@@ -34,7 +34,7 @@ class Worker extends SCWorker {
         var cameraChannel = socket.subscribe('camera_channel');
         cameraChannel.watch(function (data) {
             if (data.type == "start-streaming") {
-                _this.runCommand('ls', ['-lh', '/usr']);
+                _this.runCommand('ffmpeg', ['-r', '30', '-i', 'rtsp://192.168.1.17:554/user=admin&password=&channel=1&stream=1.sdp', 'http://192.168.1.100:8090/feed1.ffm']);
             }
         });
     }

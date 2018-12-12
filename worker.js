@@ -56,6 +56,7 @@ class Worker extends SCWorker {
             console.log(`child process exited with code ${code}`);
         });
     }
+
 }
 
 new Worker();

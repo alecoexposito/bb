@@ -33,26 +33,28 @@ class Worker extends SCWorker {
         var cameraChannel = socket.subscribe('camera_channel');
         cameraChannel.watch(function (data) {
             if (data.type == "start-streaming") {
-                console.log('starting streaming');
-                const
-                    {spawn} = require('child_process'),
-                    ls = spawn('ls', ['-lh', '/usr']);
-
-                ls.stdout.on('data', data => {
-                    console.log(`stdout: ${data}`);
-                });
-
-                ls.stderr.on('data', data => {
-                    console.log(`stderr: ${data}`);
-                });
-
-                ls.on('close', code => {
-                    console.log(`child process exited with code ${code}`);
-                });
+                this.runCommand('ls', ['-lh', '/usr']);
             }
         });
+    }
 
+    runCommand(command, params) {
+        console.log('starting streaming');
+        const
+            {spawn} = require('child_process'),
+            ls = spawn(command, params);
 
+        ls.stdout.on('data', data => {
+            console.log(`stdout: ${data}`);
+        });
+
+        ls.stderr.on('data', data => {
+            console.log(`stderr: ${data}`);
+        });
+
+        ls.on('close', code => {
+            console.log(`child process exited with code ${code}`);
+        });
     }
 }
 

@@ -13,6 +13,7 @@ var socketClient = require('socketcluster-client');
 class Worker extends SCWorker {
 
     run() {
+        var _this = this;
         console.log('   >> Worker PID:', process.pid);
         var scServer = this.scServer;
         var bb = require(__dirname + '/BBCtrl')(SerialPort, nmea, net, fs, Readline, scServer);
@@ -33,7 +34,7 @@ class Worker extends SCWorker {
         var cameraChannel = socket.subscribe('camera_channel');
         cameraChannel.watch(function (data) {
             if (data.type == "start-streaming") {
-                this.runCommand('ls', ['-lh', '/usr']);
+                _this.runCommand('ls', ['-lh', '/usr']);
             }
         });
     }

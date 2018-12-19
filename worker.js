@@ -62,6 +62,8 @@ class Worker extends SCWorker {
                     '64k',
                     '-hls_list_size',
                     '0',
+                    '-g',
+                    '20',
                     '/home/zurikato/remote-hls/bb23/test.m3u8'
                 ]);
             } else if(vcommand == "stop-streaming") {

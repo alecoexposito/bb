@@ -62,7 +62,7 @@ class Worker extends SCWorker {
                     '64k',
                     '-hls_list_size',
                     '0',
-                    '~/remote-hls/bb23/test.m3u8'
+                    '/home/zurikato/remote-hls/bb23/test.m3u8'
                 ]);
             } else if(vcommand == "stop-streaming") {
                 console.log("AAAAAAAAAAAAAAAAAAAAAA--------------received from web:------------AAAAAAAAAAAAAAA ", data);

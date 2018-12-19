@@ -1,0 +1,29 @@
+{
+  "name": "bb",
+  "version": "1.0.0",
+  "description": "",
+  "main": "BBCtrl.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alecoexposito/bb.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/alecoexposito/bb/issues"
+  },
+  "homepage": "https://github.com/alecoexposito/bb#readme",
+  "dependencies": {
+    "express": "^4.16.4",
+    "node-nmea": "^2.0.0",
+    "serialport": "^7.1.0",
+    "serve-static": "^1.13.2",
+    "socketcluster": "^14.3.3",
+    "socketcluster-client": "^14.2.1"
+  }
+}

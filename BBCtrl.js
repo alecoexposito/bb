@@ -62,7 +62,7 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
                         	client.on('error', function(err) {console.log(err)});
 				            client.connect(options.port, options.ipAddress, function() {                
 				                parser.on("data",function(data){
-				                    console.log(data);
+				                    // console.log(data);
 				                    let gprmc = nmea.parse(data.toString());
 				                    if(gprmc.valid==true && gprmc.type=='RMC'){
 				                       let response = {

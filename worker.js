@@ -42,7 +42,6 @@ class Worker extends SCWorker {
                     '-codec:v',
                     'libx264',
                     '-b:v',
-                    '-b:v',
                     '64k',
                     '-maxrate',
                     '64k',

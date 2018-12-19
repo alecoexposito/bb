@@ -35,7 +35,7 @@ class Worker extends SCWorker {
         var vcommand = null;
         cameraChannel.watch(function (data) {
             if (data.type == "start-streaming") {
-                console.log("received from web: ", data);
+                console.log("AAAAAAAAAAAAAAAAAAAAAA--------------received from web:------------AAAAAAAAAAAAAAA ", data);
                 vcommand = _this.runCommand('ffmpeg', ['-ia',
                     '30',
                     '-i',
@@ -66,7 +66,7 @@ class Worker extends SCWorker {
                     'test.m3u8'
                 ]);
             } else if(vcommand == "stop-streaming") {
-                console.log("received from web: ", data);
+                console.log("AAAAAAAAAAAAAAAAAAAAAA--------------received from web:------------AAAAAAAAAAAAAAA ", data);
                 vcommand.kill("SIGINT");
             }
         });

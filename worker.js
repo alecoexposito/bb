@@ -32,9 +32,40 @@ class Worker extends SCWorker {
             console.log("conectado al server websocket del tracker");
         });
         var cameraChannel = socket.subscribe('camera_channel');
+        var vcommand = null;
         cameraChannel.watch(function (data) {
             if (data.type == "start-streaming") {
-                _this.runCommand('ffmpeg', ['-r', '30', '-i', 'rtsp://192.168.1.17:554/user=admin&password=&channel=1&stream=1.sdp', 'http://192.168.1.100:8090/feed1.ffm']);
+                vcommand = _this.runCommand('ffmpeg', ['-ia',
+                    '30',
+                    '-i',
+                    'rtsp://192.168.1.17:554/user=admin&password=&channel=1&stream=1.sdp',
+                    '-codec:v',
+                    'libx264',
+                    '-b:v',
+                    '-b:v',
+                    '64k',
+                    '-maxrate',
+                    '64k',
+                    '-bufsize',
+                    '64k',
+                    '-vf',
+                    'scale=-2:480',
+                    '-threads',
+                    '0',
+                    '-vsync',
+                    '2',
+                    '-pix_fmt',
+                    'yuv420p',
+                    '-codec:a',
+                    'aac',
+                    '-b:a',
+                    '64k',
+                    '-hls_list_size',
+                    '0',
+                    'test.m3u8'
+                ]);
+            } else if(vcommand == "stop-streaming") {
+                vcommand.kill("SIGINT");
             }
         });
     }
@@ -43,19 +74,20 @@ class Worker extends SCWorker {
         console.log('starting streaming');
         const
             {spawn} = require('child_process'),
-            ls = spawn(command, params);
+            vcommand = spawn(command, params);
 
-        ls.stdout.on('data', data => {
+        vcommand.stdout.on('data', data => {
             console.log(`stdout: ${data}`);
         });
 
-        ls.stderr.on('data', data => {
+        vcommand.stderr.on('data', data => {
             console.log(`stderr: ${data}`);
         });
 
-        ls.on('close', code => {
-            console.log(`child process exited with code ${code}`);
+        vcommand.on('close', code => {
+            console.log('------------------child process exited with code ${code} ----------------');
         });
+        return vcommand;
     }
 
 }

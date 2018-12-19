@@ -36,8 +36,7 @@ class Worker extends SCWorker {
         cameraChannel.watch(function (data) {
             if (data.type == "start-streaming") {
                 console.log("AAAAAAAAAAAAAAAAAAAAAA--------------received from web:------------AAAAAAAAAAAAAAA ", data);
-                vcommand = _this.runCommand('ffmpeg', ['-ia',
-                    '30',
+                vcommand = _this.runCommand('ffmpeg', [
                     '-i',
                     'rtsp://192.168.1.17:554/user=admin&password=&channel=1&stream=1.sdp',
                     '-codec:v',

@@ -37,34 +37,16 @@ class Worker extends SCWorker {
             if (data.type == "start-streaming") {
                 console.log("AAAAAAAAAAAAAAAAAAAAAA--------------received from web:------------AAAAAAAAAAAAAAA ", data);
                 // _this.runCommand('cd', ['~/remote-hls'])
-                vcommand = _this.runCommand('ffmpeg', [
-                    '-i',
-                    'rtsp://192.168.1.17:554/user=admin&password=&channel=1&stream=1.sdp',
-                    '-codec:v',
-                    'libx264',
-                    '-b:v',
-                    '64k',
-                    '-maxrate',
-                    '64k',
-                    '-bufsize',
-                    '64k',
-                    '-vf',
-                    'scale=-2:480',
-                    '-threads',
-                    '0',
-                    '-vsync',
-                    '2',
-                    '-pix_fmt',
-                    'yuv420p',
-                    '-codec:a',
-                    'aac',
-                    '-b:a',
-                    '64k',
-                    '-hls_list_size',
-                    '0',
-                    '-g',
-                    '20',
-                    '/home/zurikato/remote-hls/bb23/test.m3u8'
+                vcommand = _this.runCommand('gst-launch-1.0', [
+                    'rtspsrc',
+                    'location="rtsp://192.168.1.17:554/user=admin&password=&channel=1&stream=1.sdp"',
+                    '!',
+                    'decodebin',
+                    '!',
+                    'jpegenc',
+                    '!',
+                    'multifilesink',
+                    'location=/home/zurikato/camera/camera.jpg'
                 ]);
             } else if(vcommand == "stop-streaming") {
                 console.log("AAAAAAAAAAAAAAAAAAAAAA--------------received from web:------------AAAAAAAAAAAAAAA ", data);

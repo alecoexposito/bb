@@ -39,7 +39,7 @@ class Worker extends SCWorker {
                 // _this.runCommand('cd', ['~/remote-hls'])
                 vcommand = _this.runCommand('gst-launch-1.0', [
                     'rtspsrc',
-                    'location="rtsp://192.168.1.17:554/user=admin&password=&channel=1&stream=1.sdp"',
+                    'location="rtsp://192.168.1.18:554/user=admin&password=&channel=1&stream=1.sdp"',
                     '!',
                     'decodebin',
                     '!',

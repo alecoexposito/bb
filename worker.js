@@ -50,7 +50,7 @@ class Worker extends SCWorker {
                 ]);
             } else if(vcommand == "stop-streaming") {
                 console.log("AAAAAAAAAAAAAAAAAAAAAA--------------received from web:------------AAAAAAAAAAAAAAA ", data);
-                vcommand.kill("SIGINT");
+                vcommand.kill("SIGKILL");
             }
         });
     }

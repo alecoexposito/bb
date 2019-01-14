@@ -34,13 +34,13 @@ class Worker extends SCWorker {
         var cameraChannel = socket.subscribe('camera_channel');
         var vcommand = null;
         cameraChannel.watch(function (data) {
-            if(data.id == 387) {
+            if(data.id == 386) {
                 if (data.type == "start-streaming") {
                     console.log("AAAAAAAAAAAAAAAAAAAAAA--------------received from web:------------AAAAAAAAAAAAAAA ", data);
                     // _this.runCommand('cd', ['~/remote-hls'])
                     vcommand = _this.runCommand('gst-launch-1.0', [
                         'rtspsrc',
-                        'location="rtsp://192.168.1.17:554/user=admin&password=&channel=1&stream=1.sdp"',
+                        'location="rtsp://192.168.1.16:554/user=admin&password=&channel=1&stream=1.sdp"',
                         '!',
                         'decodebin',
                         '!',

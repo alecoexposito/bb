@@ -48,7 +48,7 @@ class Worker extends SCWorker {
                     'multifilesink',
                     'location=/home/zurikato/camera/camera.jpg'
                 ]);
-            } else if(vcommand == "stop-streaming") {
+            } else if(data.type == "stop-streaming") {
                 console.log("AAAAAAAAAAAAAAAAAAAAAA--------------received from web:------------AAAAAAAAAAAAAAA ", data);
                 vcommand.kill("SIGKILL");
             }

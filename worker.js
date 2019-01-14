@@ -34,23 +34,25 @@ class Worker extends SCWorker {
         var cameraChannel = socket.subscribe('camera_channel');
         var vcommand = null;
         cameraChannel.watch(function (data) {
-            if (data.type == "start-streaming") {
-                console.log("AAAAAAAAAAAAAAAAAAAAAA--------------received from web:------------AAAAAAAAAAAAAAA ", data);
-                // _this.runCommand('cd', ['~/remote-hls'])
-                vcommand = _this.runCommand('gst-launch-1.0', [
-                    'rtspsrc',
-                    'location="rtsp://192.168.1.18:554/user=admin&password=&channel=1&stream=1.sdp"',
-                    '!',
-                    'decodebin',
-                    '!',
-                    'jpegenc',
-                    '!',
-                    'multifilesink',
-                    'location=/home/zurikato/camera/camera.jpg'
-                ]);
-            } else if(data.type == "stop-streaming") {
-                console.log("AAAAAAAAAAAAAAAAAAAAAA--------------received from web:------------AAAAAAAAAAAAAAA ", data);
-                vcommand.kill("SIGKILL");
+            if(data.id == 386) {
+                if (data.type == "start-streaming") {
+                    console.log("AAAAAAAAAAAAAAAAAAAAAA--------------received from web:------------AAAAAAAAAAAAAAA ", data);
+                    // _this.runCommand('cd', ['~/remote-hls'])
+                    vcommand = _this.runCommand('gst-launch-1.0', [
+                        'rtspsrc',
+                        'location="rtsp://192.168.1.18:554/user=admin&password=&channel=1&stream=1.sdp"',
+                        '!',
+                        'decodebin',
+                        '!',
+                        'jpegenc',
+                        '!',
+                        'multifilesink',
+                        'location=/home/zurikato/camera/camera.jpg'
+                    ]);
+                } else if(data.type == "stop-streaming") {
+                    console.log("AAAAAAAAAAAAAAAAAAAAAA--------------received from web:------------AAAAAAAAAAAAAAA ", data);
+                    vcommand.kill("SIGKILL");
+                }
             }
         });
     }

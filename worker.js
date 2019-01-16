@@ -40,7 +40,7 @@ class Worker extends SCWorker {
                     console.log("AAAAAAAAAAAAAAAAAAAAAA--------------received from web:------------AAAAAAAAAAAAAAA ", data);
                     vcommand = _this.runCommand('gst-launch-1.0', [
                         'rtspsrc',
-                        'location=' + process.env.CAMERA_LOCATION,
+                        'location=' + process.env.CAMERA_LOCATION + ' latency=0',
                         '!',
                         'decodebin',
                         '!',

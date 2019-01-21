@@ -57,10 +57,10 @@ class Worker extends SCWorker {
                     vcommand.kill("SIGKILL");
                 } else if(data.type == "start-video-backup") {
                     var location = process.env.VIDEO_BACKUP_LOCATION;
-                    console.log("Stream from backup: ", location);
+                    console.log("Stream from backup: ", data);
                     var initialDate = data.initialDate;
                     var endDate = data.endDate;
-                    console.log(initialDate, endDate);
+                    console.log(initialDate);
 
                     fs.readdir(location, (err, files) => {
                         files.forEach(file => {

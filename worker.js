@@ -64,7 +64,7 @@ class Worker extends SCWorker {
 
                     fs.readdir(location, (err, files) => {
                         files.forEach(file => {
-                            console.log("In folder: ", file);
+                            console.log("In folder: " + file, file >= initialDate && file <= endDate);
                             if(file >= initialDate && file <= endDate)
                                 console.log("Selected: " , file);
                         });

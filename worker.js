@@ -8,6 +8,7 @@ var express = require('express');
 var serveStatic = require('serve-static');
 var path = require('path');
 require("dotenv").config();
+const fs = require("fs");
 
 var socketClient = require('socketcluster-client');
 
@@ -55,6 +56,21 @@ class Worker extends SCWorker {
                 } else if(data.type == "stop-streaming") {
                     console.log("AAAAAAAAAAAAAAAAAAAAAA--------------received from web:------------AAAAAAAAAAAAAAA ", data);
                     vcommand.kill("SIGKILL");
+                } else if(data.type == "stream-video-backup") {
+                    var location = process.env.VIDEO_BACKUP_LOCATION;
+                    var initialDate = data.initialDate;
+                    var endDate = data.endDate;
+
+                    console.log("Stream from backup: ", location);
+
+                    fs.readdir(location, (err, files) => {
+                        files.forEach(file => {
+                            if(file >= initialDate && file <= endDate)
+                                console.log("Selected: " , file);
+                        });
+                    });
+
+
                 }
             }
         });

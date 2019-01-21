@@ -58,8 +58,8 @@ class Worker extends SCWorker {
                 } else if(data.type == "start-video-backup") {
                     var location = process.env.VIDEO_BACKUP_LOCATION;
                     console.log("Stream from backup: ", location);
-                    // var initialDate = data.initialDate;
-                    // var endDate = data.endDate;
+                    var initialDate = data.initialDate;
+                    var endDate = data.endDate;
 
 
                     fs.readdir(location, (err, files) => {

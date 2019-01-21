@@ -8,7 +8,6 @@ var express = require('express');
 var serveStatic = require('serve-static');
 var path = require('path');
 require("dotenv").config();
-const fs = require("fs");
 
 var socketClient = require('socketcluster-client');
 

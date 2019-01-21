@@ -60,7 +60,7 @@ class Worker extends SCWorker {
                     console.log("Stream from backup: ", location);
                     var initialDate = data.initialDate;
                     var endDate = data.endDate;
-
+                    console.log(initialDate, endDate);
 
                     fs.readdir(location, (err, files) => {
                         files.forEach(file => {

@@ -80,6 +80,8 @@ class Worker extends SCWorker {
                             }
                         });
                     });
+                    this.writeToPlayList(playlistFile, "#EXT-X-ENDLIST");
+
 
 
                 }
@@ -123,10 +125,6 @@ class Worker extends SCWorker {
         this.writeToPlayList(filename, "#EXT-X-MEDIA-SEQUENCE:0\n");
         this.writeToPlayList(filename, "#EXT-X-ALLOW-CACHE:YES\n");
         this.writeToPlayList(filename, "#EXT-X-TARGETDURATION:32\n");
-        this.writeToPlayList(filename, "#EXTM3U");
-        this.writeToPlayList(filename, "#EXTM3U");
-        this.writeToPlayList(filename, "#EXTM3U");
-        this.writeToPlayList(filename, "#EXTM3U");
     }
 
     addTsToPlaylist(tsFilename, playlistFilename) {

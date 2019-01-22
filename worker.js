@@ -65,7 +65,7 @@ class Worker extends SCWorker {
                     //     location + '/playlist.m3u8',
                     //     '/home/zurikato/camera/video/playlist.m3u8'
                     // ]);
-                    var playlistFile = "/home/zurikato/camera/video/" + data.id + ".m3u8";
+                    var playlistFile = "/home/zurikato/camera/video/playlist.m3u8";
                     _this.initPlayList(playlistFile);
                     fs.readdir(location, (err, files) => {
                         files.forEach(file => {

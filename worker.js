@@ -80,7 +80,7 @@ class Worker extends SCWorker {
                             }
                         });
                     });
-                    this.writeToPlayList(playlistFile, "#EXT-X-ENDLIST");
+                    _this.writeToPlayList(playlistFile, "#EXT-X-ENDLIST");
 
 
 

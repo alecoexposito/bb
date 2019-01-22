@@ -69,7 +69,6 @@ class Worker extends SCWorker {
                     _this.initPlayList(playlistFile);
                     fs.readdir(location, (err, files) => {
                         files.forEach(file => {
-                            console.log("In folder: " + file, file >= initialDate && file <= endDate);
                             if(file != 'playlist.m3u8' && file >= initialDate && file <= endDate) {
                                 console.log("Selected: " , file);
                                 _this.runCommand("cp", [
@@ -79,8 +78,8 @@ class Worker extends SCWorker {
                                 _this.addTsToPlaylist(file, playlistFile);
                             }
                         });
+                        _this.writeToPlayList(playlistFile, "#EXT-X-ENDLIST");
                     });
-                    _this.writeToPlayList(playlistFile, "#EXT-X-ENDLIST");
 
 
 

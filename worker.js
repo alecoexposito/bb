@@ -82,14 +82,14 @@ class Worker extends SCWorker {
                     });
 
                 } else if(data.type == "stop-video-backup") {
-                    _this.runCommand("rm /home/zurikato/camera/video/*", []);
+                    // _this.runCommand("rm /home/zurikato/camera/video/*", []);
+                    _this.deleteFolderFiles("/home/zurikato/camera/video");
                 }
             }
         });
     }
 
     runCommand(command, params) {
-        console.log('starting streaming');
         const
             {spawn} = require('child_process'),
             vcommand = spawn(command, params);
@@ -129,6 +129,18 @@ class Worker extends SCWorker {
     addTsToPlaylist(tsFilename, playlistFilename) {
         this.writeToPlayList(playlistFilename, "#EXTINF:30.000000,\n");
         this.writeToPlayList(playlistFilename, tsFilename + "\n");
+    }
+
+    deleteFolderFiles(location) {
+        fs.readdir(location, (err, files) => {
+            if (err) throw err;
+
+            for (const file of files) {
+                fs.unlink(path.join(directory, file), err => {
+                    if (err) throw err;
+                });
+            }
+        });
     }
 
 }

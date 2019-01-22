@@ -136,7 +136,7 @@ class Worker extends SCWorker {
             if (err) throw err;
 
             for (const file of files) {
-                fs.unlink(path.join(directory, file), err => {
+                fs.unlink(path.join(location, file), err => {
                     if (err) throw err;
                 });
             }

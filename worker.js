@@ -61,10 +61,12 @@ class Worker extends SCWorker {
                     var initialDate = data.initialDate;
                     var endDate = data.endDate;
                     console.log(initialDate);
-                    _this.runCommand("cp", [
-                        location + '/playlist.m3u8',
-                        '/home/zurikato/camera/video/playlist.m3u8'
-                    ]);
+                    // _this.runCommand("cp", [
+                    //     location + '/playlist.m3u8',
+                    //     '/home/zurikato/camera/video/playlist.m3u8'
+                    // ]);
+                    var playlistFile = "/home/zurikato/camera/video/" + data.id + ".m3u8";
+                    _this.initPlayList(playlistFile);
                     fs.readdir(location, (err, files) => {
                         files.forEach(file => {
                             console.log("In folder: " + file, file >= initialDate && file <= endDate);
@@ -74,7 +76,7 @@ class Worker extends SCWorker {
                                     location + '/' + file,
                                     '/home/zurikato/camera/video/' + file
                                 ]);
-
+                                _this.addTsToPlaylist(file, playlistFile);
                             }
                         });
                     });
@@ -103,6 +105,33 @@ class Worker extends SCWorker {
             console.log('------------------child process exited with code ${code} ----------------');
         });
         return vcommand;
+    }
+
+    writeToPlayList(filename, data) {
+        fs.writeFileSync(filename, data, function(err) {
+            if(err) {
+                return console.log("error: ", err);
+            }
+
+            console.log("playlist file written: ", data);
+        });
+    }
+
+    initPlayList(filename) {
+        this.writeToPlayList(filename, "#EXTM3U\n");
+        this.writeToPlayList(filename, "#EXT-X-VERSION:3\n");
+        this.writeToPlayList(filename, "#EXT-X-MEDIA-SEQUENCE:0\n");
+        this.writeToPlayList(filename, "#EXT-X-ALLOW-CACHE:YES\n");
+        this.writeToPlayList(filename, "#EXT-X-TARGETDURATION:32\n");
+        this.writeToPlayList(filename, "#EXTM3U");
+        this.writeToPlayList(filename, "#EXTM3U");
+        this.writeToPlayList(filename, "#EXTM3U");
+        this.writeToPlayList(filename, "#EXTM3U");
+    }
+
+    addTsToPlaylist(tsFilename, playlistFilename) {
+        this.writeToPlayList(playlistFilename, "#EXTINF:30.000000,\n");
+        this.writeToPlayList(playlistFilename, tsFilename + "\n");
     }
 
 }

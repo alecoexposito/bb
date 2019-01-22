@@ -61,12 +61,21 @@ class Worker extends SCWorker {
                     var initialDate = data.initialDate;
                     var endDate = data.endDate;
                     console.log(initialDate);
-
+                    _this.runCommand("cp", [
+                        location + '/playlist.m3u8',
+                        '/home/zurikato/camera/video/playlist.m3u8'
+                    ]);
                     fs.readdir(location, (err, files) => {
                         files.forEach(file => {
                             console.log("In folder: " + file, file >= initialDate && file <= endDate);
-                            if(file >= initialDate && file <= endDate)
+                            if(file != 'playlist.m3u8' && file >= initialDate && file <= endDate) {
                                 console.log("Selected: " , file);
+                                _this.runCommand("cp", [
+                                    location + '/' + file,
+                                    '/home/zurikato/camera/video/' + file
+                                ]);
+
+                            }
                         });
                     });
 

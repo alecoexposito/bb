@@ -108,7 +108,7 @@ class Worker extends SCWorker {
     }
 
     writeToPlayList(filename, data) {
-        fs.writeFileSync(filename, data, function(err) {
+        fs.appendFileSync(filename, data, function(err) {
             if(err) {
                 return console.log("error: ", err);
             }

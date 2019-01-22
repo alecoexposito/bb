@@ -82,9 +82,7 @@ class Worker extends SCWorker {
                     });
 
                 } else if(data.type == "stop-video-backup") {
-                    _this.runCommand("rm", [
-                        '/home/zurikato/camera/video/*'
-                    ]);
+                    _this.runCommand("rm /home/zurikato/camera/video/*", []);
                 }
             }
         });

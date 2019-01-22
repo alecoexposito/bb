@@ -81,8 +81,10 @@ class Worker extends SCWorker {
                         _this.writeToPlayList(playlistFile, "#EXT-X-ENDLIST");
                     });
 
-
-
+                } else if(data.type == "stop-video-backup") {
+                    _this.runCommand("rm", [
+                        '/home/zurikato/camera/video/*'
+                    ]);
                 }
             }
         });

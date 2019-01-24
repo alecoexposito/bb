@@ -65,15 +65,15 @@ class Worker extends SCWorker {
                     //     location + '/playlist.m3u8',
                     //     '/home/zurikato/camera/video/playlist.m3u8'
                     // ]);
-                    var playlistFile = "/home/zurikato/camera/video/" + data.playlistName + ".m3u8";
+                    var playlistFolder = "/home/zurikato/camera/video/" + data.playlistName;
+                    var playlistFile = "/home/zurikato/camera/video/" + data.playlistName + "/playlist.m3u8";
                     _this.initPlayList(playlistFile);
                     fs.readdir(location, (err, files) => {
                         files.forEach(file => {
                             if(file != 'playlist.m3u8' && file >= initialDate && file <= endDate) {
-                                console.log("Selected: " , file);
                                 _this.runCommand("cp", [
                                     location + '/' + file,
-                                    '/home/zurikato/camera/video/' + file
+                                    playlistFolder + "/" + file
                                 ]);
                                 _this.addTsToPlaylist(file, playlistFile);
                             }
@@ -83,7 +83,7 @@ class Worker extends SCWorker {
 
                 } else if(data.type == "stop-video-backup") {
                     // _this.runCommand("rm /home/zurikato/camera/video/*", []);
-                    _this.deleteFolderFiles("/home/zurikato/camera/video");
+                    // _this.deleteFolderFiles("/home/zurikato/camera/video");
                 }
             }
         });

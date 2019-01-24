@@ -84,6 +84,9 @@ class Worker extends SCWorker {
                 } else if(data.type == "stop-video-backup") {
                     // _this.runCommand("rm /home/zurikato/camera/video/*", []);
                     // _this.deleteFolderFiles("/home/zurikato/camera/video");
+                    var folderPath = "/home/zurikato/camera/video/" + data.playlistName;
+                    _this.deleteFolderFiles(folderPath);
+                    fs.rmdir(folderPath);
                 }
             }
         });

@@ -86,7 +86,7 @@ class Worker extends SCWorker {
                     // _this.deleteFolderFiles("/home/zurikato/camera/video");
                     var folderPath = "/home/zurikato/camera/video/" + data.playlistName;
                     _this.deleteFolderFiles(folderPath);
-                    fs.rmdir(folderPath);
+                    fs.rmdirSync(folderPath);
                 }
             }
         });

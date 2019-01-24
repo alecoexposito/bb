@@ -67,7 +67,7 @@ class Worker extends SCWorker {
                     // ]);
                     var playlistFolder = "/home/zurikato/camera/video/" + data.playlistName;
                     var playlistFile = "/home/zurikato/camera/video/" + data.playlistName + "/playlist.m3u8";
-                    _this.initPlayList(playlistFile);
+                    _this.initPlayList(playlistFile, playlistFolder);
                     fs.readdir(location, (err, files) => {
                         files.forEach(file => {
                             if(file != 'playlist.m3u8' && file >= initialDate && file <= endDate) {
@@ -118,7 +118,8 @@ class Worker extends SCWorker {
         });
     }
 
-    initPlayList(filename) {
+    initPlayList(filename, playlistFolder) {
+        fs.mkdirSync(playlistFolder);
         this.writeToPlayList(filename, "#EXTM3U\n");
         this.writeToPlayList(filename, "#EXT-X-VERSION:3\n");
         this.writeToPlayList(filename, "#EXT-X-MEDIA-SEQUENCE:0\n");

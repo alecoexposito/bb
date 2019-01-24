@@ -86,7 +86,7 @@ class Worker extends SCWorker {
                     // _this.runCommand("rm /home/zurikato/camera/video/*", []);
                     // _this.deleteFolderFiles("/home/zurikato/camera/video");
                     var folderPath = "/home/zurikato/camera/video/" + data.playlistName;
-                    del([folderPath]).then(paths => {
+                    del([folderPath], {dryRun: true}).then(paths => {
                         console.log('Deleted files and folders:\n', paths.join('\n'));
                     });
                     // _this.deleteFolderFiles(folderPath);

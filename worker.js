@@ -8,6 +8,7 @@ var express = require('express');
 var serveStatic = require('serve-static');
 var path = require('path');
 require("dotenv").config();
+const del = require('del');
 
 var socketClient = require('socketcluster-client');
 
@@ -85,8 +86,11 @@ class Worker extends SCWorker {
                     // _this.runCommand("rm /home/zurikato/camera/video/*", []);
                     // _this.deleteFolderFiles("/home/zurikato/camera/video");
                     var folderPath = "/home/zurikato/camera/video/" + data.playlistName;
-                    _this.deleteFolderFiles(folderPath);
-                    fs.rmdirSync(folderPath);
+                    del([folderPath]).then(paths => {
+                        console.log('Deleted files and folders:\n', paths.join('\n'));
+                    });
+                    // _this.deleteFolderFiles(folderPath);
+                    // fs.rmdirSync(folderPath);
                 }
             }
         });

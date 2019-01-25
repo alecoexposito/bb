@@ -9,6 +9,7 @@ var serveStatic = require('serve-static');
 var path = require('path');
 require("dotenv").config();
 const del = require('del');
+var ps = require('ps-node');
 
 var socketClient = require('socketcluster-client');
 
@@ -39,17 +40,21 @@ class Worker extends SCWorker {
             if(data.id == process.env.DEVICE_ID) {
                 if (data.type == "start-streaming") {
                     console.log("AAAAAAAAAAAAAAAAAAAAAA--------------received from web:------------AAAAAAAAAAAAAAA ", data);
-                    vcommand = _this.runCommand('gst-launch-1.0', [
-                        'rtspsrc',
-                        'location=' + process.env.CAMERA_LOCATION + ' latency=0',
-                        '!',
-                        'decodebin',
-                        '!',
-                        'jpegenc',
-                        '!',
-                        'multifilesink',
-                        'location=/home/zurikato/camera/camera.jpg'
-                    ]);
+                    if(_this.isProcessOpenned('gst-launch-1.0')) {
+                        console.log("gst-launch-1.0 already openned");
+                    } else {
+                        vcommand = _this.runCommand('gst-launch-1.0', [
+                            'rtspsrc',
+                            'location=' + process.env.CAMERA_LOCATION + ' latency=0',
+                            '!',
+                            'decodebin',
+                            '!',
+                            'jpegenc',
+                            '!',
+                            'multifilesink',
+                            'location=/home/zurikato/camera/camera.jpg'
+                        ]);
+                    }
                     // setTimeout(function() {
                     //     vcommand.kill("SIGKILL");
                     // }, 120000)
@@ -148,6 +153,25 @@ class Worker extends SCWorker {
                     if (err) throw err;
                 });
             }
+        });
+    }
+
+    isProcessOpenned(name) {
+        ps.lookup({
+            command: name,
+        }, function(err, resultList ) {
+            if (err) {
+                throw new Error( err );
+            }
+
+            resultList.forEach(function( process ){
+                if( process ){
+                    console.log( 'PID: %s, COMMAND: %s, ARGUMENTS: %s', process.pid, process.command, process.arguments );
+                    return true;
+                }
+            });
+
+            return false;
         });
     }
 

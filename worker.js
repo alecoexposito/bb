@@ -90,9 +90,10 @@ class Worker extends SCWorker {
                             }
                         });
                         if(noFileFound == true) {
-                            videoBackupChannel.publish({ type: "no-videos-available" });
+                            videoBackupChannel.publish({ type: "no-video-available" });
                         }else {
                             _this.writeToPlayList(playlistFile, "#EXT-X-ENDLIST");
+                            videoBackupChannel.publish({ type: "play-recorded-video" });
                         }
                     });
 

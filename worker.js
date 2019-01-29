@@ -67,6 +67,7 @@ class Worker extends SCWorker {
                     var initialDate = data.initialDate;
                     var endDate = data.endDate;
                     console.log(initialDate);
+
                     var videoBackupChannel = socket.subscribe(data.playlistName + '_channel');
                     videoBackupChannel.publish({ message: "testing" });
                     // _this.runCommand("cp", [

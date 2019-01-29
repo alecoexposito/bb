@@ -69,7 +69,7 @@ class Worker extends SCWorker {
                     console.log(initialDate);
 
                     var videoBackupChannel = socket.subscribe(data.playlistName + '_channel');
-                    videoBackupChannel.publish({ message: "testing" });
+
                     // _this.runCommand("cp", [
                     //     location + '/playlist.m3u8',
                     //     '/home/zurikato/camera/video/playlist.m3u8'
@@ -78,8 +78,10 @@ class Worker extends SCWorker {
                     var playlistFile = "/home/zurikato/camera/video/" + data.playlistName + "/playlist.m3u8";
                     _this.initPlayList(playlistFile, playlistFolder);
                     fs.readdir(location, (err, files) => {
+                        var noFileFound = true;
                         files.forEach(file => {
                             if(file != 'playlist.m3u8' && file >= initialDate && file <= endDate) {
+                                noFileFound = false;
                                 _this.runCommand("cp", [
                                     location + '/' + file,
                                     playlistFolder + "/" + file
@@ -87,7 +89,11 @@ class Worker extends SCWorker {
                                 _this.addTsToPlaylist(file, playlistFile);
                             }
                         });
-                        _this.writeToPlayList(playlistFile, "#EXT-X-ENDLIST");
+                        if(noFileFound == true) {
+                            videoBackupChannel.publish({ type: "no-videos-available" });
+                        }else {
+                            _this.writeToPlayList(playlistFile, "#EXT-X-ENDLIST");
+                        }
                     });
 
                 } else if(data.type == "stop-video-backup") {

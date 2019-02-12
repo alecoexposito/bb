@@ -207,7 +207,7 @@ class Worker extends SCWorker {
     addTsToPlaylist(tsFilename, playlistFilename, infoLine) {
         var infoLineData = "#EXTINF:30.000000,\n";
         if(infoLine !== undefined)
-            infoLineData = infoLine;
+            infoLineData = infoLine + "\n";
         this.writeToPlayList(playlistFilename, infoLineData);
         this.writeToPlayList(playlistFilename, tsFilename + "\n");
     }

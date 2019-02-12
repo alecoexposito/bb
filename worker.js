@@ -10,6 +10,7 @@ var path = require('path');
 require("dotenv").config();
 const del = require('del');
 var ps = require('ps-node');
+var lr = require('readline');
 
 var socketClient = require('socketcluster-client');
 
@@ -73,6 +74,18 @@ class Worker extends SCWorker {
                     var playlistFolder = "/home/zurikato/camera/video/" + data.playlistName;
                     var playlistFile = "/home/zurikato/camera/video/" + data.playlistName + "/playlist.m3u8";
                     _this.initPlayList(playlistFile, playlistFolder);
+
+
+                    var lineReader = lr.createInterface({
+                        input: fs.createReadStream(location + '/playlist.m3u8')
+                    });
+
+                    lineReader.on('line', function (line) {
+                        console.log('Line from file:', line);
+                    });
+
+
+
                     fs.readdir(location, (err, files) => {
                         var noFileFound = true;
                         files.forEach(file => {

@@ -75,13 +75,13 @@ class Worker extends SCWorker {
                     var playlistFile = "/home/zurikato/camera/video/" + data.playlistName + "/playlist.m3u8";
                     _this.initPlayList(playlistFile, playlistFolder);
 
-
+                    var count = 1;
                     var lineReader = lr.createInterface({
                         input: fs.createReadStream(location + '/playlist.m3u8')
                     });
 
                     lineReader.on('line', function (line) {
-                        console.log('Line from file:', line);
+                        console.log(count++, line);
                     });
 
 

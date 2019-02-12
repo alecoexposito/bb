@@ -80,24 +80,26 @@ class Worker extends SCWorker {
                         input: fs.createReadStream(location + '/playlist.m3u8')
                     });
 
+                    var lastUtilityLine = "";
+                    var noFileFound = true;
                     lineReader.on('line', function (line) {
-                        console.log(count++, line);
-                    });
-
-
-
-                    fs.readdir(location, (err, files) => {
-                        var noFileFound = true;
-                        files.forEach(file => {
-                            if(file != 'playlist.m3u8' && file >= initialDate && file <= endDate) {
+                        if(line.startsWith("#")) {
+                            lastUtilityLine = line;
+                        } else {
+                            if(line >= initialDate && line <= endDate) {
+                                console.log("line added: ", line);
                                 noFileFound = false;
                                 _this.runCommand("cp", [
-                                    location + '/' + file,
-                                    playlistFolder + "/" + file
+                                    location + '/' + line,
+                                    playlistFolder + "/" + line
                                 ]);
                                 _this.addTsToPlaylist(file, playlistFile);
                             }
-                        });
+                        }
+                    });
+
+                    lineReader.on('close', function() {
+                        console.log("process finished");
                         if(noFileFound == true) {
                             videoBackupChannel.publish({ type: "no-video-available" });
                         }else {
@@ -105,6 +107,28 @@ class Worker extends SCWorker {
                             videoBackupChannel.publish({ type: "play-recorded-video" });
                         }
                     });
+
+
+
+                    // fs.readdir(location, (err, files) => {
+                    //     var noFileFound = true;
+                    //     files.forEach(file => {
+                    //         if(file != 'playlist.m3u8' && file >= initialDate && file <= endDate) {
+                    //             noFileFound = false;
+                    //             _this.runCommand("cp", [
+                    //                 location + '/' + file,
+                    //                 playlistFolder + "/" + file
+                    //             ]);
+                    //             _this.addTsToPlaylist(file, playlistFile);
+                    //         }
+                    //     });
+                    //     if(noFileFound == true) {
+                    //         videoBackupChannel.publish({ type: "no-video-available" });
+                    //     }else {
+                    //         _this.writeToPlayList(playlistFile, "#EXT-X-ENDLIST");
+                    //         videoBackupChannel.publish({ type: "play-recorded-video" });
+                    //     }
+                    // });
 
                 } else if(data.type == "stop-video-backup") {
                     var folderPath = "/home/zurikato/camera/video/" + data.playlistName;
@@ -180,8 +204,11 @@ class Worker extends SCWorker {
         this.writeToPlayList(filename, "#EXT-X-TARGETDURATION:32\n");
     }
 
-    addTsToPlaylist(tsFilename, playlistFilename) {
-        this.writeToPlayList(playlistFilename, "#EXTINF:30.000000,\n");
+    addTsToPlaylist(tsFilename, playlistFilename, infoLine) {
+        var infoLineData = "#EXTINF:30.000000,\n";
+        if(infoLine !== undefined)
+            infoLineData = infoLine;
+        this.writeToPlayList(playlistFilename, infoLineData);
         this.writeToPlayList(playlistFilename, tsFilename + "\n");
     }
 

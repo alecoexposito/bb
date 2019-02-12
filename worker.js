@@ -104,13 +104,13 @@ class Worker extends SCWorker {
                     console.log("entrando en el begin download")
                     var totalTime = data.endTime - data.initialTime;
 
-                    _this.downloadVideoByTime(data.initialTime, totalTime, data.playlistName);
+                    _this.downloadVideoByTime(data.initialTime, totalTime, data.playlistName, socket);
                 }
             }
         });
     }
 
-    downloadVideoByTime(initialTime, totalTime, playlistName) {
+    downloadVideoByTime(initialTime, totalTime, playlistName, socket) {
         console.log("executing download video by time");
         var _this = this;
         var location = "/home/zurikato/camera/video/" + playlistName;

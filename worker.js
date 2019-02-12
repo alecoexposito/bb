@@ -93,7 +93,7 @@ class Worker extends SCWorker {
                                     location + '/' + line,
                                     playlistFolder + "/" + line
                                 ]);
-                                _this.addTsToPlaylist(file, playlistFile);
+                                _this.addTsToPlaylist(line, playlistFile, lastUtilityLine);
                             }
                         }
                     });

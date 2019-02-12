@@ -101,7 +101,9 @@ class Worker extends SCWorker {
                     // _this.deleteFolderFiles(folderPath);
                     // fs.rmdirSync(folderPath);
                 } else if(data.type == "begin-download") {
+                    console.log("entrando en el begin download")
                     var totalTime = data.endTime - data.initialTime;
+
                     _this.downloadVideoByTime(data.initialTime, totalTime, data.playlistName);
                 }
             }
@@ -123,26 +125,6 @@ class Worker extends SCWorker {
             videoBackupChannel.publish({ type: "download-ready" });
         });
 
-        // var files = [];
-        // fs.readdir(location, (err, files) => {
-        //     var noFileFound = true;
-        //     files.forEach(file => {
-        //         if(file != 'playlist.m3u8') {
-        //             noFileFound = false;
-        //             files.push(file);
-        //             // _this.runCommand("cp", [
-        //             //     location + '/' + file,
-        //             //     playlistFolder + "/" + file
-        //             // ]);
-        //         }
-        //     });
-        //     if(noFileFound == true) {
-        //         videoBackupChannel.publish({ type: "no-video-available" });
-        //     }else {
-        //
-        //         videoBackupChannel.publish({ type: "play-recorded-video" });
-        //     }
-        // });
     }
 
     runCommand(command, params, closeCallback) {

@@ -100,7 +100,7 @@ class Worker extends SCWorker {
                     });
                     // _this.deleteFolderFiles(folderPath);
                     // fs.rmdirSync(folderPath);
-                } else if(data.type == "video-download") {
+                } else if(data.type == "begin-download") {
                     _this.downloadVideoByTime(data.initialDate, data.endDate, data.playlistName);
                 }
             }

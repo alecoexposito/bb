@@ -70,10 +70,6 @@ class Worker extends SCWorker {
 
                     var videoBackupChannel = socket.subscribe(data.playlistName + '_channel');
 
-                    // _this.runCommand("cp", [
-                    //     location + '/playlist.m3u8',
-                    //     '/home/zurikato/camera/video/playlist.m3u8'
-                    // ]);
                     var playlistFolder = "/home/zurikato/camera/video/" + data.playlistName;
                     var playlistFile = "/home/zurikato/camera/video/" + data.playlistName + "/playlist.m3u8";
                     _this.initPlayList(playlistFile, playlistFolder);
@@ -98,20 +94,57 @@ class Worker extends SCWorker {
                     });
 
                 } else if(data.type == "stop-video-backup") {
-                    // _this.runCommand("rm /home/zurikato/camera/video/*", []);
-                    // _this.deleteFolderFiles("/home/zurikato/camera/video");
                     var folderPath = "/home/zurikato/camera/video/" + data.playlistName;
                     del([folderPath], {force: true}).then(paths => {
                         console.log('Deleted files and folders:\n', paths.join('\n'));
                     });
                     // _this.deleteFolderFiles(folderPath);
                     // fs.rmdirSync(folderPath);
+                } else if(data.type == "video-download") {
+                    _this.downloadVideoByTime(data.initialDate, data.endDate, data.playlistName);
                 }
             }
         });
     }
 
-    runCommand(command, params) {
+    downloadVideoByTime(initialTime, totalTime, playlistName) {
+        console.log("executing download video by time");
+        var _this = this;
+        var location = "/home/zurikato/camera/video/" + playlistName;
+        var scriptsLocation = "/home/zurikato/scripts";
+        var videoBackupChannel = socket.subscribe(playlistName + '_channel');
+        _this.runCommand("sh", [
+            scriptsLocation + '/join-cut-segments.sh',
+            initialTime,
+            totalTime,
+            playlistName
+        ], function() {
+            videoBackupChannel.publish({ type: "download-ready" });
+        });
+
+        // var files = [];
+        // fs.readdir(location, (err, files) => {
+        //     var noFileFound = true;
+        //     files.forEach(file => {
+        //         if(file != 'playlist.m3u8') {
+        //             noFileFound = false;
+        //             files.push(file);
+        //             // _this.runCommand("cp", [
+        //             //     location + '/' + file,
+        //             //     playlistFolder + "/" + file
+        //             // ]);
+        //         }
+        //     });
+        //     if(noFileFound == true) {
+        //         videoBackupChannel.publish({ type: "no-video-available" });
+        //     }else {
+        //
+        //         videoBackupChannel.publish({ type: "play-recorded-video" });
+        //     }
+        // });
+    }
+
+    runCommand(command, params, closeCallback) {
         const
             {spawn} = require('child_process'),
             vcommand = spawn(command, params);
@@ -125,6 +158,10 @@ class Worker extends SCWorker {
         });
 
         vcommand.on('close', code => {
+            if(closeCallback !== undefined) {
+                console.log("executing callback function");
+                closeCallback();
+            }
             console.log('------------------child process exited with code ${code} ----------------');
         });
         return vcommand;
@@ -135,8 +172,6 @@ class Worker extends SCWorker {
             if(err) {
                 return console.log("error: ", err);
             }
-
-            console.log("playlist file written: ", data);
         });
     }
 

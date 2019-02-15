@@ -45,8 +45,8 @@ class Worker extends SCWorker {
                         console.log("gst-launch-1.0 already openned");
                     } else {
                         vcommand = _this.runCommand('gst-launch-1.0', [
-                            'rtspsrc',
-                            'location=' + process.env.CAMERA_LOCATION + ' latency=0',
+                            '"rtspsrc',
+                            'location=' + process.env.CAMERA_LOCATION + '" latency=0',
                             '!',
                             'decodebin',
                             '!',

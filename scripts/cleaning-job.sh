@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 filename="$1"
 name=""
+folderPath=/home/zurikato/video-backup
+cd $folderPath
 while read -r line; do
     if [[ $line == *.ts ]]
     then

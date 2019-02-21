@@ -210,6 +210,7 @@ class Worker extends SCWorker {
             infoLineData = infoLine + "\n";
         this.writeToPlayList(playlistFilename, infoLineData);
         this.writeToPlayList(playlistFilename, tsFilename + "\n");
+        this.writeToPlayList("#EXT-X-ENDLIST\n");
     }
 
     deleteFolderFiles(location) {

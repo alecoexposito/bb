@@ -205,7 +205,6 @@ class Worker extends SCWorker {
         this.writeToPlayList(filename, "#EXT-X-MEDIA-SEQUENCE:0\n");
         this.writeToPlayList(filename, "#EXT-X-ALLOW-CACHE:YES\n");
         this.writeToPlayList(filename, "#EXT-X-TARGETDURATION:32\n");
-        this.writeToPlayList(filename, "#EXT-X-PLAYLIST-TYPE:EVENT\n");
     }
 
     addTsToPlaylist(tsFilename, playlistFilename, infoLine) {

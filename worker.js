@@ -94,6 +94,9 @@ class Worker extends SCWorker {
                                     playlistFolder + "/" + line
                                 ]);
                                 _this.addTsToPlaylist(line, playlistFile, lastUtilityLine);
+                            } else if(line > endDate) {
+                                console.log("ultima linea leida");
+                                lineReader.close();
                             }
                         }
                     });

@@ -11,6 +11,7 @@ require("dotenv").config();
 const del = require('del');
 var ps = require('ps-node');
 var lr = require('readline');
+var moment = require('moment');
 
 var socketClient = require('socketcluster-client');
 
@@ -151,7 +152,38 @@ class Worker extends SCWorker {
     }
 
     downloadVideoByTime(initialTime, totalTime, playlistName, socket) {
-        console.log("executing download video by time");
+        console.log("entered in download video by time");
+        console.log("initial time: ", initialTime);
+        console.log("total time: ", totalTime);
+
+        fs.readdir(location, (err, files) => {
+                var noFileFound = true;
+                var firstPass = false;
+                var initialDate = null;
+                var endDate = null;
+
+                files.forEach(file => {
+                    if(file != 'playlist.m3u8') {
+                        if(firstPass) {
+                            var dateStr = file.replace("_hls.ts", "");
+                            var fileDate = moment(dateStr, 'YYYY-MM-DD_HH-mm-ss');
+                            var initialDateTmp = fileDate.add(initialTime, 'seconds');
+                            initialDate = initialDateTmp.format('YYYY-MM-DD_HH-mm-ss') + "_hls.ts";
+                            endDate = initialDateTmp.add(totalTime, 'seconds').format('YYYY-MM-DD_HH-mm-ss') + "_hls.ts";
+                            firstPass = true;
+                        }
+                        if(file >= initialDate && file <= endDate) {
+                            console.log("included file: ", file);
+                        }
+                    }
+                });
+                if(noFileFound == true) {
+                    videoBackupChannel.publish({ type: "no-video-available" });
+                }else {
+                    _this.writeToPlayList(playlistFile, "#EXT-X-ENDLIST");
+                    videoBackupChannel.publish({ type: "play-recorded-video" });
+                }
+            });
         var _this = this;
         var location = "/home/zurikato/camera/video/" + playlistName;
         var scriptsLocation = "/home/zurikato/scripts";

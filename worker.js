@@ -159,7 +159,7 @@ class Worker extends SCWorker {
 
         fs.readdir(location, (err, files) => {
                 var noFileFound = true;
-                var firstPass = false;
+                var firstPass = true;
                 var initialDate = null;
                 var endDate = null;
 

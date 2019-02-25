@@ -173,7 +173,7 @@ class Worker extends SCWorker {
                             endDate = initialDateTmp.add(Math.ceil(totalTime), 'seconds').format('YYYY-MM-DD_HH-mm-ss') + "_hls.ts";
                             console.log("initial date: ", initialDate);
                             console.log("end date: ", endDate);
-                            firstPass = true;
+                            firstPass = false;
                         }
                         if(file >= initialDate && file <= endDate) {
                             console.log("included file: ", file);

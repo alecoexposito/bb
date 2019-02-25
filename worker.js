@@ -155,6 +155,7 @@ class Worker extends SCWorker {
         console.log("entered in download video by time");
         console.log("initial time: ", initialTime);
         console.log("total time: ", totalTime);
+        var location = "/home/zurikato/camera/video/" + playlistName;
 
         fs.readdir(location, (err, files) => {
                 var noFileFound = true;
@@ -185,7 +186,6 @@ class Worker extends SCWorker {
                 }
             });
         var _this = this;
-        var location = "/home/zurikato/camera/video/" + playlistName;
         var scriptsLocation = "/home/zurikato/scripts";
         var videoBackupChannel = socket.subscribe(playlistName + '_channel');
         _this.runCommand("sh", [

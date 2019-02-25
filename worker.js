@@ -175,8 +175,14 @@ class Worker extends SCWorker {
                             console.log("end date: ", endDate);
                             firstPass = false;
                         }
+                        var filename = location + "/videos.txt";
                         if(file >= initialDate && file <= endDate) {
                             console.log("included file: ", file);
+                            fs.appendFileSync(filename, "file " + file + "\n", function(err) {
+                                if(err) {
+                                    return console.log("error: ", err);
+                                }
+                            });
                         }
                     }
                 });

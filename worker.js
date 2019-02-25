@@ -171,6 +171,8 @@ class Worker extends SCWorker {
                             var initialDateTmp = fileDate.add(initialTime, 'seconds');
                             initialDate = initialDateTmp.format('YYYY-MM-DD_HH-mm-ss') + "_hls.ts";
                             endDate = initialDateTmp.add(totalTime, 'seconds').format('YYYY-MM-DD_HH-mm-ss') + "_hls.ts";
+                            console.log("initial date: ", initialDate);
+                            console.log("end date: ", endDate);
                             firstPass = true;
                         }
                         if(file >= initialDate && file <= endDate) {

@@ -199,11 +199,8 @@ class Worker extends SCWorker {
                     videoBackupChannel.publish({ type: "download-ready" });
                 });
 
-            if(noFileFound == true) {
+                if(noFileFound == true) {
                     videoBackupChannel.publish({ type: "no-video-available" });
-                }else {
-                    _this.writeToPlayList(playlistFile, "#EXT-X-ENDLIST");
-                    videoBackupChannel.publish({ type: "play-recorded-video" });
                 }
             });
 

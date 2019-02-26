@@ -162,8 +162,11 @@ class Worker extends SCWorker {
                 var firstPass = true;
                 var initialDate = null;
                 var endDate = null;
-
+                var noFileFound = true;
+                var _this = this;
+                var scriptsLocation = "/home/zurikato/scripts";
                 files.forEach(file => {
+                    noFileFound = false;
                     if(file != 'playlist.m3u8') {
                         if(firstPass) {
                             var dateStr = file.replace("_hls.ts", "");
@@ -186,24 +189,23 @@ class Worker extends SCWorker {
                         }
                     }
                 });
-                if(noFileFound == true) {
+                var videoBackupChannel = socket.subscribe(playlistName + '_channel');
+                _this.runCommand("sh", [
+                    scriptsLocation + '/join-cut-segments.sh',
+                    initialTime,
+                    totalTime,
+                    playlistName
+                ], function() {
+                    videoBackupChannel.publish({ type: "download-ready" });
+                });
+
+            if(noFileFound == true) {
                     videoBackupChannel.publish({ type: "no-video-available" });
                 }else {
                     _this.writeToPlayList(playlistFile, "#EXT-X-ENDLIST");
                     videoBackupChannel.publish({ type: "play-recorded-video" });
                 }
             });
-        var _this = this;
-        var scriptsLocation = "/home/zurikato/scripts";
-        var videoBackupChannel = socket.subscribe(playlistName + '_channel');
-        _this.runCommand("sh", [
-            scriptsLocation + '/join-cut-segments.sh',
-            initialTime,
-            totalTime,
-            playlistName
-        ], function() {
-            videoBackupChannel.publish({ type: "download-ready" });
-        });
 
     }
 

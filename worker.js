@@ -156,6 +156,7 @@ class Worker extends SCWorker {
         console.log("initial time: ", initialTime);
         console.log("total time: ", totalTime);
         var location = "/home/zurikato/camera/video/" + playlistName;
+        fs.truncateSync(location + "/videos.txt", 0);
 
         fs.readdir(location, (err, files) => {
                 var noFileFound = true;

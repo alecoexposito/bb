@@ -1,6 +1,7 @@
-module.exports = (SerialPort, nmea, net, fs, Readline, scServer, sqlite3) => {
+module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
     class bbController {
         constructor() {
+            var sqlite3 = require('sqlite3').verbose();
             this.db = new sqlite3.Database('/home/zurikato/.db/bb.sqlite', sqlite3.OPEN_READWRITE, (err) => {
                 if(err) {
                     console.log("error openning the sqlite database");

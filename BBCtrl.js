@@ -62,6 +62,7 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
                 parser.on("data", function (data) {
                     console.log("data from bb", data);
                     let gprmc = nmea.parse(data.toString());
+                    console.log("gprmc: ", gprmc);
                     if (gprmc.valid == true && gprmc.type == 'RMC') {
                         let response = {
                             'device_id': device_id,

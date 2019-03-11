@@ -1,4 +1,4 @@
-module.exports = (SerialPort, nmea, net, fs, Readline, scServer, moment) => {
+module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
     class bbController {
         constructor() {
             var sqlite3 = require('sqlite3').verbose();
@@ -61,6 +61,7 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer, moment) => {
 
                 parser.on("data", function (data) {
                     console.log("data from bb", data);
+                    var moment = require('moment');
                     let gprmc = nmea.parse(data.toString());
                     console.log("gprmc: ", gprmc);
                     if (gprmc.valid == true && gprmc.type == 'RMC') {

@@ -71,7 +71,7 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
                             'longitude': gprmc.loc.geojson.coordinates[0],
                             'speed': gprmc.speed.kmh
                         };
-                        let values = [response.latitude, response.longitude, response.speed, moment.utc().millisecond(), moment.utc().millisecond()];
+                        let values = [response.latitude, response.longitude, response.speed, moment.utc().valueOf(), moment.utc().valueOf()];
                         self.saveOfflineData(values);
                         let buffer = Buffer.from(JSON.stringify(response));
                         if (client.writable) {

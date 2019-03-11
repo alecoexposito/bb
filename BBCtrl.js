@@ -1,4 +1,4 @@
-module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
+module.exports = (SerialPort, nmea, net, fs, Readline, scServer, moment) => {
     class bbController {
         constructor() {
             var sqlite3 = require('sqlite3').verbose();

@@ -39,13 +39,45 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
 
                 } else {
                     console.log("PORT OPENED");
+                    const parser = portS1.pipe(new Readline({delimiter: '\r\n'}));
+                    console.log("voy a llamar al parser on data2");
+                    parser.on("data", function (data) {
+                        console.log("EN EL PARSER ON DATA");
+                        var moment = require('moment');
+                        let gprmc = nmea.parse(data.toString());
+                        console.log("gprmc: ", gprmc);
+                        if (gprmc.valid == true && gprmc.type == 'RMC') {
+                            let response = {
+                                'device_id': device_id,
+                                'latitude': gprmc.loc.geojson.coordinates[1],
+                                'longitude': gprmc.loc.geojson.coordinates[0],
+                                'speed': gprmc.speed.kmh
+                            };
+                            let values = [response.latitude, response.longitude, response.speed, moment.utc().valueOf(), moment.utc().valueOf()];
+                            let buffer = Buffer.from(JSON.stringify(response));
+
+                            client.write(buffer, function(err) {
+                                if(err) {
+                                    console.log("error writing to socket, writing offline")
+                                    values.push(1);
+                                } else {
+                                    console.log("all ok");
+                                    values.push(0);
+                                }
+                            });
+                            self.saveOfflineData(values);
+                            console.log('wrote in client and offline');
+
+                        }
+                    });
+
                 }
             });
 
             portS1.on('error', function (err) {
                 console.log('Error en el puerto: ', err.message);
             });
-            const parser = portS1.pipe(new Readline({delimiter: '\r\n'}));
+
             //parser.on('data', function(data){console.log(data);})
             var client = new net.Socket();
             client.on('error', function (err) {
@@ -59,37 +91,6 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
             // parser.on("stream_channel", function (data) {
             //     console.log("stream channel: ", data);
             // });
-
-            console.log("voy a llamar al parser on data");
-            parser.on("data", function (data) {
-                console.log("EN EL PARSER ON DATA");
-                var moment = require('moment');
-                let gprmc = nmea.parse(data.toString());
-                console.log("gprmc: ", gprmc);
-                if (gprmc.valid == true && gprmc.type == 'RMC') {
-                    let response = {
-                        'device_id': device_id,
-                        'latitude': gprmc.loc.geojson.coordinates[1],
-                        'longitude': gprmc.loc.geojson.coordinates[0],
-                        'speed': gprmc.speed.kmh
-                    };
-                    let values = [response.latitude, response.longitude, response.speed, moment.utc().valueOf(), moment.utc().valueOf()];
-                    let buffer = Buffer.from(JSON.stringify(response));
-
-                    client.write(buffer, function(err) {
-                        if(err) {
-                            console.log("error writing to socket, writing offline")
-                            values.push(1);
-                        } else {
-                            console.log("all ok");
-                            values.push(0);
-                        }
-                    });
-                    self.saveOfflineData(values);
-                    console.log('wrote in client and offline');
-
-                }
-            });
 
         }
     }

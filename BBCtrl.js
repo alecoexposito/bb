@@ -43,7 +43,7 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
             });
 
             portS1.on('error', function (err) {
-                console.log('Error: ', err.message);
+                console.log('Error en el puerto: ', err.message);
             });
             const parser = portS1.pipe(new Readline({delimiter: '\r\n'}));
             //parser.on('data', function(data){console.log(data);})
@@ -60,7 +60,7 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
 
 
                 parser.on("data", function (data) {
-                    console.log("data from bb", data);
+                    // console.log("data from bb", data);
                     var moment = require('moment');
                     let gprmc = nmea.parse(data.toString());
                     console.log("gprmc: ", gprmc);
@@ -74,45 +74,13 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
                         let values = [response.latitude, response.longitude, response.speed, moment.utc().valueOf(), moment.utc().valueOf()];
                         self.saveOfflineData(values);
                         let buffer = Buffer.from(JSON.stringify(response));
-                        if (client.writable) {
-                            client.write(buffer);
-                            console.log('wrote in client');
-                        } else {
-                            console.log('client not writable');
-                            //----------
-                            client = new net.Socket();
-                            client.on('error', function (err) {
-                                console.log(err)
-                            });
-                            client.connect(options.port, options.ipAddress, function () {
-                                parser.on("data", function (data) {
-                                    // console.log(data);
-                                    let gprmc = nmea.parse(data.toString());
-                                    if (gprmc.valid == true && gprmc.type == 'RMC') {
-                                        let response = {
-                                            'device_id': device_id,
-                                            'latitude': gprmc.loc.geojson.coordinates[1],
-                                            'longitude': gprmc.loc.geojson.coordinates[0],
-                                            'speed': gprmc.speed.kmh
-                                        };
-                                        let buffer = Buffer.from(JSON.stringify(response));
-                                        if (client.writable) {
-                                            client.write(buffer);
-                                            console.log('writing in client again');
-                                        } else {
-                                            console.log('client is still not writable not writable');
-                                            console.log('destroying client for good');
-                                            client.destroy();
-                                            client.unref();
-                                        }
-                                    }
-                                });
 
-                            });
+                        client.write(buffer, function(err) {
+                            console.log("error writing to socket, writing offline")
+                            values.push(true);
+                        });
+                        console.log('wrote in client');
 
-                            //-----------
-
-                        }
                     }
                 });
 

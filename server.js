@@ -1,8 +1,6 @@
 var SocketCluster = require('socketcluster');
 
 var SerialPort = require("serialport");
-const nmea = require('node-nmea');
-const net = require('net');
 const Readline = SerialPort.parsers.Readline;
 
 

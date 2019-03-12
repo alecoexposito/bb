@@ -56,13 +56,13 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
 
             });
 
-            parser.on("stream_channel", function (data) {
-                console.log("stream channel: ", data);
-            });
+            // parser.on("stream_channel", function (data) {
+            //     console.log("stream channel: ", data);
+            // });
 
 
             parser.on("data", function (data) {
-                // console.log("data from bb", data);
+                console.log("EN EL PARSER ON DATA");
                 var moment = require('moment');
                 let gprmc = nmea.parse(data.toString());
                 console.log("gprmc: ", gprmc);

@@ -50,7 +50,7 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
             var client = new net.Socket();
             client.on('error', function (err) {
                 console.log('OCURRIO EL ERROR');
-                console.log(err);
+                // console.log(err);
             });
             client.connect(options.port, options.ipAddress, function () {
 
@@ -60,7 +60,7 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
             //     console.log("stream channel: ", data);
             // });
 
-
+            console.log("voy a llamar al parser on data");
             parser.on("data", function (data) {
                 console.log("EN EL PARSER ON DATA");
                 var moment = require('moment');

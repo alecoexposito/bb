@@ -39,8 +39,6 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
 
                 } else {
                     console.log("PORT OPENED");
-                    const parser = portS1.pipe(new Readline({delimiter: '\r\n'}));
-                    console.log("PARSER: ", parser);
                 }
             });
 
@@ -48,6 +46,7 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
                 console.log('Error en el puerto: ', err.message);
             });
 
+            const parser = portS1.pipe(new Readline({delimiter: '\r\n'}));
             //parser.on('data', function(data){console.log(data);})
             var client = new net.Socket();
             client.on('error', function (err) {

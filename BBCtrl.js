@@ -54,7 +54,6 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
                 // console.log(err);
             });
             client.connect(options.port, options.ipAddress, function () {
-                console.log("voy a llamar al parser on data");
                 parser.on("data", function (data) {
                     console.log("EN EL PARSER ON DATA");
                     var moment = require('moment');
@@ -67,18 +66,17 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
                             'longitude': gprmc.loc.geojson.coordinates[0],
                             'speed': gprmc.speed.kmh
                         };
-                        let values = [response.latitude, response.longitude, response.speed, moment.utc().valueOf(), moment.utc().valueOf()];
                         let buffer = Buffer.from(JSON.stringify(response));
-
+                        var is_offline = 0;
                         client.write(buffer, function(err) {
                             if(err) {
                                 console.log("error writing to socket, writing offline");
-                                values.push(1);
+                                is_offline = 1;
                             } else {
                                 console.log("all ok");
-                                values.push(0);
                             }
                         });
+                        let values = [response.latitude, response.longitude, response.speed, moment.utc().valueOf(), moment.utc().valueOf(), is_offline];
                         self.saveOfflineData(values);
                         console.log('wrote in client and offline');
 

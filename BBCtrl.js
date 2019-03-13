@@ -78,6 +78,7 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
                             self.saveOfflineData(values);
                         } else {
                             console.log("all ok");
+                            is_offline = 0;
                             let values = [response.latitude, response.longitude, response.speed, moment.utc().valueOf(), moment.utc().valueOf(), is_offline];
                             self.saveOfflineData(values);                            }
                     });

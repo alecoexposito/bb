@@ -46,6 +46,9 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
                 console.log('Error en el puerto: ', err.message);
             });
 
+            client.connect(options.port, options.ipAddress, function () {
+            });
+
             const parser = portS1.pipe(new Readline({delimiter: '\r\n'}));
             parser.on('data', function(data){console.log("data en el parser: ", data);})
             var client = new net.Socket();
@@ -53,37 +56,35 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
                 console.log('OCURRIO EL ERROR');
                 // console.log(err);
             });
-            client.connect(options.port, options.ipAddress, function () {
-                parser.on("data", function (data) {
-                    console.log("EN EL PARSER ON DATA");
-                    var moment = require('moment');
-                    let gprmc = nmea.parse(data.toString());
-                    console.log("gprmc: ", gprmc);
-                    if (gprmc.valid == true && gprmc.type == 'RMC') {
-                        let response = {
-                            'device_id': device_id,
-                            'latitude': gprmc.loc.geojson.coordinates[1],
-                            'longitude': gprmc.loc.geojson.coordinates[0],
-                            'speed': gprmc.speed.kmh
-                        };
-                        let buffer = Buffer.from(JSON.stringify(response));
-                        var is_offline = 0;
-                        client.write(buffer, function(err) {
-                            if(err) {
-                                console.log("error writing to socket, writing offline");
-                                is_offline = 1;
-                                let values = [response.latitude, response.longitude, response.speed, moment.utc().valueOf(), moment.utc().valueOf(), is_offline];
-                                self.saveOfflineData(values);
-                            } else {
-                                console.log("all ok");
-                                let values = [response.latitude, response.longitude, response.speed, moment.utc().valueOf(), moment.utc().valueOf(), is_offline];
-                                self.saveOfflineData(values);                            }
-                        });
+            parser.on("data", function (data) {
+                console.log("EN EL PARSER ON DATA");
+                var moment = require('moment');
+                let gprmc = nmea.parse(data.toString());
+                console.log("gprmc: ", gprmc);
+                if (gprmc.valid == true && gprmc.type == 'RMC') {
+                    let response = {
+                        'device_id': device_id,
+                        'latitude': gprmc.loc.geojson.coordinates[1],
+                        'longitude': gprmc.loc.geojson.coordinates[0],
+                        'speed': gprmc.speed.kmh
+                    };
+                    let buffer = Buffer.from(JSON.stringify(response));
+                    var is_offline = 0;
+                    client.write(buffer, function(err) {
+                        if(err) {
+                            console.log("error writing to socket, writing offline");
+                            is_offline = 1;
+                            let values = [response.latitude, response.longitude, response.speed, moment.utc().valueOf(), moment.utc().valueOf(), is_offline];
+                            self.saveOfflineData(values);
+                        } else {
+                            console.log("all ok");
+                            let values = [response.latitude, response.longitude, response.speed, moment.utc().valueOf(), moment.utc().valueOf(), is_offline];
+                            self.saveOfflineData(values);                            }
+                    });
 
-                        console.log('wrote in client and offline');
+                    console.log('wrote in client and offline');
 
-                    }
-                });
+                }
             });
 
             // parser.on("stream_channel", function (data) {

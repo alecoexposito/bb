@@ -40,7 +40,7 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
                 } else {
                     console.log("PORT OPENED");
                     const parser = portS1.pipe(new Readline({delimiter: '\r\n'}));
-
+                    console.log("PARSER: ", parser);
                 }
             });
 

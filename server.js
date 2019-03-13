@@ -1,8 +1,5 @@
 var SocketCluster = require('socketcluster');
 
-var SerialPort = require("serialport");
-const Readline = SerialPort.parsers.Readline;
-
 
 var socketCluster = new SocketCluster({
     workers: 1,

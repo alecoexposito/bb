@@ -39,7 +39,6 @@ class Worker extends SCWorker {
         });
         socket.on('error', function(err) {
             console.log("error ocurred");
-            return;
         });
         var cameraChannel = socket.subscribe('camera_channel');
         var vcommand = null;

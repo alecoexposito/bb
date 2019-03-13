@@ -32,7 +32,7 @@ class Worker extends SCWorker {
             console.log('----------------------------- CLIENT CONNECTED ------------------------------')
         });
 
-        bb.run(options, client);
+        bb.run(optionsClient, client);
         scServer.on('connection', function (socket) {
             console.log("on connection: ", socket);
         });

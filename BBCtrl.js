@@ -52,6 +52,7 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
                 // console.log(err);
             });
             client.connect(options.port, options.ipAddress, function () {
+                console.log('----------------------------- CLIENT CONNECTED ------------------------------')
             });
 
             const parser = portS1.pipe(new Readline({delimiter: '\r\n'}));

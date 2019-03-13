@@ -26,6 +26,10 @@ class Worker extends SCWorker {
         scServer.on('connection', function (socket) {
             console.log("on connection: ", socket);
         });
+        scServer.on('error', function(err) {
+            console.log("error ocurred");
+            return;
+        })
 
         var options = {
             secure: false,

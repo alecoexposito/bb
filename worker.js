@@ -22,13 +22,13 @@ class Worker extends SCWorker {
         console.log('   >> Worker PID:', process.pid);
         var scServer = this.scServer;
         var bb = require(__dirname + '/BBCtrl')(SerialPort, nmea, net, fs, Readline, scServer);
-        var options = {'serialPort': '/dev/ttyS1', 'baudRate': 9600, 'port': 3002, 'ipAddress': '192.168.1.100'};
+        var optionsClient = {'serialPort': '/dev/ttyS1', 'baudRate': 9600, 'port': 3002, 'ipAddress': '192.168.1.100'};
         var client = new net.Socket();
         client.on('error', function (err) {
             console.log('OCURRIO EL ERROR');
             // console.log(err);
         });
-        client.connect(options.port, options.ipAddress, function () {
+        client.connect(optionsClient.port, optionsClient.ipAddress, function () {
             console.log('----------------------------- CLIENT CONNECTED ------------------------------')
         });
 

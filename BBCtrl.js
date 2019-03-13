@@ -72,12 +72,14 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
                             if(err) {
                                 console.log("error writing to socket, writing offline");
                                 is_offline = 1;
+                                let values = [response.latitude, response.longitude, response.speed, moment.utc().valueOf(), moment.utc().valueOf(), is_offline];
+                                self.saveOfflineData(values);
                             } else {
                                 console.log("all ok");
-                            }
+                                let values = [response.latitude, response.longitude, response.speed, moment.utc().valueOf(), moment.utc().valueOf(), is_offline];
+                                self.saveOfflineData(values);                            }
                         });
-                        let values = [response.latitude, response.longitude, response.speed, moment.utc().valueOf(), moment.utc().valueOf(), is_offline];
-                        self.saveOfflineData(values);
+
                         console.log('wrote in client and offline');
 
                     }

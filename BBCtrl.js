@@ -46,16 +46,16 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
                 console.log('Error en el puerto: ', err.message);
             });
 
-            client.connect(options.port, options.ipAddress, function () {
-            });
-
-            const parser = portS1.pipe(new Readline({delimiter: '\r\n'}));
-            parser.on('data', function(data){console.log("data en el parser: ", data);})
             var client = new net.Socket();
             client.on('error', function (err) {
                 console.log('OCURRIO EL ERROR');
                 // console.log(err);
             });
+            client.connect(options.port, options.ipAddress, function () {
+            });
+
+            const parser = portS1.pipe(new Readline({delimiter: '\r\n'}));
+            parser.on('data', function(data){console.log("data en el parser: ", data);})
             parser.on("data", function (data) {
                 console.log("EN EL PARSER ON DATA");
                 var moment = require('moment');

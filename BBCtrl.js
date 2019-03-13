@@ -14,7 +14,7 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
         saveOfflineData(values) {
             console.log("saving data offline: ", values);
             var db = this.db;
-            db.run('insert into info_data(lat, lng, speed, created_at, updated_at) values(?, ?, ?, ?, ?)', values, function(err) {
+            db.run('insert into info_data(lat, lng, speed, created_at, updated_at, is_offline) values(?, ?, ?, ?, ?, ?)', values, function(err) {
                 if(err) {
                     return console.log(console.log(err.message));
                 }

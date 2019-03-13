@@ -28,9 +28,7 @@ class Worker extends SCWorker {
             console.log('OCURRIO EL ERROR');
             // console.log(err);
         });
-        client.connect(optionsClient.port, optionsClient.ipAddress, function () {
-            console.log('----------------------------- CLIENT CONNECTED ------------------------------')
-        });
+
 
         bb.run(optionsClient, client);
         scServer.on('connection', function (socket) {
@@ -46,6 +44,9 @@ class Worker extends SCWorker {
         var socket = socketClient.connect(options);
         socket.on('connect', function () {
             console.log("conectado al server websocket del tracker");
+            client.connect(optionsClient.port, optionsClient.ipAddress, function () {
+                console.log('----------------------------- CLIENT CONNECTED ------------------------------')
+            });
         });
         socket.on('error', function(err) {
             console.log("error ocurred");

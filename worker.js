@@ -26,10 +26,7 @@ class Worker extends SCWorker {
         scServer.on('connection', function (socket) {
             console.log("on connection: ", socket);
         });
-        scServer.on('error', function(err) {
-            console.log("error ocurred");
-            return;
-        })
+
 
         var options = {
             secure: false,
@@ -39,6 +36,10 @@ class Worker extends SCWorker {
         var socket = socketClient.connect(options);
         socket.on('connect', function () {
             console.log("conectado al server websocket del tracker");
+        });
+        socket.on('error', function(err) {
+            console.log("error ocurred");
+            return;
         });
         var cameraChannel = socket.subscribe('camera_channel');
         var vcommand = null;

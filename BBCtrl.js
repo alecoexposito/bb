@@ -24,7 +24,7 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
 
         }
 
-        run(options) {
+        run(options, client) {
             var self = this;
 
             /*let content = fs.readFileSync('/proc/cpuinfo', 'utf8');
@@ -46,14 +46,6 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
                 console.log('Error en el puerto: ', err.message);
             });
 
-            var client = new net.Socket();
-            client.on('error', function (err) {
-                console.log('OCURRIO EL ERROR');
-                // console.log(err);
-            });
-            client.connect(options.port, options.ipAddress, function () {
-                console.log('----------------------------- CLIENT CONNECTED ------------------------------')
-            });
 
             const parser = portS1.pipe(new Readline({delimiter: '\r\n'}));
             parser.on('data', function(data){console.log("data en el parser: ", data);})

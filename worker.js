@@ -22,6 +22,7 @@ class Worker extends SCWorker {
         console.log('   >> Worker PID:', process.pid);
         var scServer = this.scServer;
         var bb = require(__dirname + '/BBCtrl')(SerialPort, nmea, net, fs, Readline, scServer);
+        var options = {'serialPort': '/dev/ttyS1', 'baudRate': 9600, 'port': 3002, 'ipAddress': '192.168.1.100'};
         var client = new net.Socket();
         client.on('error', function (err) {
             console.log('OCURRIO EL ERROR');
@@ -31,7 +32,7 @@ class Worker extends SCWorker {
             console.log('----------------------------- CLIENT CONNECTED ------------------------------')
         });
 
-        bb.run({'serialPort': '/dev/ttyS1', 'baudRate': 9600, 'port': 3002, 'ipAddress': '192.168.1.100'}, client);
+        bb.run(options, client);
         scServer.on('connection', function (socket) {
             console.log("on connection: ", socket);
         });

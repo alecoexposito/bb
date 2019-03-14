@@ -49,7 +49,6 @@ class Worker extends SCWorker {
 
         });
 
-        _this.db.close();
     }
 
     run() {

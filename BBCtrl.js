@@ -40,12 +40,11 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
 
 
             const parser = portS1.pipe(new Readline({delimiter: '\r\n'}));
-            parser.on('data', function(data){console.log("data en el parser: ", data);})
+            // parser.on('data', function(data){console.log("data en el parser: ", data);})
             parser.on("data", function (data) {
-                console.log("EN EL PARSER ON DATA");
                 var moment = require('moment');
                 let gprmc = nmea.parse(data.toString());
-                console.log("gprmc: ", gprmc);
+                // console.log("gprmc: ", gprmc);
                 if (gprmc.valid == true && gprmc.type == 'RMC') {
                     let response = {
                         'device_id': device_id,

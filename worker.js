@@ -65,7 +65,7 @@ class Worker extends SCWorker {
         });
 
 
-        bb.run(optionsClient, client, db);
+        bb.run(optionsClient, client, _this.db);
         scServer.on('connection', function (socket) {
             console.log("on connection: ", socket);
         });

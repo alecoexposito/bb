@@ -37,13 +37,14 @@ class Worker extends SCWorker {
             if (err) {
                 throw err;
             }
+            console.log("row: ", row);
             let response = {
                 'device_id': row.device_id,
                 'latitude': row.lat,
                 'longitude': row.lng,
                 'speed': row.speed,
-                'createdAt': moment.utc(row.created_at).format("YYYY-mm-dd HH:mm:ss"),
-                'updatedAt': moment.utc(row.updated_at).format("YYYY-mm-dd HH:mm:ss")
+                'createdAt': moment.utc(row.created_at).format("YYYY-M-D HH:mm:ss"),
+                'updatedAt': moment.utc(row.updated_at).format("YYYY-M-D HH:mm:ss")
             };
             console.log("a guardar en server: ", {deviceModel: 'BB', gpsData: response});
 

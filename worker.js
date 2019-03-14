@@ -46,9 +46,25 @@ class Worker extends SCWorker {
                 'createdAt': moment.utc(Number.parseFloat(row.created_at)).format("YYYY-M-D HH:mm:ss"),
                 'updatedAt': moment.utc(Number.parseFloat(row.updated_at)).format("YYYY-M-D HH:mm:ss")
             };
+            let buffer = Buffer.from(JSON.stringify(response));
+            client.write(buffer, function(err) {
+                if(err) {
+                    console.log("error enviando el dato offline");
+                } else {
+                    console.log("--------------------- enviado el dato offline -------------------------");
+                }
+            });
             console.log("a guardar en server: ", {deviceModel: 'BB', gpsData: response});
-
         });
+
+        db.run('update info_data set is_offline = 0', values, function(err) {
+            if(err) {
+                return console.log(console.log(err.message));
+            }
+
+            console.log('updateados a 0 los datos offline sincronizados');
+        });
+
 
     }
 

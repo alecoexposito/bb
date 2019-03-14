@@ -97,7 +97,7 @@ class Worker extends SCWorker {
             console.log("conectado al server websocket del tracker");
             client.connect(optionsClient.port, optionsClient.ipAddress, function () {
                 console.log('----------------------------- CLIENT CONNECTED ------------------------------');
-                _this.syncOfflineData();
+                _this.syncOfflineData(client);
 
             });
         });

@@ -17,6 +17,41 @@ var socketClient = require('socketcluster-client');
 
 class Worker extends SCWorker {
 
+    constructor() {
+        super();
+        var sqlite3 = require('sqlite3').verbose();
+        this.db = new sqlite3.Database('/home/zurikato/.db/bb.sqlite', sqlite3.OPEN_READWRITE, (err) => {
+            if(err) {
+                return console.log("error openning the sqlite database");
+            }
+            console.log('connected to the sqlite database');
+        });
+    }
+
+    syncOfflineData() {
+        var sqlite3 = require('sqlite3').verbose();
+        let db = new sqlite3.Database('../db/chinook.db');
+        let sql = "select * from info_data where is_offline = 1";
+
+        db.each(sql, [], (err, row) => {
+            if (err) {
+                throw err;
+            }
+            let response = {
+                'device_id': row.device_id,
+                'latitude': row.lat,
+                'longitude': row.lng,
+                'speed': row.speed,
+                'createdAt': moment.utc(row.created_at).format("YYYY-mm-dd HH:mm:ss"),
+                'updatedAt': moment.utc(row.updated_at).format("YYYY-mm-dd HH:mm:ss")
+            };
+            console.log("a guardar en server: ", {deviceModel: 'BB', gpsData: response});
+
+        });
+
+        db.close();
+    }
+
     run() {
         var _this = this;
         console.log('   >> Worker PID:', process.pid);
@@ -30,7 +65,7 @@ class Worker extends SCWorker {
         });
 
 
-        bb.run(optionsClient, client);
+        bb.run(optionsClient, client, db);
         scServer.on('connection', function (socket) {
             console.log("on connection: ", socket);
         });
@@ -45,7 +80,9 @@ class Worker extends SCWorker {
         socket.on('connect', function () {
             console.log("conectado al server websocket del tracker");
             client.connect(optionsClient.port, optionsClient.ipAddress, function () {
-                console.log('----------------------------- CLIENT CONNECTED ------------------------------')
+                console.log('----------------------------- CLIENT CONNECTED ------------------------------');
+                _this.syncOfflineData();
+
             });
         });
         socket.on('error', function(err) {

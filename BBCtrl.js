@@ -1,20 +1,13 @@
 module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
     class bbController {
         constructor() {
-            var sqlite3 = require('sqlite3').verbose();
-            this.db = new sqlite3.Database('/home/zurikato/.db/bb.sqlite', sqlite3.OPEN_READWRITE, (err) => {
-                if(err) {
-                    return console.log("error openning the sqlite database");
-                }
-                console.log('connected to the sqlite database');
-            });
 
         }
 
-        saveOfflineData(values) {
+        saveOfflineData(db, values) {
             console.log("saving data offline: ", values);
             var db = this.db;
-            db.run('insert into info_data(lat, lng, speed, created_at, updated_at, is_offline) values(?, ?, ?, ?, ?, ?)', values, function(err) {
+            db.run('insert into info_data(device_id, lat, lng, speed, created_at, updated_at, is_offline) values(?, ?, ?, ?, ?, ?, ?)', values, function(err) {
                 if(err) {
                     return console.log(console.log(err.message));
                 }
@@ -24,7 +17,7 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
 
         }
 
-        run(options, client) {
+        run(options, client, db) {
             var self = this;
 
             /*let content = fs.readFileSync('/proc/cpuinfo', 'utf8');
@@ -67,13 +60,14 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
                         if(err) {
                             console.log("error writing to socket, writing offline");
                             is_offline = 1;
-                            let values = [response.latitude, response.longitude, response.speed, moment.utc().valueOf(), moment.utc().valueOf(), is_offline];
-                            self.saveOfflineData(values);
+                            let values = [response.device_id, response.latitude, response.longitude, response.speed, moment.utc().valueOf(), moment.utc().valueOf(), is_offline];
+                            self.saveOfflineData(db, values);
                         } else {
                             console.log("all ok");
                             is_offline = 0;
-                            let values = [response.latitude, response.longitude, response.speed, moment.utc().valueOf(), moment.utc().valueOf(), is_offline];
-                            self.saveOfflineData(values);                            }
+                            let values = [response.device_id, response.latitude, response.longitude, response.speed, moment.utc().valueOf(), moment.utc().valueOf(), is_offline];
+                            self.saveOfflineData(db, values);
+                        }
                     });
 
                     console.log('wrote in client and offline');

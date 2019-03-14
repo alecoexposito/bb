@@ -29,11 +29,11 @@ class Worker extends SCWorker {
     }
 
     syncOfflineData() {
-        var sqlite3 = require('sqlite3').verbose();
-        let db = new sqlite3.Database('../db/chinook.db');
+        console.log("sincronizando datos offline");
+        var _this = this;
         let sql = "select * from info_data where is_offline = 1";
 
-        db.each(sql, [], (err, row) => {
+        _this.db.each(sql, [], (err, row) => {
             if (err) {
                 throw err;
             }
@@ -49,7 +49,7 @@ class Worker extends SCWorker {
 
         });
 
-        db.close();
+        _this.db.close();
     }
 
     run() {

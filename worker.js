@@ -57,7 +57,7 @@ class Worker extends SCWorker {
             console.log("a guardar en server: ", {deviceModel: 'BB', gpsData: response});
         });
 
-        _this.db.run('update info_data set is_offline = 0', values, function(err) {
+        _this.db.run('update info_data set is_offline = 0 where is_offline = 1', [], function(err) {
             if(err) {
                 return console.log(console.log(err.message));
             }

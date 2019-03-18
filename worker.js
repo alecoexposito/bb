@@ -28,7 +28,7 @@ class Worker extends SCWorker {
         });
     }
 
-    syncOfflineData() {
+    syncOfflineData(client) {
         console.log("sincronizando datos offline");
         var _this = this;
         let sql = "select * from info_data where is_offline = 1";
@@ -55,15 +55,21 @@ class Worker extends SCWorker {
                 }
             });
             console.log("a guardar en server: ", {deviceModel: 'BB', gpsData: response});
-        });
-
-        _this.db.run('update info_data set is_offline = 0 where is_offline = 1', [], function(err) {
+        }, (err, count) => {
             if(err) {
-                return console.log(console.log(err.message));
+                return console.log("error ocurred retrieving offline data from sqlite");
             }
 
-            console.log('updateados a 0 los datos offline sincronizados');
+            _this.db.run('update info_data set is_offline = 0 where is_offline = 1', [], function(err) {
+                if(err) {
+                    return console.log(console.log(err.message));
+                }
+
+                console.log('updateados a 0 los datos offline sincronizados');
+            });
+
         });
+
 
 
     }

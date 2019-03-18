@@ -43,8 +43,8 @@ class Worker extends SCWorker {
                 'latitude': row.lat,
                 'longitude': row.lng,
                 'speed': row.speed,
-                'createdAt': moment.utc(Number.parseFloat(row.created_at)).format("YYYY-M-D HH:mm:ss"),
-                'updatedAt': moment.utc(Number.parseFloat(row.updated_at)).format("YYYY-M-D HH:mm:ss")
+                'createdAt': moment.utc(Number.parseFloat(row.created_at)).format("YYYY-MM-DD HH:mm:ss"),
+                'updatedAt': moment.utc(Number.parseFloat(row.updated_at)).format("YYYY-MM-DD HH:mm:ss")
             };
             let buffer = Buffer.from(JSON.stringify(response));
             client.write(buffer, function(err) {

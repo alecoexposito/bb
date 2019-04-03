@@ -229,9 +229,24 @@ class Worker extends SCWorker {
             if(data.id == process.env.DEVICE_ID) {
                 if (data.type == "obd-info") {
                     console.log("going to run the python command");
-                    _this.runCommand('python', ['/home/zurikato/scripts/obd-info.py'], function() {
-                        obdChannel.publish({ type: 'obd-info-response', message: 'just a simple text' });
+
+                    const
+                        {spawn} = require('child_process'),
+                        vcommand = spawn(command, params);
+
+                    var response =  "";
+                    vcommand.stdout.on('data', data => {
+                        response += data;
                     });
+
+                    vcommand.stderr.on('data', data => {
+                        console.log(`stderr: ${data}`);
+                    });
+
+                    vcommand.on('close', code => {
+                        obdChannel.publish({ type: 'obd-info-response', message: response });
+                    });
+
                 }
             }
         });

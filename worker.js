@@ -223,6 +223,17 @@ class Worker extends SCWorker {
                 }
             }
         });
+
+        var obdChannel = socket.subscribe('obd_channel');
+        obdChannel.watch(function(data) {
+            if(data.id == process.env.DEVICE_ID) {
+                if (data.type == "obd-info") {
+                    _this.runCommand('python ~/scripts/obd-info.py', [], function() {
+                        obdChannel.publish({ type: 'obd-info-response', message: 'just a simple text' });
+                    });
+                }
+            }
+        });
     }
 
     downloadVideoByTime(initialTime, totalTime, playlistName, socket) {

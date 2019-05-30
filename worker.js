@@ -33,7 +33,9 @@ class Worker extends SCWorker {
         var _this = this;
         if(this.sendImage) {
             console.log("enviando");
-            cameraChannel.publish("enviando imagen");
+            var imageFile = fs.readFileSync("/home/zurikato/camera-local/camera.jpg");
+
+            cameraChannel.publish({image: imageFile.toString("base64")});
             setTimeout(function() {
                 _this.sendImageWebsocket(cameraChannel);
             }, 1000)
@@ -143,7 +145,7 @@ class Worker extends SCWorker {
                             'jpegenc',
                             '!',
                             'multifilesink',
-                            'location=/home/zurikato/camera/camera.jpg'
+                            'location=/home/zurikato/camera-local/camera.jpg'
                         ]);
                         _this.sendImage = true;
                         _this.sendImageWebsocket(cameraChannel);

@@ -28,7 +28,7 @@ class Worker extends SCWorker {
         });
         this.sendImage = false;
     }
-    sendImage;
+    // var sendImage;
     sendImageWebsocket(cameraChannel) {
         var _this = this;
         if(this.sendImage) {

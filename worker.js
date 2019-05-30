@@ -26,8 +26,9 @@ class Worker extends SCWorker {
             }
             console.log('connected to the sqlite database');
         });
+        this.sendImage = false;
     }
-    sendImage = false;
+    sendImage;
     sendImageWebsocket(cameraChannel) {
         var _this = this;
         if(this.sendImage) {
@@ -144,6 +145,7 @@ class Worker extends SCWorker {
                             'multifilesink',
                             'location=/home/zurikato/camera/camera.jpg'
                         ]);
+                        _this.sendImage = true;
                         _this.sendImageWebsocket(cameraChannel);
 
                     }
@@ -152,6 +154,7 @@ class Worker extends SCWorker {
                     // }, 120000)
                 } else if(data.type == "stop-streaming") {
                     console.log("AAAAAAAAAAAAAAAAAAAAAA--------------received from web:------------AAAAAAAAAAAAAAA ", data);
+                    _this.sendImage = false;
                     vcommand.kill("SIGKILL");
                 } else if(data.type == "start-video-backup") {
                     var location = process.env.VIDEO_BACKUP_LOCATION;

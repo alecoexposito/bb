@@ -112,7 +112,7 @@ class Worker extends SCWorker {
 
         var options = {
             secure: false,
-            hostname: '192.168.1.100',
+            hostname: process.env.TRACKER_IP,
             port: 3001
         };
         var socket = socketClient.connect(options);

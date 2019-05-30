@@ -27,6 +27,20 @@ class Worker extends SCWorker {
             console.log('connected to the sqlite database');
         });
     }
+    sendImage = false;
+    sendImageWebsocket(cameraChannel) {
+        var _this = this;
+        if(this.sendImage) {
+            console.log("enviando");
+            cameraChannel.publish("enviando imagen");
+            setTimeout(function() {
+                _this.sendImageWebsocket(cameraChannel);
+            }, 1000)
+        } else {
+            console.log("se acabo la enviadera");
+        }
+
+    }
 
     syncOfflineData(client) {
         console.log("sincronizando datos offline");
@@ -130,6 +144,8 @@ class Worker extends SCWorker {
                             'multifilesink',
                             'location=/home/zurikato/camera/camera.jpg'
                         ]);
+                        _this.sendImageWebsocket(cameraChannel);
+
                     }
                     // setTimeout(function() {
                     //     vcommand.kill("SIGKILL");

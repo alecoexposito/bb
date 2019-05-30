@@ -38,7 +38,7 @@ class Worker extends SCWorker {
             cameraChannel.publish({image: imageFile.toString("base64")});
             setTimeout(function() {
                 _this.sendImageWebsocket(cameraChannel);
-            }, 1000)
+            }, 300)
         } else {
             console.log("se acabo la enviadera");
         }

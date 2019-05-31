@@ -144,7 +144,7 @@ class Worker extends SCWorker {
                             '!',
                             'videorate',
                             '!',
-                            'video/x-raw,framerate=30/1',
+                            'video/x-raw,framerate=5/1',
                             '!',
                             'jpegenc',
                             '!',

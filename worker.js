@@ -29,13 +29,13 @@ class Worker extends SCWorker {
         this.sendImage = false;
     }
     // var sendImage;
-    sendImageWebsocket(cameraChannel) {
+    sendImageWebsocket(cameraVideoChannel) {
         var _this = this;
         if(this.sendImage) {
             console.log("enviando");
             var imageFile = fs.readFileSync("/home/zurikato/camera-local/camera.jpg");
 
-            cameraChannel.publish({image: imageFile.toString("base64")});
+            cameraVideoChannel.publish({image: imageFile.toString("base64")});
             setTimeout(function() {
                 _this.sendImageWebsocket(cameraChannel);
             }, 300)
@@ -128,6 +128,7 @@ class Worker extends SCWorker {
             console.log("error ocurred");
         });
         var cameraChannel = socket.subscribe('camera_channel');
+        var cameraVideoChannel = socket.subscribe('camera_' + process.env.DEVICE_ID + '_channel');
         var vcommand = null;
         cameraChannel.watch(function (data) {
             if(data.id == process.env.DEVICE_ID) {
@@ -152,7 +153,7 @@ class Worker extends SCWorker {
                             'location=/home/zurikato/camera-local/camera.jpg'
                         ]);
                         _this.sendImage = true;
-                        _this.sendImageWebsocket(cameraChannel);
+                        _this.sendImageWebsocket(cameraVideoChannel);
 
                     }
                     // setTimeout(function() {

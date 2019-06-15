@@ -137,21 +137,26 @@ class Worker extends SCWorker {
                     if(_this.isProcessOpenned('gst-launch-1.0')) {
                         console.log("gst-launch-1.0 already openned");
                     } else {
-                        vcommand = _this.runCommand('gst-launch-1.0', [
-                            'rtspsrc',
-                            'location=' + process.env.CAMERA_LOCATION + ' latency=0',
-                            '!',
-                            'decodebin',
-                            '!',
-                            'videorate',
-                            '!',
-                            'video/x-raw,framerate=5/1',
-                            '!',
-                            'jpegenc',
-                            '!',
-                            'multifilesink',
-                            'location=/home/zurikato/camera-local/camera.jpg'
+                        // vcommand = _this.runCommand('gst-launch-1.0', [
+                        //     'rtspsrc',
+                        //     'location=' + process.env.CAMERA_LOCATION + ' latency=0',
+                        //     '!',
+                        //     'decodebin',
+                        //     '!',
+                        //     'videorate',
+                        //     '!',
+                        //     'video/x-raw,framerate=5/1',
+                        //     '!',
+                        //     'jpegenc',
+                        //     '!',
+                        //     'multifilesink',
+                        //     'location=/home/zurikato/camera-local/camera.jpg'
+                        // ]);
+
+                        vcommand = _this.runCommand('bash', [
+                            '/home/zurikato/scripts/run-live-video.sh'
                         ]);
+
                         _this.sendImage = true;
                         _this.sendImageWebsocket(cameraVideoChannel);
 
@@ -162,7 +167,8 @@ class Worker extends SCWorker {
                 } else if(data.type == "stop-streaming") {
                     console.log("AAAAAAAAAAAAAAAAAAAAAA--------------received from web:------------AAAAAAAAAAAAAAA ", data);
                     _this.sendImage = false;
-                    vcommand.kill("SIGKILL");
+                    process.kill(-vcommand.pid, "SIGKILL")
+                    // vcommand.kill("SIGKILL");
                 } else if(data.type == "start-video-backup") {
                     var location = process.env.VIDEO_BACKUP_LOCATION;
                     console.log("Stream from backup: ", data);
@@ -339,7 +345,9 @@ class Worker extends SCWorker {
     runCommand(command, params, closeCallback) {
         const
             {spawn} = require('child_process'),
-            vcommand = spawn(command, params);
+            vcommand = spawn(command, params, {
+                detached: true
+            });
 
         vcommand.stdout.on('data', data => {
             console.log(`stdout: ${data}`);

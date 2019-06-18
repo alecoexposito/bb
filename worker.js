@@ -29,11 +29,6 @@ class Worker extends SCWorker {
         this.sendImage = false;
         this.livePid = null;
 
-        setInterval(function() {
-            console.log("video channel watchers: ", cameraVideoChannel.watchers());
-        }, 5000);
-
-
     }
     // var sendImage;
     sendImageWebsocket(cameraVideoChannel) {
@@ -265,6 +260,10 @@ class Worker extends SCWorker {
                 }
             }
         });
+
+        setInterval(function() {
+            console.log("video channel watchers: ", cameraVideoChannel.watchers());
+        }, 2000);
 
         var obdChannel = socket.subscribe('obd_channel');
         obdChannel.watch(function(data) {

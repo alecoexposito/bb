@@ -261,10 +261,10 @@ class Worker extends SCWorker {
             }
         });
 
-        setInterval(function() {
-            console.log("video channel watchers: ", scServer.clients);
-        }, 2000);
-
+        cameraVideoChannel.watch(function(data) {
+            console.log(data);
+        });
+        
         var obdChannel = socket.subscribe('obd_channel');
         obdChannel.watch(function(data) {
             if(data.id == process.env.DEVICE_ID) {

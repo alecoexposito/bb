@@ -262,9 +262,11 @@ class Worker extends SCWorker {
         });
 
         cameraVideoChannel.watch(function(data) {
-            console.log(data);
+            if(data.type && data.type == "public-answer") {
+                console.log(data);
+            }
         });
-        
+
         var obdChannel = socket.subscribe('obd_channel');
         obdChannel.watch(function(data) {
             if(data.id == process.env.DEVICE_ID) {

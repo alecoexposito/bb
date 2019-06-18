@@ -27,6 +27,8 @@ class Worker extends SCWorker {
             console.log('connected to the sqlite database');
         });
         this.sendImage = false;
+        this.livePid = null;
+
     }
     // var sendImage;
     sendImageWebsocket(cameraVideoChannel) {
@@ -127,6 +129,7 @@ class Worker extends SCWorker {
         socket.on('error', function(err) {
             console.log("error ocurred");
         });
+
         var cameraChannel = socket.subscribe('camera_channel');
         var cameraVideoChannel = socket.subscribe('camera_' + process.env.DEVICE_ID + '_channel');
         var vcommand = null;
@@ -134,8 +137,8 @@ class Worker extends SCWorker {
             if(data.id == process.env.DEVICE_ID) {
                 if (data.type == "start-streaming") {
                     console.log("AAAAAAAAAAAAAAAAAAAAAA--------------received from web:------------AAAAAAAAAAAAAAA ", data);
-                    if(_this.isProcessOpenned('gst-launch-1.0')) {
-                        console.log("gst-launch-1.0 already openned");
+                    if(_this.livePid != null /*_this.isProcessOpenned('gst-launch-1.0')*/) {
+                        console.log("process already openned");
                     } else {
                         // vcommand = _this.runCommand('gst-launch-1.0', [
                         //     'rtspsrc',
@@ -157,6 +160,7 @@ class Worker extends SCWorker {
                             '/home/zurikato/scripts/run-live-video.sh'
                         ]);
 
+                        _this.livePid = vcommand.pid;
                         _this.sendImage = true;
                         _this.sendImageWebsocket(cameraVideoChannel);
 
@@ -167,7 +171,8 @@ class Worker extends SCWorker {
                 } else if(data.type == "stop-streaming") {
                     console.log("AAAAAAAAAAAAAAAAAAAAAA--------------received from web:------------AAAAAAAAAAAAAAA ", data);
                     _this.sendImage = false;
-                    process.kill(-vcommand.pid, "SIGKILL")
+                    process.kill(-_this.livePid, "SIGKILL")
+                    _this.livePid = null;
                     // vcommand.kill("SIGKILL");
                 } else if(data.type == "start-video-backup") {
                     var location = process.env.VIDEO_BACKUP_LOCATION;
@@ -255,6 +260,10 @@ class Worker extends SCWorker {
                 }
             }
         });
+
+        setInterval(function() {
+            console.log("video channel watchers: ", cameraVideoChannel.watchers());
+        })
 
         var obdChannel = socket.subscribe('obd_channel');
         obdChannel.watch(function(data) {

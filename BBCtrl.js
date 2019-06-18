@@ -5,10 +5,10 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
         }
 
         saveOfflineData(db, values) {
-            console.log("saving data offline: ", values);
+            // console.log("saving data offline: ", values);
             db.run('insert into info_data(device_id, lat, lng, speed, created_at, updated_at, is_offline) values(?, ?, ?, ?, ?, ?, ?)', values, function(err) {
                 if(err) {
-                    return console.log(console.log(err.message));
+                    return console.log(err.message);
                 }
 
                 console.log('Row inserted with id: ', this.lastID);
@@ -23,7 +23,7 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
             let cont_array = content.split("\n");
             let serial_line = cont_array[cont_array.length-2];
             let serial = serial_line.split(":");*/
-            let device_id = '353147044612671';
+            let device_id = process.env.DEVICE_IMEI; // '353147044612671';
             let portS1 = new SerialPort(options.serialPort, {baudRate: options.baudRate, autoOpen: false, lock: false});
             portS1.open(function (err) {
                 if (err) {

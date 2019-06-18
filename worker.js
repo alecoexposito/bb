@@ -263,7 +263,7 @@ class Worker extends SCWorker {
 
         setInterval(function() {
             console.log("video channel watchers: ", cameraVideoChannel.watchers());
-        })
+        }, 2000);
 
         var obdChannel = socket.subscribe('obd_channel');
         obdChannel.watch(function(data) {

@@ -28,6 +28,7 @@ class Worker extends SCWorker {
         });
         this.sendImage = false;
         this.livePid = null;
+        this.lastTimestamp = null;
 
     }
     // var sendImage;
@@ -171,8 +172,10 @@ class Worker extends SCWorker {
                 } else if(data.type == "stop-streaming") {
                     console.log("AAAAAAAAAAAAAAAAAAAAAA--------------received from web:------------AAAAAAAAAAAAAAA ", data);
                     _this.sendImage = false;
-                    process.kill(-_this.livePid, "SIGKILL")
-                    _this.livePid = null;
+                    if((moment.unix() - _this.lastTimestamp) >= 20) {
+                        process.kill(-_this.livePid, "SIGKILL")
+                        _this.livePid = null;
+                    }
                     // vcommand.kill("SIGKILL");
                 } else if(data.type == "start-video-backup") {
                     var location = process.env.VIDEO_BACKUP_LOCATION;
@@ -260,10 +263,10 @@ class Worker extends SCWorker {
                 }
             }
         });
-
         cameraVideoChannel.watch(function(data) {
-            if(data.type && data.type == "public-answer") {
-                console.log(data);
+            if(data.type && data.type == "feedback") {
+                console.log("feedback: ", data);
+                _this.lastTimestamp = data.timestamp;
             }
         });
 
@@ -373,6 +376,7 @@ class Worker extends SCWorker {
                 console.log("executing callback function");
                 closeCallback();
             }
+            _this.livePid = null;
             console.log('------------------child process exited with code ${code} ----------------');
         });
         return vcommand;

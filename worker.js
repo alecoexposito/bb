@@ -181,7 +181,7 @@ class Worker extends SCWorker {
                             _this.livePid = null;
                             clearInterval(interval);
                         }
-                    }, 30)
+                    }, 3000)
 
                     // vcommand.kill("SIGKILL");
                 } else if(data.type == "start-video-backup") {

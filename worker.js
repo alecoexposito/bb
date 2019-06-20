@@ -171,18 +171,21 @@ class Worker extends SCWorker {
                     // }, 120000)
                 } else if(data.type == "stop-streaming") {
                     console.log("AAAAAAAAAAAAAAAAAAAAAA--------------received from web:------------AAAAAAAAAAAAAAA ", data);
-                    _this.sendImage = false;
                     if((moment.unix() - _this.lastTimestamp) >= 20) {
+                        _this.sendImage = false;
                         process.kill(-_this.livePid, "SIGKILL")
                         _this.livePid = null;
+                    } else {
                         var interval = setInterval(function() {
                             console.log("intervalo para parar el proceso");
                             if((moment.unix() - _this.lastTimestamp) >= 20) {
+                                _this.sendImage = false;
                                 process.kill(-_this.livePid, "SIGKILL")
                                 _this.livePid = null;
                                 clearInterval(interval);
                             }
                         }, 10)
+
                     }
                     // vcommand.kill("SIGKILL");
                 } else if(data.type == "start-video-backup") {

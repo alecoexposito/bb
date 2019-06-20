@@ -273,7 +273,7 @@ class Worker extends SCWorker {
         cameraVideoChannel.watch(function(data) {
             if(data.type && data.type == "feedback") {
                 console.log("feedback: ", data);
-                _this.lastTimestamp = data.timestamp;
+                _this.lastTimestamp = moment().unix();
             }
         });
 

@@ -175,6 +175,14 @@ class Worker extends SCWorker {
                     if((moment.unix() - _this.lastTimestamp) >= 20) {
                         process.kill(-_this.livePid, "SIGKILL")
                         _this.livePid = null;
+                        var interval = setInterval(function() {
+                            console.log("intervalo para parar el proceso");
+                            if((moment.unix() - _this.lastTimestamp) >= 20) {
+                                process.kill(-_this.livePid, "SIGKILL")
+                                _this.livePid = null;
+                                clearInterval(interval);
+                            }
+                        }, 10)
                     }
                     // vcommand.kill("SIGKILL");
                 } else if(data.type == "start-video-backup") {

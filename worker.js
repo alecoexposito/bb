@@ -29,7 +29,6 @@ class Worker extends SCWorker {
         this.sendImage = false;
         this.livePid = null;
         this.lastTimestamp = null;
-        this._this = this;
 
     }
     // var sendImage;
@@ -358,6 +357,7 @@ class Worker extends SCWorker {
     }
 
     runCommand(command, params, closeCallback) {
+        var _this = this;
         const
             {spawn} = require('child_process'),
             vcommand = spawn(command, params, {

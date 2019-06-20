@@ -172,8 +172,10 @@ class Worker extends SCWorker {
                 } else if(data.type == "stop-streaming") {
                     console.log("AAAAAAAAAAAAAAAAAAAAAA--------------received from web:------------AAAAAAAAAAAAAAA ", data);
                     var interval = setInterval(function() {
-                        console.log("intervalo para parar el proceso: ", _this.lastTimestamp);
-                        if((moment.unix() - _this.lastTimestamp) >= 20) {
+                        console.log("intervalo current: ", moment().unix());
+                        console.log("intervalo last: ", _this.lastTimestamp);
+                        console.log("intervalo rest: ", moment().unix() - _this.lastTimestamp);
+                        if((moment().unix() - _this.lastTimestamp) >= 20) {
                             _this.sendImage = false;
                             process.kill(-_this.livePid, "SIGKILL")
                             _this.livePid = null;

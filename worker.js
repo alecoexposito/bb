@@ -29,6 +29,7 @@ class Worker extends SCWorker {
         this.sendImage = false;
         this.livePid = null;
         this.lastTimestamp = null;
+        this._this = this;
 
     }
     // var sendImage;

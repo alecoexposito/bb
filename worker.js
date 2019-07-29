@@ -141,24 +141,8 @@ class Worker extends SCWorker {
                     if(_this.livePid != null /*_this.isProcessOpenned('gst-launch-1.0')*/) {
                         console.log("process already openned");
                     } else {
-                        // vcommand = _this.runCommand('gst-launch-1.0', [
-                        //     'rtspsrc',
-                        //     'location=' + process.env.CAMERA_LOCATION + ' latency=0',
-                        //     '!',
-                        //     'decodebin',
-                        //     '!',
-                        //     'videorate',
-                        //     '!',
-                        //     'video/x-raw,framerate=5/1',
-                        //     '!',
-                        //     'jpegenc',
-                        //     '!',
-                        //     'multifilesink',
-                        //     'location=/home/zurikato/camera-local/camera.jpg'
-                        // ]);
-
                         vcommand = _this.runCommand('bash', [
-                            '/home/zurikato/scripts/run-live-video.sh'
+                            '/usr/scripts/run-live-video.sh'
                         ]);
 
                         _this.livePid = vcommand.pid;

@@ -142,7 +142,8 @@ class Worker extends SCWorker {
                         console.log("process already openned");
                     } else {
                         vcommand = _this.runCommand('bash', [
-                            '/usr/scripts/run-live-video.sh'
+                            '/usr/scripts/run-live-video.sh',
+                            data.urlCamera
                         ]);
 
                         _this.livePid = vcommand.pid;

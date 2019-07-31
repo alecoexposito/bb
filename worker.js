@@ -29,18 +29,65 @@ class Worker extends SCWorker {
         this.sendImage = false;
         this.livePid = null;
         this.lastTimestamp = null;
+        /**
+         * In this array will be saved the state of every running process, its pid, its lastTimestamp, idCamera and the sendImageFlag
+         * @type {Array}
+         */
+        this.currentPids = [];
 
     }
-    // var sendImage;
-    sendImageWebsocket(cameraVideoChannel) {
-        var _this = this;
-        if(this.sendImage) {
-            console.log("enviando");
-            var imageFile = fs.readFileSync("/home/zurikato/camera-local/camera.jpg");
 
-            cameraVideoChannel.publish({image: imageFile.toString("base64")});
+    findRunningProcess(idCamera) {
+        for(var i = 0; i < this.currentPids.length; i++) {
+            var currentProcess = this.currentPids[i];
+            if(currentProcess.idCamera == idCamera)
+                return currentProcess;
+        }
+        return null;
+    }
+
+    runningProcessIndex(idCamera) {
+        for(var i = 0; i < this.currentPids.length; i++) {
+            var currentProcess = this.currentPids[i];
+            if(currentProcess.idCamera == idCamera)
+                return i;
+        }
+        return -1;
+    }
+
+    addRunningProcess(idCamera, pid) {
+        var index = this.runningProcessIndex(idCamera);
+        if(index != -1) {
+            this.currentPids[index].pid = pid;
+            this.currentPids[index].sendImage = true;
+        } else {
+            var runningProcess = {
+                idCamera: idCamera,
+                pid: pid,
+                lastTimestamp: moment().unix(),
+                sendImage: true
+            };
+            this.currentPids.push(runningProcess);
+        }
+    }
+
+    stopRunningProcess(idCamera) {
+        var index = this.runningProcessIndex(idCamera);
+        this.currentPids[index].pid = null;
+        this.currentPids[index].sendImage = false;
+    }
+
+    // var sendImage;
+    sendImageWebsocket(cameraVideoChannel, idCamera) {
+        var _this = this;
+        var currentProcess = _this.findRunningProcess(idCamera);
+        if(currentProcess.sendImage) {
+            console.log("enviando");
+            var imageFile = fs.readFileSync("/home/zurikato/camera-local/camera-" + idCamera + ".jpg");
+
+            cameraVideoChannel.publish({image: imageFile.toString("base64"), idCamera: idCamera});
             setTimeout(function() {
-                _this.sendImageWebsocket(cameraVideoChannel);
+                _this.sendImageWebsocket(cameraVideoChannel, idCamera);
             }, 300)
         } else {
             console.log("se acabo la enviadera");
@@ -138,17 +185,19 @@ class Worker extends SCWorker {
             if(data.id == process.env.DEVICE_ID) {
                 if (data.type == "start-streaming") {
                     console.log("AAAAAAAAAAAAAAAAAAAAAA--------------received from web:------------AAAAAAAAAAAAAAA ", data);
-                    if(_this.livePid != null /*_this.isProcessOpenned('gst-launch-1.0')*/) {
+                    var idCamera = data.idCamera;
+                    var currentProcess = _this.findRunningProcess(idCamera);
+                    if(currentProcess != null && currentProcess.pid != null /*_this.isProcessOpenned('gst-launch-1.0')*/) {
                         console.log("process already openned");
                     } else {
                         vcommand = _this.runCommand('bash', [
                             '/usr/scripts/run-live-video.sh',
                             data.urlCamera
                         ]);
-
-                        _this.livePid = vcommand.pid;
-                        _this.sendImage = true;
-                        _this.sendImageWebsocket(cameraVideoChannel);
+                        var pid = vcommand.pid;
+                        // _this.sendImage = true;
+                        _this.addRunningProcess(idCamera, pid);
+                        _this.sendImageWebsocket(cameraVideoChannel, idCamera);
 
                     }
                     // setTimeout(function() {
@@ -160,9 +209,13 @@ class Worker extends SCWorker {
                         console.log("intervalo current: ", moment().unix());
                         console.log("intervalo last: ", _this.lastTimestamp);
                         console.log("intervalo rest: ", moment().unix() - _this.lastTimestamp);
+                        var idCamera = data.idCamera;
                         if((moment().unix() - _this.lastTimestamp) >= 20) {
+                            var currentProcess = _this.findRunningProcess(idCamera);
+                            var pid = currentProcess.pid;
+                            process.kill(pid, "SIGKILL");
+                            _this.stopRunningProcess(idCamera);
                             _this.sendImage = false;
-                            process.kill(-_this.livePid, "SIGKILL")
                             _this.livePid = null;
                             clearInterval(interval);
                         }
@@ -258,7 +311,10 @@ class Worker extends SCWorker {
         cameraVideoChannel.watch(function(data) {
             if(data.type && data.type == "feedback") {
                 console.log("feedback: ", data);
-                _this.lastTimestamp = moment().unix();
+                var idCamera = data.idCamera;
+                var index = _this.runningProcessIndex(idCamera);
+                _this.currentPids[index].lastTimestamp = moment().unix();
+                // _this.lastTimestamp = moment().unix();
             }
         });
 

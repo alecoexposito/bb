@@ -207,12 +207,12 @@ class Worker extends SCWorker {
                 } else if(data.type == "stop-streaming") {
                     console.log("AAAAAAAAAAAAAAAAAAAAAA--------------received from web:------------AAAAAAAAAAAAAAA ", data);
                     var interval = setInterval(function() {
-                        console.log("intervalo current: ", moment().unix());
-                        console.log("intervalo last: ", _this.lastTimestamp);
-                        console.log("intervalo rest: ", moment().unix() - _this.lastTimestamp);
+                        // console.log("intervalo current: ", moment().unix());
+                        // console.log("intervalo last: ", _this.lastTimestamp);
+                        // console.log("intervalo rest: ", moment().unix() - _this.lastTimestamp);
                         var idCamera = data.idCamera;
-                        if((moment().unix() - _this.lastTimestamp) >= 20) {
-                            var currentProcess = _this.findRunningProcess(idCamera);
+                        var currentProcess = _this.findRunningProcess(idCamera);
+                        if((moment().unix() - currentProcess.lastTimestamp) >= 20) {
                             var pid = currentProcess.pid;
                             process.kill(pid, "SIGKILL");
                             _this.stopRunningProcess(idCamera);

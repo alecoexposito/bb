@@ -192,7 +192,8 @@ class Worker extends SCWorker {
                     } else {
                         vcommand = _this.runCommand('bash', [
                             '/usr/scripts/run-live-video.sh',
-                            data.urlCamera
+                            data.urlCamera,
+                            "camera-" + idCamera + ".jpg"
                         ]);
                         var pid = vcommand.pid;
                         // _this.sendImage = true;

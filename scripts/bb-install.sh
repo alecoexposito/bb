@@ -11,14 +11,17 @@ cd ~/bb
 echo corriendo npm install
 npm install
 echo creando carpetas necesarias
-mkdir ~/scripts
 mkdir ~/camera
+mkdir ~/camera-local
 mkdir ~/video-backup
 mkdir ~/.db
 echo copiando base de datos sqlite
 cp ~/bb/data/bb.sqlite ~/.db
 echo copiando scripts
-cp ~/bb/scripts ~/scripts -r
+cp ~/bb/scripts ~/ -r
+sudo mkdir /usr/scripts
+sudo cp ~/bb/scripts/* /usr/scripts
+sudo chmod 777 /usr/scripts -R
 echo instalando ffmpeg
 sudo apt-get install sshfs ffmpeg
 echo instalando gstreamer

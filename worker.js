@@ -410,7 +410,7 @@ class Worker extends SCWorker {
         const
             {spawn} = require('child_process'),
             vcommand = spawn(command, params, {
-                detached: true
+                detached: false
             });
 
         vcommand.stdout.on('data', data => {

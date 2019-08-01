@@ -196,6 +196,7 @@ class Worker extends SCWorker {
                             "camera-" + idCamera + ".jpg"
                         ]);
                         var pid = vcommand.pid;
+                        console.log("------started process with pid: --------", pid);
                         // _this.sendImage = true;
                         _this.addRunningProcess(idCamera, pid);
                         _this.sendImageWebsocket(cameraVideoChannel, idCamera);
@@ -207,17 +208,16 @@ class Worker extends SCWorker {
                 } else if(data.type == "stop-streaming") {
                     console.log("AAAAAAAAAAAAAAAAAAAAAA--------------received from web:------------AAAAAAAAAAAAAAA ", data);
                     var interval = setInterval(function() {
+                        var idCamera = data.idCamera;
+                        var currentProcess = _this.findRunningProcess(idCamera);
                         // console.log("intervalo current: ", moment().unix());
                         // console.log("intervalo last: ", _this.lastTimestamp);
                         // console.log("intervalo rest: ", moment().unix() - _this.lastTimestamp);
-                        var idCamera = data.idCamera;
-                        var currentProcess = _this.findRunningProcess(idCamera);
                         if((moment().unix() - currentProcess.lastTimestamp) >= 20) {
                             var pid = currentProcess.pid;
+                            console.log("------ killinig process with pid: -----------", pid);
                             process.kill(pid, "SIGKILL");
                             _this.stopRunningProcess(idCamera);
-                            _this.sendImage = false;
-                            _this.livePid = null;
                             clearInterval(interval);
                         }
                     }, 12000)

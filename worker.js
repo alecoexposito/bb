@@ -216,7 +216,7 @@ class Worker extends SCWorker {
                         if((moment().unix() - currentProcess.lastTimestamp) >= 20) {
                             var pid = currentProcess.pid;
                             console.log("------ killinig process with pid: -----------", pid);
-                            process.kill(pid, "SIGKILL");
+                            process.kill(-pid, "SIGKILL");
                             _this.stopRunningProcess(idCamera);
                             clearInterval(interval);
                         }
@@ -410,7 +410,7 @@ class Worker extends SCWorker {
         const
             {spawn} = require('child_process'),
             vcommand = spawn(command, params, {
-                detached: false
+                detached: true
             });
 
         vcommand.stdout.on('data', data => {

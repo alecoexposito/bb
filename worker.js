@@ -492,7 +492,7 @@ class Worker extends SCWorker {
         }
 
         var interval = setInterval(function() {
-            var idCamera = cameras[i].idCamera;
+            var idCamera = cameras[0].idCamera;
             var currentProcess = _this.findRunningProcess(idCamera);
             console.log("en el interval del multiple cameras: " + idCamera, (moment().unix() - currentProcess.lastTimestamp) >= 20);
             if((moment().unix() - currentProcess.lastTimestamp) >= 20) {

@@ -186,11 +186,11 @@ class Worker extends SCWorker {
                     console.log("AAAAAAAAAAAAAAAAAAAAAA--------------received from web:------------AAAAAAAAAAAAAAA ", data);
 
                     if(data.multiple) {
+                        _this.runMultipleCameras(data, cameraVideoChannel);
+                    } else {
                         var idCamera = data.idCamera;
                         var urlCamera = data.urlCamera;
                         _this.runSingleCamera(idCamera, urlCamera, cameraVideoChannel);
-                    } else {
-                        _this.runMultipleCameras(data, cameraVideoChannel);
                     }
 
                     // setTimeout(function() {

@@ -180,28 +180,19 @@ class Worker extends SCWorker {
 
         var cameraChannel = socket.subscribe('camera_channel');
         var cameraVideoChannel = socket.subscribe('camera_' + process.env.DEVICE_ID + '_channel');
-        var vcommand = null;
         cameraChannel.watch(function (data) {
             if(data.id == process.env.DEVICE_ID) {
                 if (data.type == "start-streaming") {
                     console.log("AAAAAAAAAAAAAAAAAAAAAA--------------received from web:------------AAAAAAAAAAAAAAA ", data);
-                    var idCamera = data.idCamera;
-                    var currentProcess = _this.findRunningProcess(idCamera);
-                    if(currentProcess != null && currentProcess.pid != null /*_this.isProcessOpenned('gst-launch-1.0')*/) {
-                        console.log("process already openned");
-                    } else {
-                        vcommand = _this.runCommand('bash', [
-                            '/usr/scripts/run-live-video.sh',
-                            data.urlCamera,
-                            "camera-" + idCamera + ".jpg"
-                        ]);
-                        var pid = vcommand.pid;
-                        console.log("------started process with pid: --------", pid);
-                        // _this.sendImage = true;
-                        _this.addRunningProcess(idCamera, pid);
-                        _this.sendImageWebsocket(cameraVideoChannel, idCamera);
 
+                    if(data.multiple) {
+                        var idCamera = data.idCamera;
+                        var urlCamera = data.urlCamera;
+                        _this.runSingleCamera(idCamera, urlCamera, cameraVideoChannel);
+                    } else {
+                        _this.runMultipleCameras(data, cameraVideoChannel);
                     }
+
                     // setTimeout(function() {
                     //     vcommand.kill("SIGKILL");
                     // }, 120000)
@@ -470,23 +461,35 @@ class Worker extends SCWorker {
         });
     }
 
-    isProcessOpenned(name) {
-        ps.lookup({
-            command: name,
-        }, function(err, resultList ) {
-            if (err) {
-                throw new Error( err );
-            }
+    runSingleCamera(idCamera, urlCamera, cameraVideoChannel) {
+        var _this = this;
+        var vcommand = null;
 
-            resultList.forEach(function( process ){
-                if( process ){
-                    console.log( 'PID: %s, COMMAND: %s, ARGUMENTS: %s', process.pid, process.command, process.arguments );
-                    return true;
-                }
-            });
+        var currentProcess = _this.findRunningProcess(idCamera);
+        if(currentProcess != null && currentProcess.pid != null) {
+            console.log("process already openned");
+        } else {
+            vcommand = _this.runCommand('bash', [
+                '/usr/scripts/run-live-video.sh',
+                urlCamera,
+                "camera-" + idCamera + ".jpg"
+            ]);
+            var pid = vcommand.pid;
+            console.log("------started process with pid: --------", pid);
+            // _this.sendImage = true;
+            _this.addRunningProcess(idCamera, pid);
+            _this.sendImageWebsocket(cameraVideoChannel, idCamera);
+        }
+    }
 
-            return false;
-        });
+    runMultipleCameras(data, cameraVideoChannel) {
+        var cameras = data.cameras;
+        var _this = this;
+        for(var i = 0; i < cameras.length; i++) {
+            var idCamera = cameras[i].idCamera;
+            var urlCamera = cameras[i].urlCamera;
+            _this.runSingleCamera(idCamera, urlCamera, cameraVideoChannel);
+        }
     }
 
 }

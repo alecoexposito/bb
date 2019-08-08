@@ -304,9 +304,11 @@ class Worker extends SCWorker {
             if(data.type && data.type == "feedback") {
                 console.log("feedback: ", data);
                 var idCamera = data.idCamera;
-                var index = _this.runningProcessIndex(idCamera);
-                _this.currentPids[index].lastTimestamp = moment().unix();
-                // _this.lastTimestamp = moment().unix();
+                if(idCamera != "all") {
+                    var index = _this.runningProcessIndex(idCamera);
+                    _this.currentPids[index].lastTimestamp = moment().unix();
+                    // _this.lastTimestamp = moment().unix();
+                }
             }
         });
 

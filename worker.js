@@ -489,9 +489,10 @@ class Worker extends SCWorker {
             var urlCamera = cameras[i].urlCamera;
             console.log("cameras en i: ", cameras[i]);
             _this.runSingleCamera(idCamera, urlCamera, cameraVideoChannel);
+
             var interval = setInterval(function() {
                 var currentProcess = _this.findRunningProcess(idCamera);
-                console.log("en el interval del multiple cameras: ", (moment().unix() - currentProcess.lastTimestamp) >= 20);
+                console.log("en el interval del multiple cameras: " + idCamera, (moment().unix() - currentProcess.lastTimestamp) >= 20);
                 if((moment().unix() - currentProcess.lastTimestamp) >= 20) {
                     var pid = currentProcess.pid;
                     console.log("------ killinig process with pid: -----------", pid);
@@ -499,7 +500,7 @@ class Worker extends SCWorker {
                     _this.stopRunningProcess(idCamera);
                     clearInterval(interval);
                 }
-            }, 12000)
+            }, /*12000*/2000)
         }
     }
 

@@ -509,7 +509,7 @@ class Worker extends SCWorker {
                 }
                 clearInterval(interval);
             }
-        }, /*12000*/2000)
+        }, /*12000*/12000)
 
     }
 

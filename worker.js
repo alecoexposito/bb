@@ -501,7 +501,7 @@ class Worker extends SCWorker {
                 process.kill(-pid, "SIGKILL");
                 _this.stopRunningProcess(idCamera);
                 for(var j = 1; j < cameras.length; j++) {
-                    currentProcess = cameras[j].idCamera;
+                    currentProcess = _this.findRunningProcess(cameras[j].idCamera);
                     var pid = currentProcess.pid;
                     console.log("------ killinig process with pid: -----------", pid);
                     process.kill(-pid, "SIGKILL");

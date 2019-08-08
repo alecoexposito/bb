@@ -488,6 +488,7 @@ class Worker extends SCWorker {
         for(var i = 0; i < cameras.length; i++) {
             var idCamera = cameras[i].idCamera;
             var urlCamera = cameras[i].urlCamera;
+            console.log("cameras en i: ", cameras[i]);
             _this.runSingleCamera(idCamera, urlCamera, cameraVideoChannel);
         }
     }

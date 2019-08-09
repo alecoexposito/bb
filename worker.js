@@ -30,7 +30,7 @@ class Worker extends SCWorker {
         this.livePid = null;
         this.lastTimestamp = null;
         this.clientSocketTracker = new net.Socket();
-        clientSocketTracker.connect(process.env.TRACKER_SOCKET_PORT, process.env.TRACKER_IP, function() {
+        this.clientSocketTracker.connect(process.env.TRACKER_SOCKET_PORT, process.env.TRACKER_IP, function() {
             console.log("connected to tracker tcp socket");
         });
         /**

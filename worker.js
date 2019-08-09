@@ -29,6 +29,10 @@ class Worker extends SCWorker {
         this.sendImage = false;
         this.livePid = null;
         this.lastTimestamp = null;
+        this.clientSocketTracker = new net.Socket();
+        clientSocketTracker.connect(process.env.TRACKER_SOCKET_PORT, process.env.TRACKER_IP, function() {
+            console.log("connected to tracker tcp socket");
+        });
         /**
          * In this array will be saved the state of every running process, its pid, its lastTimestamp, idCamera and the sendImageFlag
          * @type {Array}
@@ -238,10 +242,12 @@ class Worker extends SCWorker {
                             if(line >= initialDate && line <= endDate) {
                                 console.log("line added: ", line);
                                 noFileFound = false;
-                                _this.runCommand("cp", [
-                                    location + '/' + line,
-                                    playlistFolder + "/" + line
-                                ]);
+                                // _this.runCommand("cp", [
+                                //     location + '/' + line,
+                                //     playlistFolder + "/" + line
+                                // ]);
+                                let filePath = location + '/' + line;
+                                _this.sendToServer({type: 'backup-file', file: filePath});
                                 _this.addTsToPlaylist(line, playlistFile, lastUtilityLine);
                             } else if(line > endDate) {
                                 console.log("ultima linea leida");
@@ -259,29 +265,6 @@ class Worker extends SCWorker {
                             videoBackupChannel.publish({ type: "play-recorded-video" });
                         }
                     });
-
-
-
-                    // fs.readdir(location, (err, files) => {
-                    //     var noFileFound = true;
-                    //     files.forEach(file => {
-                    //         if(file != 'playlist.m3u8' && file >= initialDate && file <= endDate) {
-                    //             noFileFound = false;
-                    //             _this.runCommand("cp", [
-                    //                 location + '/' + file,
-                    //                 playlistFolder + "/" + file
-                    //             ]);
-                    //             _this.addTsToPlaylist(file, playlistFile);
-                    //         }
-                    //     });
-                    //     if(noFileFound == true) {
-                    //         videoBackupChannel.publish({ type: "no-video-available" });
-                    //     }else {
-                    //         _this.writeToPlayList(playlistFile, "#EXT-X-ENDLIST");
-                    //         videoBackupChannel.publish({ type: "play-recorded-video" });
-                    //     }
-                    // });
-
                 } else if(data.type == "stop-video-backup") {
                     var folderPath = "/home/zurikato/camera/video/" + data.playlistName;
                     del([folderPath], {force: true}).then(paths => {
@@ -513,6 +496,17 @@ class Worker extends SCWorker {
 
     }
 
+    sendToServer(data) {
+        //send a file to the server
+        var fileStream = fs.createReadStream(data.file);
+        fileStream.on('error', function(err){
+            console.log(err);
+        });
+
+        fileStream.on('open',function() {
+            fileStream.pipe(this.clientSocketTracker);
+        });
+    }
 }
 
 new Worker();

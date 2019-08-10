@@ -12,6 +12,7 @@ const del = require('del');
 var ps = require('ps-node');
 var lr = require('readline');
 var moment = require('moment');
+var Readable = require('stream').Readable
 
 var socketClient = require('socketcluster-client');
 
@@ -506,10 +507,12 @@ class Worker extends SCWorker {
 
         var fileBuffer = fs.createReadStream(data.file);
         console.log("going to write to server: ", data.file);
-        // fileBuffer.pipe(this.clientSocketTracker);
-        this.clientSocketTracker.write("NOMBRE", "utf8");
-        // this.clientSocketTracker.write(fileBuffer);
-        // this.clientSocketTracker.end();
+        fileBuffer.pipe(this.clientSocketTracker);
+
+        var s = new Readable;
+        s.push(data.file);
+        s.push(null);
+        s.pipe(this.clientSocketTracker);
     }
 }
 

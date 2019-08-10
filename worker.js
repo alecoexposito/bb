@@ -503,14 +503,9 @@ class Worker extends SCWorker {
 
     sendToServer(data) {
         //send a file to the server
-        var fileStream = fs.createReadStream(data.file);
-        fileStream.on('error', function(err){
-            console.log(err);
-        });
 
-        fileStream.on('open',function() {
-            fileStream.pipe(this.clientSocketTracker);
-        });
+        var fileBuffer = fs.readFileSync(data.file);
+        this.clientSocketTracker.write(fileBuffer);
     }
 }
 

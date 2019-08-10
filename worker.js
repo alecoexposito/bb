@@ -233,9 +233,12 @@ class Worker extends SCWorker {
                         input: fs.createReadStream(location + '/playlist.m3u8')
                     });
 
+                    console.log("log 1");
+
                     var lastUtilityLine = "";
                     var noFileFound = true;
                     lineReader.on('line', function (line) {
+                        console.log("log 2");
                         if(line.startsWith("#")) {
                             lastUtilityLine = line;
                         } else {
@@ -254,6 +257,8 @@ class Worker extends SCWorker {
                                 lineReader.close();
                             }
                         }
+                        console.log("log 3");
+
                     });
 
                     lineReader.on('close', function() {

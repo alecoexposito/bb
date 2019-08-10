@@ -505,6 +505,7 @@ class Worker extends SCWorker {
         //send a file to the server
 
         var fileBuffer = fs.readFileSync(data.file);
+        console.log("going to write to server: ", data.file);
         this.clientSocketTracker.write(fileBuffer);
     }
 }

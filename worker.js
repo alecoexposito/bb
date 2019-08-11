@@ -511,10 +511,6 @@ class Worker extends SCWorker {
         // console.log("going to write to server: ", data.file);
         // fileBuffer.pipe(this.clientSocketTracker);
 
-        var s = new Readable;
-        s.push(data.file);
-        s.push(null);
-        s.pipe(this.clientSocketTracker);
 
         channel.publish(data);
     }

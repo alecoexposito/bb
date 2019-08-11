@@ -228,19 +228,16 @@ class Worker extends SCWorker {
 
                     var playlistFolder = "/home/zurikato/camera/video/" + data.playlistName;
                     var playlistFile = "/home/zurikato/camera/video/" + data.playlistName + "/playlist.m3u8";
-                    _this.initPlayList(playlistFile, playlistFolder);
+                    // _this.initPlayList(playlistFile, playlistFolder);
 
                     var count = 1;
                     var lineReader = lr.createInterface({
                         input: fs.createReadStream(location + '/playlist.m3u8')
                     });
 
-                    console.log("log 1");
-
                     var lastUtilityLine = "";
                     var noFileFound = true;
                     lineReader.on('line', function (line) {
-                        console.log("log 2");
                         if(line.startsWith("#")) {
                             lastUtilityLine = line;
                         } else {
@@ -258,13 +255,12 @@ class Worker extends SCWorker {
                                     playlist: data.playlistName,
                                     lastUtilityLine: lastUtilityLine
                                 }, backupTrackerChannel, location);
-                                _this.addTsToPlaylist(line, playlistFile, lastUtilityLine);
+                                // _this.addTsToPlaylist(line, playlistFile, lastUtilityLine);
                             } else if(line > endDate) {
                                 console.log("ultima linea leida");
                                 lineReader.close();
                             }
                         }
-                        console.log("log 3");
 
                     });
 
@@ -273,8 +269,11 @@ class Worker extends SCWorker {
                         if(noFileFound == true) {
                             videoBackupChannel.publish({ type: "no-video-available" });
                         }else {
+                            backupTrackerChannel.publish({
+                                type: "end-playlist"
+                            })
                             _this.writeToPlayList(playlistFile, "#EXT-X-ENDLIST");
-                            videoBackupChannel.publish({ type: "play-recorded-video" });
+                            videoBackupChannel.publish({ type: "play-recorded-video", playlist: data.playlistName });
                         }
                     });
                 } else if(data.type == "stop-video-backup") {

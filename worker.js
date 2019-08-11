@@ -257,7 +257,7 @@ class Worker extends SCWorker {
                                     deviceId: process.env.DEVICE_ID,
                                     playlist: data.playlistName,
                                     lastUtilityLine: lastUtilityLine
-                                }, backupTrackerChannel);
+                                }, backupTrackerChannel, location);
                                 _this.addTsToPlaylist(line, playlistFile, lastUtilityLine);
                             } else if(line > endDate) {
                                 console.log("ultima linea leida");
@@ -510,12 +510,12 @@ class Worker extends SCWorker {
 
     }
 
-    sendToServer(data, channel) {
+    sendToServer(data, channel, location) {
         //send a file to the server
         // var fileBuffer = fs.createReadStream(data.file);
         // console.log("going to write to server: ", data.file);
         // fileBuffer.pipe(this.clientSocketTracker);
-        var file = fs.readFileSync(data.file);
+        var file = fs.readFileSync(location + "/" + data.fileName);
         var dataToSend = data;
         dataToSend.fileData = file.toString("base64");
 

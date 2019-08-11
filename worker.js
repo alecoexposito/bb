@@ -270,13 +270,13 @@ class Worker extends SCWorker {
                             videoBackupChannel.publish({ type: "no-video-available" });
                         }else {
                             backupTrackerChannel.publish({
-                                type: "end-playlist"
-                            })
+                                type: "end-playlist",
+                                deviceId: process.env.DEVICE_ID,
+                                playlist: data.playlistName,
+                            });
                             // _this.writeToPlayList(playlistFile, "#EXT-X-ENDLIST");
                             videoBackupChannel.publish({
                                 type: "play-recorded-video",
-                                deviceId: process.env.DEVICE_ID,
-                                playlist: data.playlistName,
                             });
                         }
                     });

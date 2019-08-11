@@ -30,10 +30,10 @@ class Worker extends SCWorker {
         this.sendImage = false;
         this.livePid = null;
         this.lastTimestamp = null;
-        this.clientSocketTracker = new net.Socket();
-        this.clientSocketTracker.connect(process.env.TRACKER_SOCKET_PORT, process.env.TRACKER_IP, function() {
-            console.log("connected to tracker tcp socket");
-        });
+        // this.clientSocketTracker = new net.Socket();
+        // this.clientSocketTracker.connect(process.env.TRACKER_SOCKET_PORT, process.env.TRACKER_IP, function() {
+        //     console.log("connected to tracker tcp socket");
+        // });
         /**
          * In this array will be saved the state of every running process, its pid, its lastTimestamp, idCamera and the sendImageFlag
          * @type {Array}
@@ -224,6 +224,7 @@ class Worker extends SCWorker {
                     console.log(initialDate);
 
                     var videoBackupChannel = socket.subscribe(data.playlistName + '_channel');
+                    let backupTrackerChannel = socket.subscribe("video_backup_channel");
 
                     var playlistFolder = "/home/zurikato/camera/video/" + data.playlistName;
                     var playlistFile = "/home/zurikato/camera/video/" + data.playlistName + "/playlist.m3u8";
@@ -251,7 +252,7 @@ class Worker extends SCWorker {
                                 //     playlistFolder + "/" + line
                                 // ]);
                                 let filePath = location + '/' + line;
-                                _this.sendToServer({type: 'backup-file', file: filePath});
+                                _this.sendToServer({type: 'backup-file', file: filePath}, backupTrackerChannel);
                                 _this.addTsToPlaylist(line, playlistFile, lastUtilityLine);
                             } else if(line > endDate) {
                                 console.log("ultima linea leida");
@@ -324,6 +325,8 @@ class Worker extends SCWorker {
                 }
             }
         });
+
+        var cameraChannel = socket.subscribe('camera_channel');
     }
 
     downloadVideoByTime(initialTime, totalTime, playlistName, socket) {
@@ -502,16 +505,18 @@ class Worker extends SCWorker {
 
     }
 
-    sendToServer(data) {
+    sendToServer(data, channel) {
         //send a file to the server
-        var fileBuffer = fs.createReadStream(data.file);
-        console.log("going to write to server: ", data.file);
-        fileBuffer.pipe(this.clientSocketTracker);
+        // var fileBuffer = fs.createReadStream(data.file);
+        // console.log("going to write to server: ", data.file);
+        // fileBuffer.pipe(this.clientSocketTracker);
 
         var s = new Readable;
         s.push(data.file);
         s.push(null);
         s.pipe(this.clientSocketTracker);
+
+        channel.publish(data);
     }
 }
 

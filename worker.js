@@ -272,7 +272,7 @@ class Worker extends SCWorker {
                             backupTrackerChannel.publish({
                                 type: "end-playlist"
                             })
-                            _this.writeToPlayList(playlistFile, "#EXT-X-ENDLIST");
+                            // _this.writeToPlayList(playlistFile, "#EXT-X-ENDLIST");
                             videoBackupChannel.publish({ type: "play-recorded-video", playlist: data.playlistName });
                         }
                     });

@@ -273,7 +273,11 @@ class Worker extends SCWorker {
                                 type: "end-playlist"
                             })
                             // _this.writeToPlayList(playlistFile, "#EXT-X-ENDLIST");
-                            videoBackupChannel.publish({ type: "play-recorded-video", playlist: data.playlistName });
+                            videoBackupChannel.publish({
+                                type: "play-recorded-video",
+                                deviceId: process.env.DEVICE_ID,
+                                playlist: data.playlistName,
+                            });
                         }
                     });
                 } else if(data.type == "stop-video-backup") {

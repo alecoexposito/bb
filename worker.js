@@ -217,7 +217,7 @@ class Worker extends SCWorker {
 
                     // vcommand.kill("SIGKILL");
                 } else if(data.type == "start-video-backup") {
-                    var location = process.env.VIDEO_BACKUP_LOCATION;
+                    var location = process.env.VIDEO_BACKUP_LOCATION + "/" + data.idCamera;
                     console.log("Stream from backup: ", data);
                     var initialDate = data.initialDate;
                     var endDate = data.endDate;

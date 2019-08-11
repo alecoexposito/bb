@@ -251,8 +251,13 @@ class Worker extends SCWorker {
                                 //     location + '/' + line,
                                 //     playlistFolder + "/" + line
                                 // ]);
-                                let filePath = location + '/' + line;
-                                _this.sendToServer({type: 'backup-file', file: filePath}, backupTrackerChannel);
+                                _this.sendToServer({
+                                    type: 'backup-file',
+                                    fileName: line,
+                                    deviceId: process.env.DEVICE_ID,
+                                    playlist: data.playlistName,
+                                    lastUtilityLine: lastUtilityLine
+                                }, backupTrackerChannel);
                                 _this.addTsToPlaylist(line, playlistFile, lastUtilityLine);
                             } else if(line > endDate) {
                                 console.log("ultima linea leida");

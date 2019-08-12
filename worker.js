@@ -290,8 +290,16 @@ class Worker extends SCWorker {
                 } else if(data.type == "begin-download") {
                     console.log("entrando en el begin download")
                     var totalTime = data.endTime - data.initialTime;
+                    let backupTrackerChannel = socket.subscribe("video_backup_channel");
+                    backupTrackerChannel.publish({
+                        type: 'download-video',
+                        initialTime: data.initialTime,
+                        totalTime: data.totalTime,
+                        playlist: data.playlistName,
+                        deviceId: process.env.DEVICE_ID
+                    });
 
-                    _this.downloadVideoByTime(data.initialTime, totalTime, data.playlistName, socket);
+                    // _this.downloadVideoByTime(data.initialTime, totalTime, data.playlistName, socket);
                 }
             }
         });

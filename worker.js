@@ -225,13 +225,6 @@ class Worker extends SCWorker {
 
                     var videoBackupChannel = socket.subscribe(data.playlistName + '_channel');
                     let backupTrackerChannel = socket.subscribe("video_backup_channel");
-                    backupTrackerChannel.watch(function(data) {
-                        console.log("recibido en el tracker channel: ", data.type);
-                        if(data.type == "backup-initialized") {
-                            console.log("dentro del puto if");
-                            videoBackupChannel.publish({type: 'backup-initialized'});
-                        }
-                    });
 
                     var playlistFolder = "/home/zurikato/camera/video/" + data.playlistName;
                     var playlistFile = "/home/zurikato/camera/video/" + data.playlistName + "/playlist.m3u8";

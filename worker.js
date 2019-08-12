@@ -522,7 +522,7 @@ class Worker extends SCWorker {
     }
 
     sendToServer(data, channel, location) {
-        fs.readFile(location + "/" + data.fileName, function(err, data) {
+        fs.readFile(location + "/" + data.fileName, function(err, file) {
             if(err)
                 console.log("error reading file: ", err);
             else {

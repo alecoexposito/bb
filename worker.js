@@ -180,7 +180,7 @@ class Worker extends SCWorker {
             });
         });
         socket.on('error', function(err) {
-            console.log("error ocurred");
+            console.log("error ocurred: ", err);
         });
 
         var cameraChannel = socket.subscribe('camera_channel');

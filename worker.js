@@ -522,17 +522,15 @@ class Worker extends SCWorker {
     }
 
     sendToServer(data, channel, location) {
-        fs.readFileSync(location + "/" + data.fileName, function(err, file) {
-            if(err)
-                console.log("error reading file: ", err);
-            else {
-                var dataToSend = data;
-                dataToSend.fileData = file.toString("base64");
-                channel.publish(dataToSend);
-            }
+        //send a file to the server
+        // var fileBuffer = fs.createReadStream(data.file);
+        // console.log("going to write to server: ", data.file);
+        // fileBuffer.pipe(this.clientSocketTracker);
+        var file = fs.readFileSync(location + "/" + data.fileName);
+        var dataToSend = data;
+        dataToSend.fileData = file.toString("base64");
 
-        });
-
+        channel.publish(dataToSend);
     }
 }
 

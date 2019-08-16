@@ -42,6 +42,7 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
             const parser = portS1.pipe(new Readline({delimiter: '\r\n'}));
             // parser.on('data', function(data){console.log("data en el parser: ", data);})
             parser.on("data", function (data) {
+                console.log("data en el puerto: ", data.toString());
                 var moment = require('moment');
                 let gprmc = nmea.parse(data.toString());
                 // console.log("gprmc: ", gprmc);

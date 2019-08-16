@@ -152,7 +152,7 @@ class Worker extends SCWorker {
         var scServer = this.scServer;
         var bb = require(__dirname + '/BBCtrl')(SerialPort, nmea, net, fs, Readline, scServer);
         // var optionsClient = {'serialPort': '/dev/ttyS1', 'baudRate': 9600, 'port': 3002, 'ipAddress': process.env.TRACKER_IP};
-        var optionsClient = {'serialPort': '/dev/tty/USB1', 'baudRate': 9600, 'port': 3002, 'ipAddress': process.env.TRACKER_IP};
+        var optionsClient = {'serialPort': '/dev/ttyUSB1', 'baudRate': 9600, 'port': 3002, 'ipAddress': process.env.TRACKER_IP};
         var client = new net.Socket();
         client.on('error', function (err) {
             console.log('OCURRIO EL ERROR');

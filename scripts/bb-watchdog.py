@@ -62,7 +62,7 @@ def do_main(interface):
     print('test')
     counter1 = 0
     while True:
-        logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO, filename='/var/log/bb-watchdog/bb-watchdog.log')
+        logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO, filename='/var/log/bb-watchdog.log')
         is_up = is_interface_up(interface)
         print("is up: ", is_up)
         if is_up == True:

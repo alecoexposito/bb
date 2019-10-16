@@ -51,13 +51,15 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
                         'device_id': device_id,
                         'latitude': gprmc.loc.geojson.coordinates[1],
                         'longitude': gprmc.loc.geojson.coordinates[0],
-                        'speed': gprmc.speed.kmh
+                        'speed': gprmc.speed.kmh,
+                        'track': gprmc.track
                     };
                     console.log("tirando por el channel bb export: ", response);
                     scServer.exchange.publish("bb_export", {
                         'latitude': gprmc.loc.geojson.coordinates[1],
                         'longitude': gprmc.loc.geojson.coordinates[0],
-                        'speed': gprmc.speed.kmh
+                        'speed': gprmc.speed.kmh,
+                        'track': gprmc.track
                     });
 
                     let buffer = Buffer.from(JSON.stringify(response));

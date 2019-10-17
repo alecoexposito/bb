@@ -155,7 +155,7 @@ class Worker extends SCWorker {
         var optionsClient = {'serialPort': '/dev/ttyUSB1', 'baudRate': 9600, 'port': 3002, 'ipAddress': process.env.TRACKER_IP};
         var client = new net.Socket();
         client.on('error', function (err) {
-            console.log('OCURRIO EL ERROR');
+            console.log('error conectandose all tracker: ', err);
             // console.log(err);
         });
 

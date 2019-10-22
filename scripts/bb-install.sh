@@ -1,7 +1,16 @@
 #!/usr/bin/env bash
 cd ~
+echo updateando repositorios
+sudo apt update
+sudo apt-get update
+echo instalando python-pip
+sudo apt-get install python-pip
+echo instalando python setuptools
+sudo pip install setuptools
+echo instalando python pyserial
+sudo pip install pyserial
 echo instalando nodejs
-curl -sL https://deb.nodesource.com/setup_9.x | sudo -E bash -
+curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
 sudo apt-get install -y nodejs
 echo instalando pm2
 sudo npm install pm2@latest -g
@@ -13,6 +22,7 @@ npm install
 echo creando carpetas necesarias
 mkdir ~/camera
 mkdir ~/camera-local
+echo 0 > ~/camera-local/camera-1.jpg
 mkdir ~/video-backup
 mkdir ~/.db
 echo copiando base de datos sqlite
@@ -26,3 +36,6 @@ echo instalando ffmpeg
 sudo apt-get install sshfs ffmpeg
 echo instalando gstreamer
 sudo apt-get install gstreamer1.0-rtsp gstreamer1.0-tools gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav
+
+#echo instalando apache2
+#sudo apt-get install apache2

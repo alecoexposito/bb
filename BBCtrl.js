@@ -11,7 +11,7 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
                     return console.log(err.message);
                 }
 
-                console.log('Row inserted with id: ', this.lastID);
+                // console.log('Row inserted with id: ', this.lastID);
             });
 
         }
@@ -56,10 +56,10 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
                     };
                     // console.log("tirando por el channel bb export: ", response);
                     // scServer.exchange.publish("bb_export", {
-                    //     'latitude': gprmc.loc.geojson.coordinates[1],
+                    //     'latitude': gprmc.loc.geojson.coordinates[1],:la
                     //     'longitude': gprmc.loc.geojson.coordinates[0],
                     //     'speed': gprmc.speed.kmh,
-                    //     'track': gprmc.track
+                    //     'track': gprmc.track:la
                     // });
 
                     let buffer = Buffer.from(JSON.stringify(response));
@@ -69,14 +69,14 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
                             console.log("error writing to socket, writing offline");
                             is_offline = 1;
                         } else {
-                            console.log("all ok");
+                            // console.log("all ok");
                             is_offline = 0;
                         }
                         let values = [response.device_id, response.latitude, response.longitude, response.speed, moment().valueOf(), moment().valueOf(), is_offline];
                         self.saveOfflineData(db, values);
                     });
 
-                    console.log('wrote in client and offline');
+                    // console.log('wrote in client and offline');
 
                 }
             });

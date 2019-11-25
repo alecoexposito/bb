@@ -167,29 +167,29 @@ class Worker extends SCWorker {
         this.clientRest.get(process.env.API_URL + "/devices/" + process.env.DEVICE_ID + "/camerasInAutoplay", function(data, response) {
             console.log("data in response: ", data);
             _this.autoplayCameras = data;
+            while(_this.autoplayCameraIntervals.length > 0) {
+                let interval = _this.autoplayCameraIntervals.pop();
+                clearInterval(interval);
+            }
+
+            for (let i = 0; i < _this.autoplayCameras.length; i++) {
+                let urlCamera = _this.autoplayCameras[i].url_camera;
+                let intervalSeconds = _this.autoplayCameras[i].autoplay_interval;
+
+                let intervalC = setInterval(function() {
+                    // var urlCamera = 'rtsp://192.168.1.30:554/user=admin&password=&channel=1&stream=1.sdp';
+                    let singleCameraCommand = _this.runCommand('bash', [
+                        '/home/zurikato/scripts/single-image.sh',
+                        urlCamera
+                    ]);
+                    console.log("en el ciclo")
+                    setTimeout(function() {
+                        _this.sendSingleImageWebsocket(_this.cameraSingleChannel);
+                    }, 4000)
+                }, intervalSeconds);
+                _this.autoplayCameraIntervals.push(intervalC);
+            }
         });
-        while(_this.autoplayCameraIntervals.length > 0) {
-            let interval = _this.autoplayCameraIntervals.pop();
-            clearInterval(interval);
-        }
-
-        for (let i = 0; i < _this.autoplayCameras.length; i++) {
-            let urlCamera = _this.autoplayCameras[i].url_camera;
-            let intervalSeconds = _this.autoplayCameras[i].autoplay_interval;
-
-            let intervalC = setInterval(function(urlCamera) {
-                // var urlCamera = 'rtsp://192.168.1.30:554/user=admin&password=&channel=1&stream=1.sdp';
-                let singleCameraCommand = _this.runCommand('bash', [
-                    '/home/zurikato/scripts/single-image.sh',
-                    urlCamera
-                ]);
-                console.log("en el ciclo")
-                setTimeout(function() {
-                    _this.sendSingleImageWebsocket(_this.cameraSingleChannel);
-                }, 4000)
-            }, intervalSeconds);
-            _this.autoplayCameraIntervals.push(intervalC);
-        }
 
     }
 

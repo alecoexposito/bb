@@ -102,7 +102,6 @@ class Worker extends SCWorker {
 
     sendSingleImageWebsocket(cameraVideoChannel) {
         var _this = this;
-        var currentProcess = _this.findRunningProcess(idCamera);
         console.log("enviando single-image");
         var imageFile = fs.readFileSync("/home/zurikato/camera-local/single-camera.jpg");
         cameraVideoChannel.publish({image: imageFile.toString("base64"), type: 'single-camera'});

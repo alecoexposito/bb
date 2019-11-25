@@ -103,8 +103,12 @@ class Worker extends SCWorker {
     sendSingleImageWebsocket(cameraVideoChannel) {
         var _this = this;
         console.log("enviando single-image");
-        var imageFile = fs.readFileSync("/home/zurikato/camera-local/single-camera.jpg");
-        cameraVideoChannel.publish({image: imageFile.toString("base64"), type: 'single-camera'});
+        try {
+            var imageFile = fs.readFileSync("/home/zurikato/camera-local/single-camera.jpg");
+            cameraVideoChannel.publish({image: imageFile.toString("base64"), type: 'single-camera'});
+        } catch (e) {
+            console.log("error reading file: ", e);
+        }
 
     }
 

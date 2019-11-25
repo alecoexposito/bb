@@ -208,7 +208,7 @@ class Worker extends SCWorker {
             ]);
             setTimeout(function() {
                 _this.sendSingleImageWebsocket(cameraSingleChannel);
-            }, 5000)
+            }, 4000)
 
 
         }, 5000);

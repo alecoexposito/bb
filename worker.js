@@ -100,6 +100,15 @@ class Worker extends SCWorker {
 
     }
 
+    sendSingleImageWebsocket(cameraVideoChannel) {
+        var _this = this;
+        var currentProcess = _this.findRunningProcess(idCamera);
+        console.log("enviando single-image");
+        var imageFile = fs.readFileSync("/home/zurikato/camera-local/single-camera.jpg");
+        cameraVideoChannel.publish({image: imageFile.toString("base64"), type: 'single-camera'});
+
+    }
+
     syncOfflineData(client) {
         console.log("sincronizando datos offline");
         var _this = this;
@@ -155,8 +164,7 @@ class Worker extends SCWorker {
         var optionsClient = {'serialPort': '/dev/ttyUSB1', 'baudRate': 9600, 'port': 3002, 'ipAddress': process.env.TRACKER_IP};
         var client = new net.Socket();
         client.on('error', function (err) {
-            console.log('error conectandose all tracker: ', err);
-            // console.log(err);
+            console.log('error conectandose al tracker: ', err);
         });
 
 
@@ -198,10 +206,6 @@ class Worker extends SCWorker {
                         var urlCamera = data.urlCamera;
                         _this.runSingleCamera(idCamera, urlCamera, cameraVideoChannel);
                     }
-
-                    // setTimeout(function() {
-                    //     vcommand.kill("SIGKILL");
-                    // }, 120000)
                 } else if(data.type == "stop-streaming") {
                     console.log("AAAAAAAAAAAAAAAAAAAAAA--------------received from web:------------AAAAAAAAAAAAAAA ", data);
                     var interval = setInterval(function() {
@@ -216,7 +220,6 @@ class Worker extends SCWorker {
                         }
                     }, 12000)
 
-                    // vcommand.kill("SIGKILL");
                 } else if(data.type == "start-video-backup") {
                     var location = process.env.VIDEO_BACKUP_LOCATION + "/" + data.idCamera;
                     console.log("Stream from backup: ", data);
@@ -301,6 +304,15 @@ class Worker extends SCWorker {
                     });
 
                     // _this.downloadVideoByTime(data.initialTime, totalTime, data.playlistName, socket);
+                } else if(data.type == "single-camera") {
+                    urlCamera = data.urlCamera;
+                    let singleCameraCommand = _this.runCommand('bash', [
+                        '/usr/scripts/single-camera.sh',
+                        urlCamera
+                    ]);
+                    setTimeout(function() {
+                        _this.sendSingleImageWebsocket(cameraVideoChannel);
+                    }, 1000)
                 }
             }
         });
@@ -315,35 +327,6 @@ class Worker extends SCWorker {
                 }
             }
         });
-
-        var obdChannel = socket.subscribe('obd_channel');
-        obdChannel.watch(function(data) {
-            if(data.id == process.env.DEVICE_ID) {
-                if (data.type == "obd-info") {
-                    console.log("going to run the python command");
-
-                    const
-                        {spawn} = require('child_process'),
-                        vcommand = spawn(command, params);
-
-                    var response =  "";
-                    vcommand.stdout.on('data', data => {
-                        response += data;
-                    });
-
-                    vcommand.stderr.on('data', data => {
-                        console.log(`stderr: ${data}`);
-                    });
-
-                    vcommand.on('close', code => {
-                        obdChannel.publish({ type: 'obd-info-response', message: response });
-                    });
-
-                }
-            }
-        });
-
-        var cameraChannel = socket.subscribe('camera_channel');
     }
 
     downloadVideoByTime(initialTime, totalTime, playlistName, socket) {

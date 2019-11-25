@@ -100,12 +100,12 @@ class Worker extends SCWorker {
 
     }
 
-    sendSingleImageWebsocket(cameraVideoChannel) {
+    sendSingleImageWebsocket(channel) {
         var _this = this;
         console.log("enviando single-image");
         try {
             var imageFile = fs.readFileSync("/home/zurikato/camera-local/single-camera.jpg");
-            cameraVideoChannel.publish({image: imageFile.toString("base64"), type: 'single-camera'});
+            channel.publish({image: imageFile.toString("base64"), type: 'single-camera'});
         } catch (e) {
             console.log("error reading file: ", e);
         }
@@ -197,7 +197,7 @@ class Worker extends SCWorker {
 
         var cameraChannel = socket.subscribe('camera_channel');
         var cameraVideoChannel = socket.subscribe('camera_' + process.env.DEVICE_ID + '_channel');
-        var cameraSingleChannel = socket.subscribe('camera_' + process.env.DEVICE_ID + 'single_channel');
+        var cameraSingleChannel = socket.subscribe('camera_single_channel');
 
         setInterval(function() {
 

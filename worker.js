@@ -186,7 +186,7 @@ class Worker extends SCWorker {
                     setTimeout(function() {
                         _this.sendSingleImageWebsocket(_this.cameraSingleChannel);
                     }, 4000)
-                }, intervalSeconds);
+                }, intervalSeconds * 1000);
                 _this.autoplayCameraIntervals.push(intervalC);
             }
         });

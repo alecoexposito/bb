@@ -201,7 +201,7 @@ class Worker extends SCWorker {
         var cameraVideoChannel = socket.subscribe('camera_' + process.env.DEVICE_ID + '_channel');
         var cameraSingleChannel = socket.subscribe('camera_single_channel');
 
-        this.clientRest.get(process.env.API_URL + "/devices/" + process.env.DEVICE_ID + "camerasInAutoplay", function(data, response) {
+        this.clientRest.get(process.env.API_URL + "/devices/" + process.env.DEVICE_ID + "/camerasInAutoplay", function(data, response) {
             console.log("data in response: ", data);
         })
 

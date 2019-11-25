@@ -199,19 +199,19 @@ class Worker extends SCWorker {
         var cameraVideoChannel = socket.subscribe('camera_' + process.env.DEVICE_ID + '_channel');
         var cameraSingleChannel = socket.subscribe('camera_single_channel');
 
-        setInterval(function() {
-
-            var urlCamera = 'rtsp://192.168.1.30:554/user=admin&password=&channel=1&stream=1.sdp';
-            let singleCameraCommand = _this.runCommand('bash', [
-                '/home/zurikato/scripts/single-image.sh',
-                urlCamera
-            ]);
-            setTimeout(function() {
-                _this.sendSingleImageWebsocket(cameraSingleChannel);
-            }, 4000)
-
-
-        }, 5000);
+        // setInterval(function() {
+        //
+        //     var urlCamera = 'rtsp://192.168.1.30:554/user=admin&password=&channel=1&stream=1.sdp';
+        //     let singleCameraCommand = _this.runCommand('bash', [
+        //         '/home/zurikato/scripts/single-image.sh',
+        //         urlCamera
+        //     ]);
+        //     setTimeout(function() {
+        //         _this.sendSingleImageWebsocket(cameraSingleChannel);
+        //     }, 4000)
+        //
+        //
+        // }, 5000);
 
         cameraChannel.watch(function (data) {
             if(data.id == process.env.DEVICE_ID) {

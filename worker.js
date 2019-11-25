@@ -32,6 +32,8 @@ class Worker extends SCWorker {
         this.livePid = null;
         this.lastTimestamp = null;
         this.clientRest = new Client();
+        this.autoplayCameras = [];
+        this.autoplayCameraIntervals = [];
         // this.clientSocketTracker = new net.Socket();
         // this.clientSocketTracker.connect(process.env.TRACKER_SOCKET_PORT, process.env.TRACKER_IP, function() {
         //     console.log("connected to tracker tcp socket");
@@ -160,6 +162,34 @@ class Worker extends SCWorker {
 
     }
 
+    loadAutoplayCameras() {
+        var _this = this;
+        this.clientRest.get(process.env.API_URL + "/devices/" + process.env.DEVICE_ID + "/camerasInAutoplay", function(data, response) {
+            console.log("data in response: ", data);
+            _this.autoplayCameras = data;
+        });
+        while(_this.autoplayCameraIntervals.length > 0) {
+            let interval = _this.autoplayCameraIntervals.pop();
+            clearInterval(interval);
+        }
+
+        for (let i = 0; i < _this.autoplayCameras.length; i++) {
+            let urlCamera = _this.autoplayCameras[i].url_camera;
+            let intervalC = setInterval(function() {
+                // var urlCamera = 'rtsp://192.168.1.30:554/user=admin&password=&channel=1&stream=1.sdp';
+                let singleCameraCommand = _this.runCommand('bash', [
+                    '/home/zurikato/scripts/single-image.sh',
+                    urlCamera
+                ]);
+                setTimeout(function() {
+                    _this.sendSingleImageWebsocket(cameraSingleChannel);
+                }, 4000)
+            }, 5000);
+            _this.autoplayCameraIntervals.push(intervalC);
+        }
+
+    }
+
     run() {
         var _this = this;
         console.log('   >> Worker PID:', process.pid);
@@ -201,23 +231,6 @@ class Worker extends SCWorker {
         var cameraVideoChannel = socket.subscribe('camera_' + process.env.DEVICE_ID + '_channel');
         var cameraSingleChannel = socket.subscribe('camera_single_channel');
 
-        this.clientRest.get(process.env.API_URL + "/devices/" + process.env.DEVICE_ID + "/camerasInAutoplay", function(data, response) {
-            console.log("data in response: ", data);
-        })
-
-        // setInterval(function() {
-        //
-        //     var urlCamera = 'rtsp://192.168.1.30:554/user=admin&password=&channel=1&stream=1.sdp';
-        //     let singleCameraCommand = _this.runCommand('bash', [
-        //         '/home/zurikato/scripts/single-image.sh',
-        //         urlCamera
-        //     ]);
-        //     setTimeout(function() {
-        //         _this.sendSingleImageWebsocket(cameraSingleChannel);
-        //     }, 4000)
-        //
-        //
-        // }, 5000);
 
         cameraChannel.watch(function (data) {
             if(data.id == process.env.DEVICE_ID) {

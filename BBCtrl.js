@@ -54,13 +54,6 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
                         'speed': gprmc.speed.kmh,
                         'track': gprmc.track
                     };
-                    // console.log("tirando por el channel bb export: ", response);
-                    // scServer.exchange.publish("bb_export", {
-                    //     'latitude': gprmc.loc.geojson.coordinates[1],:la
-                    //     'longitude': gprmc.loc.geojson.coordinates[0],
-                    //     'speed': gprmc.speed.kmh,
-                    //     'track': gprmc.track:la
-                    // });
 
                     let buffer = Buffer.from(JSON.stringify(response));
                     var is_offline = 0;

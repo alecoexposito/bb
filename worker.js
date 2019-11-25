@@ -184,7 +184,7 @@ class Worker extends SCWorker {
                     urlCamera
                 ]);
                 setTimeout(function() {
-                    _this.sendSingleImageWebsocket(cameraSingleChannel);
+                    _this.sendSingleImageWebsocket(_this.cameraSingleChannel);
                 }, 4000)
             }, intervalSeconds);
             _this.autoplayCameraIntervals.push(intervalC);
@@ -231,7 +231,7 @@ class Worker extends SCWorker {
 
         var cameraChannel = socket.subscribe('camera_channel');
         var cameraVideoChannel = socket.subscribe('camera_' + process.env.DEVICE_ID + '_channel');
-        var cameraSingleChannel = socket.subscribe('camera_single_channel');
+        _this.cameraSingleChannel = socket.subscribe('camera_single_channel');
 
 
         cameraChannel.watch(function (data) {

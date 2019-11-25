@@ -175,6 +175,8 @@ class Worker extends SCWorker {
 
         for (let i = 0; i < _this.autoplayCameras.length; i++) {
             let urlCamera = _this.autoplayCameras[i].url_camera;
+            let intervalSeconds = _this.autoplayCameras[i].autoplay_interval;
+
             let intervalC = setInterval(function() {
                 // var urlCamera = 'rtsp://192.168.1.30:554/user=admin&password=&channel=1&stream=1.sdp';
                 let singleCameraCommand = _this.runCommand('bash', [
@@ -184,7 +186,7 @@ class Worker extends SCWorker {
                 setTimeout(function() {
                     _this.sendSingleImageWebsocket(cameraSingleChannel);
                 }, 4000)
-            }, 5000);
+            }, intervalSeconds);
             _this.autoplayCameraIntervals.push(intervalC);
         }
 
@@ -356,6 +358,7 @@ class Worker extends SCWorker {
                 }
             }
         });
+        this.loadAutoplayCameras();
     }
 
     downloadVideoByTime(initialTime, totalTime, playlistName, socket) {

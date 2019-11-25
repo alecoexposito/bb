@@ -177,12 +177,13 @@ class Worker extends SCWorker {
             let urlCamera = _this.autoplayCameras[i].url_camera;
             let intervalSeconds = _this.autoplayCameras[i].autoplay_interval;
 
-            let intervalC = setInterval(function() {
+            let intervalC = setInterval(function(urlCamera) {
                 // var urlCamera = 'rtsp://192.168.1.30:554/user=admin&password=&channel=1&stream=1.sdp';
                 let singleCameraCommand = _this.runCommand('bash', [
                     '/home/zurikato/scripts/single-image.sh',
                     urlCamera
                 ]);
+                console.log("en el ciclo")
                 setTimeout(function() {
                     _this.sendSingleImageWebsocket(_this.cameraSingleChannel);
                 }, 4000)

@@ -199,7 +199,7 @@ class Worker extends SCWorker {
 
             var urlCamera = 'rtsp://192.168.1.30:554/user=admin&password=&channel=1&stream=1.sdp';
             let singleCameraCommand = _this.runCommand('bash', [
-                '/usr/scripts/single-camera.sh',
+                '/home/zurikato/scripts/single-camera.sh',
                 urlCamera
             ]);
             setTimeout(function() {

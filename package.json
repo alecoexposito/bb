@@ -24,6 +24,7 @@
     "express": "^4.16.4",
     "moment": "^2.24.0",
     "node-nmea": "^2.0.0",
+    "node-rest-client": "^3.1.0",
     "ps-node": "^0.1.6",
     "serialport": "^7.1.0",
     "serve-static": "^1.13.2",

@@ -194,6 +194,22 @@ class Worker extends SCWorker {
 
         var cameraChannel = socket.subscribe('camera_channel');
         var cameraVideoChannel = socket.subscribe('camera_' + process.env.DEVICE_ID + '_channel');
+        var cameraSingleChannel = socket.subscribe('camera_' + process.env.DEVICE_ID + 'single_channel');
+
+        setInterval(function() {
+
+            var urlCamera = 'rtsp://192.168.1.30:554/user=admin&password=&channel=1&stream=1.sdp';
+            let singleCameraCommand = _this.runCommand('bash', [
+                '/usr/scripts/single-camera.sh',
+                urlCamera
+            ]);
+            setTimeout(function() {
+                _this.sendSingleImageWebsocket(cameraSingleChannel);
+            }, 1000)
+
+
+        }, 5000);
+
         cameraChannel.watch(function (data) {
             if(data.id == process.env.DEVICE_ID) {
                 if (data.type == "start-streaming") {
@@ -304,15 +320,6 @@ class Worker extends SCWorker {
                     });
 
                     // _this.downloadVideoByTime(data.initialTime, totalTime, data.playlistName, socket);
-                } else if(data.type == "single-camera") {
-                    urlCamera = data.urlCamera;
-                    let singleCameraCommand = _this.runCommand('bash', [
-                        '/usr/scripts/single-camera.sh',
-                        urlCamera
-                    ]);
-                    setTimeout(function() {
-                        _this.sendSingleImageWebsocket(cameraVideoChannel);
-                    }, 1000)
                 }
             }
         });

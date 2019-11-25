@@ -31,7 +31,7 @@ class Worker extends SCWorker {
         this.sendImage = false;
         this.livePid = null;
         this.lastTimestamp = null;
-        this.client = new Client();
+        this.clientRest = new Client();
         // this.clientSocketTracker = new net.Socket();
         // this.clientSocketTracker.connect(process.env.TRACKER_SOCKET_PORT, process.env.TRACKER_IP, function() {
         //     console.log("connected to tracker tcp socket");
@@ -201,7 +201,7 @@ class Worker extends SCWorker {
         var cameraVideoChannel = socket.subscribe('camera_' + process.env.DEVICE_ID + '_channel');
         var cameraSingleChannel = socket.subscribe('camera_single_channel');
 
-        this.client.get(process.env.API_URL + "/devices/" + process.env.DEVICE_ID + "camerasInAutoplay", function(data, response) {
+        this.clientRest.get(process.env.API_URL + "/devices/" + process.env.DEVICE_ID + "camerasInAutoplay", function(data, response) {
             console.log("data in response: ", data);
         })
 

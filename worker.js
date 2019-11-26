@@ -163,6 +163,7 @@ class Worker extends SCWorker {
     }
 
     loadAutoplayCameras() {
+        console.log("load autoplay for cameras");
         var _this = this;
         this.clientRest.get(process.env.API_URL + "/devices/" + process.env.DEVICE_ID + "/camerasInAutoplay", function(data, response) {
             console.log("data in response: ", data);
@@ -233,6 +234,11 @@ class Worker extends SCWorker {
         var cameraChannel = socket.subscribe('camera_channel');
         var cameraVideoChannel = socket.subscribe('camera_' + process.env.DEVICE_ID + '_channel');
         _this.cameraSingleChannel = socket.subscribe('camera_single_channel');
+        _this.cameraSingleChannel.watch(function(data) {
+            if(data.type == "load-camera-autoplay") {
+                _this.loadAutoplayCameras();
+            }
+        })
 
 
         cameraChannel.watch(function (data) {

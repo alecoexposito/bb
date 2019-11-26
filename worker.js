@@ -180,7 +180,7 @@ class Worker extends SCWorker {
 
             for (let i = 0; i < _this.autoplayCameras.length; i++) {
                 let urlCamera = _this.autoplayCameras[i].url_camera;
-                let cameraName = _this.autoplayCameras[i].camera_name;
+                let cameraName = _this.autoplayCameras[i].name;
                 let intervalSeconds = _this.autoplayCameras[i].autoplay_interval;
 
                 let intervalC = setInterval(function() {

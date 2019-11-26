@@ -104,7 +104,7 @@ class Worker extends SCWorker {
 
     }
 
-    sendSingleImageWebsocket(channel, imei, name) {
+    sendSingleImageWebsocket(channel, imei, name, vehicle) {
         var _this = this;
         console.log("enviando single-image");
         try {
@@ -113,7 +113,8 @@ class Worker extends SCWorker {
                 image: imageFile.toString("base64"),
                 type: 'single-camera',
                 imei: imei,
-                name: name
+                name: name,
+                vehicle: vehicle
             });
         } catch (e) {
             console.log("error reading file: ", e);
@@ -181,6 +182,7 @@ class Worker extends SCWorker {
             for (let i = 0; i < _this.autoplayCameras.length; i++) {
                 let urlCamera = _this.autoplayCameras[i].url_camera;
                 let cameraName = _this.autoplayCameras[i].name;
+                let vehicle = _this.autoplayCameras[i].vehicle_name;
                 let intervalSeconds = _this.autoplayCameras[i].autoplay_interval;
 
                 let intervalC = setInterval(function() {
@@ -191,7 +193,7 @@ class Worker extends SCWorker {
                     ]);
                     console.log("en el ciclo")
                     setTimeout(function() {
-                        _this.sendSingleImageWebsocket(_this.cameraSingleChannel, process.env.DEVICE_IMEI, cameraName);
+                        _this.sendSingleImageWebsocket(_this.cameraSingleChannel, process.env.DEVICE_IMEI, cameraName, vehicle);
                     }, 4000)
                 }, intervalSeconds * 1000);
                 _this.autoplayCameraIntervals.push(intervalC);

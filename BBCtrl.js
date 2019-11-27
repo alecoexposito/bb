@@ -23,6 +23,7 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
 
                 this.portS1.on('open', () => {
                     this.connected = true;
+                    this.setupParser();
                 });
                 this.portS1.on('close', () => {
                     this.connected = false;
@@ -40,6 +41,43 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
 
         reconnect() {
             if (!this.connected) { this.portS1.open(); }
+        }
+
+        setupParser() {
+            const parser = this.portS1.pipe(new Readline({delimiter: '\r\n'}));
+            parser.on("data", function (data) {
+                // console.log("data en el puerto: ", data.toString());
+                var moment = require('moment');
+                let gprmc = nmea.parse(data.toString());
+                // console.log("gprmc: ", gprmc);
+                if (gprmc.valid == true && gprmc.type == 'RMC') {
+                    let response = {
+                        'device_id': device_id,
+                        'latitude': gprmc.loc.geojson.coordinates[1],
+                        'longitude': gprmc.loc.geojson.coordinates[0],
+                        'speed': gprmc.speed.kmh,
+                        'track': gprmc.track
+                    };
+
+                    let buffer = Buffer.from(JSON.stringify(response));
+                    var is_offline = 0;
+                    client.write(buffer, function(err) {
+                        if(err) {
+                            console.log("error writing to socket, writing offline");
+                            is_offline = 1;
+                        } else {
+                            // console.log("all ok");
+                            is_offline = 0;
+                        }
+                        let values = [response.device_id, response.latitude, response.longitude, response.speed, moment().valueOf(), moment().valueOf(), is_offline];
+                        self.saveOfflineData(db, values);
+                    });
+
+                    // console.log('wrote in client and offline');
+
+                }
+            });
+
         }
 
         run(options, client, db) {
@@ -82,39 +120,6 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
 
             this.connect(options);
 
-            const parser = this.portS1.pipe(new Readline({delimiter: '\r\n'}));
-            parser.on("data", function (data) {
-                // console.log("data en el puerto: ", data.toString());
-                var moment = require('moment');
-                let gprmc = nmea.parse(data.toString());
-                // console.log("gprmc: ", gprmc);
-                if (gprmc.valid == true && gprmc.type == 'RMC') {
-                    let response = {
-                        'device_id': device_id,
-                        'latitude': gprmc.loc.geojson.coordinates[1],
-                        'longitude': gprmc.loc.geojson.coordinates[0],
-                        'speed': gprmc.speed.kmh,
-                        'track': gprmc.track
-                    };
-
-                    let buffer = Buffer.from(JSON.stringify(response));
-                    var is_offline = 0;
-                    client.write(buffer, function(err) {
-                        if(err) {
-                            console.log("error writing to socket, writing offline");
-                            is_offline = 1;
-                        } else {
-                            // console.log("all ok");
-                            is_offline = 0;
-                        }
-                        let values = [response.device_id, response.latitude, response.longitude, response.speed, moment().valueOf(), moment().valueOf(), is_offline];
-                        self.saveOfflineData(db, values);
-                    });
-
-                    // console.log('wrote in client and offline');
-
-                }
-            });
 
         }
     }

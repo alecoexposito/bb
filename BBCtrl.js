@@ -1,5 +1,7 @@
 module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
     class bbController {
+        portS1;
+        connected = false;
         constructor() {
 
         }
@@ -16,48 +18,73 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
 
         }
 
+        connect(options) {
+            return new Promise((resolve) => {
+                this.portS1 = new SerialPort(options.serialPort, { baudRate: options.baudRate, autoOpen: false, lock: false });
+                this.portS1 = this.serialPort.pipe(this.parser);
+
+                this.portS1.on('open', () => {
+                    this.connected = true;
+                });
+                this.portS1.on('close', () => {
+                    this.connected = false;
+                    setTimeout(this.reconnect.bind(this), 5000);
+                });
+                this.portS1.on('error', () => {
+                    setTimeout(this.reconnect.bind(this), 5000);
+                });
+
+                this.portS1.open();
+
+                resolve(this.parser);
+            });
+        }
+
+        reconnect() {
+            if (!this.connected) { this.portS1.open(); }
+        }
+
         run(options, client, db) {
             var self = this;
 
-            /*let content = fs.readFileSync('/proc/cpuinfo', 'utf8');
-            let cont_array = content.split("\n");
-            let serial_line = cont_array[cont_array.length-2];
-            let serial = serial_line.split(":");*/
-            let device_id = process.env.DEVICE_IMEI; // '353147044612671';
-            let portS1 = new SerialPort(options.serialPort, {baudRate: options.baudRate, autoOpen: false, lock: false});
-            portS1.open(function (err) {
-                if (err) {
-                    var errorstr = "Error opening port: " + err.message;
+            // let device_id = process.env.DEVICE_IMEI; // '353147044612671';
+            // let portS1 = new SerialPort(options.serialPort, {baudRate: options.baudRate, autoOpen: false, lock: false});
+            // portS1.open(function (err) {
+            //     if (err) {
+            //         var errorstr = "Error opening port: " + err.message;
+            //
+            //     } else {
+            //         console.log("PORT OPENED");
+            //     }
+            // });
+            //
+            // portS1.on('error', function (err) {
+            //     console.log('Error en el puerto: ', err.message);
+            //     portS1.open(function (err) {
+            //         if (err) {
+            //             var errorstr = "Error opening port: " + err.message;
+            //
+            //         } else {
+            //             console.log("PORT OPENED");
+            //         }
+            //     });
+            // });
+            //
+            // portS1.on('close', function () {
+            //     portS1.open(function (err) {
+            //         if (err) {
+            //             var errorstr = "Error opening port: " + err.message;
+            //
+            //         } else {
+            //             console.log("PORT OPENED");
+            //         }
+            //     });
+            // });
 
-                } else {
-                    console.log("PORT OPENED");
-                }
-            });
 
-            portS1.on('error', function (err) {
-                console.log('Error en el puerto: ', err.message);
-                portS1.open(function (err) {
-                    if (err) {
-                        var errorstr = "Error opening port: " + err.message;
 
-                    } else {
-                        console.log("PORT OPENED");
-                    }
-                });
-            });
 
-            portS1.on('close', function () {
-                portS1.open(function (err) {
-                    if (err) {
-                        var errorstr = "Error opening port: " + err.message;
-
-                    } else {
-                        console.log("PORT OPENED");
-                    }
-                });
-            });
-
-            const parser = portS1.pipe(new Readline({delimiter: '\r\n'}));
+            const parser = this.portS1.pipe(new Readline({delimiter: '\r\n'}));
             parser.on("data", function (data) {
                 // console.log("data en el puerto: ", data.toString());
                 var moment = require('moment');

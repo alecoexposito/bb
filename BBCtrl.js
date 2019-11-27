@@ -19,7 +19,7 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
         connect(options) {
             return new Promise((resolve) => {
                 this.portS1 = new SerialPort(options.serialPort, { baudRate: options.baudRate, autoOpen: false, lock: false });
-
+                this.parser = this.portS1.pipe(new Readline({delimiter: '\r\n'}));
                 this.portS1.on('open', () => {
                     console.log("serial connected...........................");
                     this.connected = true;
@@ -35,7 +35,7 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
 
                 this.portS1.open();
 
-                resolve(this.portS1);
+                resolve(this.parser);
             });
         }
 
@@ -43,9 +43,9 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
             if (!this.connected) { this.portS1.open(); }
         }
 
-        setupParser() {
-            const parser = this.portS1.pipe(new Readline({delimiter: '\r\n'}));
-            parser.on("data", function (data) {
+        setupParser(client) {
+            // const parser = this.portS1.pipe(new Readline({delimiter: '\r\n'}));
+            this.parser.on("data", function (data) {
                 // console.log("data en el puerto: ", data.toString());
                 var moment = require('moment');
                 let gprmc = nmea.parse(data.toString());
@@ -70,7 +70,7 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
                             is_offline = 0;
                         }
                         let values = [response.device_id, response.latitude, response.longitude, response.speed, moment().valueOf(), moment().valueOf(), is_offline];
-                        self.saveOfflineData(db, values);
+                        this.saveOfflineData(db, values);
                     });
 
                     // console.log('wrote in client and offline');
@@ -118,7 +118,9 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
             // });
 
 
-            this.connect(options);
+            this.connect(options).then(() => {
+                this.setupParser(client);
+            });
 
 
         }

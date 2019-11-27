@@ -34,7 +34,7 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
 
                 this.portS1.open();
 
-                resolve(this.parser);
+                resolve(this.portS1);
             });
         }
 

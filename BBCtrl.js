@@ -23,7 +23,7 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
                 this.portS1.on('open', () => {
                     console.log("serial connected...........................");
                     this.connected = true;
-                    this.setupParser();
+                    // this.setupParser();
                 });
                 this.portS1.on('close', () => {
                     this.connected = false;

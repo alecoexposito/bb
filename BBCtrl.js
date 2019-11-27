@@ -119,6 +119,7 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
 
 
             this.connect(options).then(() => {
+                console.log("parser: ", this.parser)
                 this.setupParser(client);
             });
 

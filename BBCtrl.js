@@ -19,7 +19,6 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
         connect(options) {
             return new Promise((resolve) => {
                 this.portS1 = new SerialPort(options.serialPort, { baudRate: options.baudRate, autoOpen: false, lock: false });
-                this.portS1 = this.serialPort.pipe(this.parser);
 
                 this.portS1.on('open', () => {
                     this.connected = true;

@@ -1,7 +1,5 @@
 module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
     class bbController {
-        portS1 = null;
-        connected = false;
         constructor() {
 
         }

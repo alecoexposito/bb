@@ -21,6 +21,7 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
                 this.portS1 = new SerialPort(options.serialPort, { baudRate: options.baudRate, autoOpen: false, lock: false });
 
                 this.portS1.on('open', () => {
+                    console.log("serial connected...........................");
                     this.connected = true;
                     this.setupParser();
                 });

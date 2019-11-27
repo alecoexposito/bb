@@ -80,7 +80,7 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
             // });
 
 
-
+            this.connect(options);
 
             const parser = this.portS1.pipe(new Readline({delimiter: '\r\n'}));
             parser.on("data", function (data) {

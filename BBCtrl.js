@@ -36,11 +36,28 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
 
             portS1.on('error', function (err) {
                 console.log('Error en el puerto: ', err.message);
+                portS1.open(function (err) {
+                    if (err) {
+                        var errorstr = "Error opening port: " + err.message;
+
+                    } else {
+                        console.log("PORT OPENED");
+                    }
+                });
             });
 
+            portS1.on('close', function () {
+                portS1.open(function (err) {
+                    if (err) {
+                        var errorstr = "Error opening port: " + err.message;
+
+                    } else {
+                        console.log("PORT OPENED");
+                    }
+                });
+            });
 
             const parser = portS1.pipe(new Readline({delimiter: '\r\n'}));
-            // parser.on('data', function(data){console.log("data en el parser: ", data);})
             parser.on("data", function (data) {
                 // console.log("data en el puerto: ", data.toString());
                 var moment = require('moment');
@@ -73,12 +90,6 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
 
                 }
             });
-
-            // parser.on("stream_channel", function (data) {
-            //     console.log("stream channel: ", data);
-            // });
-
-
 
         }
     }

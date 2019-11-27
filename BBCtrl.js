@@ -21,7 +21,6 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
                 this.portS1 = new SerialPort(options.serialPort, { baudRate: options.baudRate, autoOpen: false, lock: false });
                 this.parser = this.portS1.pipe(new Readline({delimiter: '\r\n'}));
                 this.portS1.on('open', () => {
-                    console.log("serial connected...........................");
                     this.connected = true;
                     // this.setupParser();
                 });
@@ -45,7 +44,8 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
 
         setupParser(client) {
             // const parser = this.portS1.pipe(new Readline({delimiter: '\r\n'}));
-            let device_id = process.env.DEVICE_IMEI;
+            var _this = this;
+            var device_id = process.env.DEVICE_IMEI;
             this.parser.on("data", function (data) {
                 // console.log("data en el puerto: ", data.toString());
                 var moment = require('moment');
@@ -71,7 +71,7 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
                             is_offline = 0;
                         }
                         let values = [response.device_id, response.latitude, response.longitude, response.speed, moment().valueOf(), moment().valueOf(), is_offline];
-                        this.saveOfflineData(db, values);
+                        _this.saveOfflineData(db, values);
                     });
 
                     // console.log('wrote in client and offline');
@@ -120,7 +120,6 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
 
 
             this.connect(options).then(() => {
-                console.log("parser: ", this.parser)
                 this.setupParser(client);
             });
 

@@ -42,7 +42,7 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
             if (!this.connected) { this.portS1.open(); }
         }
 
-        setupParser(client) {
+        setupParser(client, db) {
             // const parser = this.portS1.pipe(new Readline({delimiter: '\r\n'}));
             var _this = this;
             var device_id = process.env.DEVICE_IMEI;

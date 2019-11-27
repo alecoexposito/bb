@@ -45,6 +45,7 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
 
         setupParser(client) {
             // const parser = this.portS1.pipe(new Readline({delimiter: '\r\n'}));
+            let device_id = process.env.DEVICE_IMEI;
             this.parser.on("data", function (data) {
                 // console.log("data en el puerto: ", data.toString());
                 var moment = require('moment');

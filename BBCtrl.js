@@ -120,7 +120,7 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
 
 
             this.connect(options).then(() => {
-                this.setupParser(client);
+                this.setupParser(client, db);
             });
 
 

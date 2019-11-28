@@ -65,6 +65,7 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
                     client.write(buffer, function(err) {
                         if(err) {
                             console.log("error writing to socket, writing offline");
+                            _this.reconnect();
                             is_offline = 1;
                         } else {
                             // console.log("all ok");

@@ -241,7 +241,7 @@ class Worker extends SCWorker {
         });
 
         socket.on('close', function() {
-            console.log("error ocurred: ", err);
+            console.log("on close: ");
             socket = socketClient.connect(options);
         });
 

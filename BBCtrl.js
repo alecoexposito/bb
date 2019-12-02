@@ -89,44 +89,44 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
         run(options, client, db) {
             var self = this;
 
-            // let device_id = process.env.DEVICE_IMEI; // '353147044612671';
-            // let portS1 = new SerialPort(options.serialPort, {baudRate: options.baudRate, autoOpen: false, lock: false});
-            // portS1.open(function (err) {
-            //     if (err) {
-            //         var errorstr = "Error opening port: " + err.message;
-            //
-            //     } else {
-            //         console.log("PORT OPENED");
-            //     }
-            // });
-            //
-            // portS1.on('error', function (err) {
-            //     console.log('Error en el puerto: ', err.message);
-            //     portS1.open(function (err) {
-            //         if (err) {
-            //             var errorstr = "Error opening port: " + err.message;
-            //
-            //         } else {
-            //             console.log("PORT OPENED");
-            //         }
-            //     });
-            // });
-            //
-            // portS1.on('close', function () {
-            //     portS1.open(function (err) {
-            //         if (err) {
-            //             var errorstr = "Error opening port: " + err.message;
-            //
-            //         } else {
-            //             console.log("PORT OPENED");
-            //         }
-            //     });
-            // });
+            let device_id = process.env.DEVICE_IMEI; // '353147044612671';
+            let portS1 = new SerialPort(options.serialPort, {baudRate: options.baudRate, autoOpen: false, lock: false});
+            portS1.open(function (err) {
+                if (err) {
+                    var errorstr = "Error opening port: " + err.message;
 
-
-            this.connect(options).then(() => {
-                this.setupParser(client, db);
+                } else {
+                    console.log("PORT OPENED");
+                }
             });
+
+            portS1.on('error', function (err) {
+                console.log('Error en el puerto: ', err.message);
+                portS1.open(function (err) {
+                    if (err) {
+                        var errorstr = "Error opening port: " + err.message;
+
+                    } else {
+                        console.log("PORT OPENED");
+                    }
+                });
+            });
+
+            portS1.on('close', function () {
+                portS1.open(function (err) {
+                    if (err) {
+                        var errorstr = "Error opening port: " + err.message;
+
+                    } else {
+                        console.log("PORT OPENED");
+                    }
+                });
+            });
+
+
+            // this.connect(options).then(() => {
+            //     this.setupParser(client, db);
+            // });
 
 
         }

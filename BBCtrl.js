@@ -123,6 +123,38 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
                 });
             });
 
+            const parser = portS1.pipe(new Readline({delimiter: '\r\n'}));
+            // parser.on('data', function(data){console.log("data en el parser: ", data);})
+            parser.on("data", function (data) {
+                // console.log("data en el puerto: ", data.toString());
+                var moment = require('moment');
+                let gprmc = nmea.parse(data.toString());
+                console.log("gprmc: ", gprmc);
+                if (gprmc.valid == true && gprmc.type == 'RMC') {
+                    let response = {
+                        'device_id': device_id,
+                        'latitude': gprmc.loc.geojson.coordinates[1],
+                        'longitude': gprmc.loc.geojson.coordinates[0],
+                        'speed': gprmc.speed.kmh
+                    };
+                    let buffer = Buffer.from(JSON.stringify(response));
+                    var is_offline = 0;
+                    client.write(buffer, function(err) {
+                        if(err) {
+                            console.log("error writing to socket, writing offline");
+                            is_offline = 1;
+                        } else {
+                            console.log("all ok");
+                            is_offline = 0;
+                        }
+                        let values = [response.device_id, response.latitude, response.longitude, response.speed, moment().valueOf(), moment().valueOf(), is_offline];
+                        self.saveOfflineData(db, values);
+                    });
+
+                    console.log('wrote in client and offline');
+
+                }
+            });
 
             // this.connect(options).then(() => {
             //     this.setupParser(client, db);

@@ -145,14 +145,14 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
                             console.log("error writing to socket, writing offline");
                             is_offline = 1;
                         } else {
-                            console.log("all ok");
+                            // console.log("all ok");
                             is_offline = 0;
                         }
                         let values = [response.device_id, response.latitude, response.longitude, response.speed, moment().valueOf(), moment().valueOf(), is_offline];
                         self.saveOfflineData(db, values);
                     });
 
-                    console.log('wrote in client and offline');
+                    // console.log('wrote in client and offline');
 
                 }
             });

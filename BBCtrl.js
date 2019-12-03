@@ -76,7 +76,8 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
                             _this.saveOfflineData(db, values);
                         });
                     } catch (e) {
-                        _this.reconnect();
+                        console.log("error writing to traker: ", e)
+                        // _this.reconnect();
                     }
 
                     // console.log('wrote in client and offline');
@@ -129,7 +130,7 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
                 // console.log("data en el puerto: ", data.toString());
                 var moment = require('moment');
                 let gprmc = nmea.parse(data.toString());
-                console.log("gprmc: ", gprmc);
+                // console.log("gprmc: ", gprmc);
                 if (gprmc.valid == true && gprmc.type == 'RMC') {
                     let response = {
                         'device_id': device_id,

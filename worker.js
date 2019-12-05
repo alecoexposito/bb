@@ -224,7 +224,8 @@ class Worker extends SCWorker {
         var options = {
             secure: false,
             hostname: process.env.TRACKER_IP,
-            port: 3001
+            port: 3001,
+            autoReconnect: true
         };
         var socket = socketClient.connect(options);
         socket.on('connect', function () {

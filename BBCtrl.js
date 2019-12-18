@@ -87,6 +87,15 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
 
         }
 
+        function isJsonString(str) {
+            try {
+                JSON.parse(str);
+            } catch (e) {
+                return false;
+            }
+            return true;
+        }
+
         run(options, client, db) {
             var self = this;
 
@@ -162,9 +171,11 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
             // });
 
             client.on('data', function(data) {
-                let dataJson = JSON.parse(data.toString());
-                if(dataJson.type == "reply")
-                    console.log("reply from tracker: ", data.toString());
+                if(self.isJsonString(data.toString())) {
+                    let dataJson = JSON.parse(data.toString());
+                    if(dataJson.type == "reply")
+                        console.log("reply from tracker: ", data.toString());
+                }
             });
         }
     }

@@ -161,7 +161,9 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
             //     this.setupParser(client, db);
             // });
 
-
+            client.on('data', function(data) {
+                console.log("reply from tracker: ", data.toString());
+            });
         }
     }
 

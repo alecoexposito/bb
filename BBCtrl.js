@@ -87,7 +87,7 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
 
         }
 
-        function isJsonString(str) {
+        isJsonString(str) {
             try {
                 JSON.parse(str);
             } catch (e) {

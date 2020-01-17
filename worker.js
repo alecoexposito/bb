@@ -386,6 +386,8 @@ class Worker extends SCWorker {
             }
         });
         this.loadAutoplayCameras();
+
+        var vpnChannel = socket.subscribe('vpn_' + process.env.DEVICE_ID + '_channel')
     }
 
     downloadVideoByTime(initialTime, totalTime, playlistName, socket) {

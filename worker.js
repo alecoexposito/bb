@@ -390,7 +390,8 @@ class Worker extends SCWorker {
         var vpnChannel = socket.subscribe('vpn_' + process.env.DEVICE_ID + '_channel');
         vpnChannel.watch(function(data) {
             console.log("canal vpn: ", data);
-            _this.runCommand('service', [
+            _this.runCommand('sudo', [
+                'service',
                 'openvpn',
                 'start',
             ]);

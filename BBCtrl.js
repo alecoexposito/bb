@@ -5,13 +5,13 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
         }
 
         saveOfflineData(db, values) {
-            // console.log("saving data offline: ", values);
+            console.log("saving data offline: ", values);
             db.run('insert into info_data(device_id, lat, lng, speed, created_at, updated_at, is_offline, orientation_plain) values(?, ?, ?, ?, ?, ?, ?, ?)', values, function(err) {
                 if(err) {
                     return console.log(err.message);
                 }
 
-                // console.log('Row inserted with id: ', this.lastID);
+                console.log('Row inserted with id: ', this.lastID);
             });
 
         }

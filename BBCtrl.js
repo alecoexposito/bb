@@ -6,83 +6,12 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
 
         saveOfflineData(db, values) {
             // console.log("saving data offline: ", values);
-            db.run('insert into info_data(device_id, lat, lng, speed, created_at, updated_at, is_offline) values(?, ?, ?, ?, ?, ?, ?)', values, function(err) {
+            db.run('insert into info_data(device_id, lat, lng, speed, created_at, updated_at, is_offline, orientation_plain) values(?, ?, ?, ?, ?, ?, ?, ?)', values, function(err) {
                 if(err) {
                     return console.log(err.message);
                 }
 
                 // console.log('Row inserted with id: ', this.lastID);
-            });
-
-        }
-
-        connect(options) {
-            return new Promise((resolve) => {
-                this.portS1 = new SerialPort(options.serialPort, { baudRate: options.baudRate, autoOpen: false, lock: false });
-                this.parser = this.portS1.pipe(new Readline({delimiter: '\r\n'}));
-                this.portS1.on('open', () => {
-                    this.connected = true;
-                    // this.setupParser();
-                });
-                this.portS1.on('close', () => {
-                    this.connected = false;
-                    setTimeout(this.reconnect.bind(this), 5000);
-                });
-                this.portS1.on('error', () => {
-                    setTimeout(this.reconnect.bind(this), 5000);
-                });
-
-                this.portS1.open();
-
-                resolve(this.parser);
-            });
-        }
-
-        reconnect() {
-            if (!this.connected) { this.portS1.open(); }
-        }
-
-        setupParser(client, db) {
-            // const parser = this.portS1.pipe(new Readline({delimiter: '\r\n'}));
-            var _this = this;
-            var device_id = process.env.DEVICE_IMEI;
-            this.parser.on("data", function (data) {
-                // console.log("data en el puerto: ", data.toString());
-                var moment = require('moment');
-                let gprmc = nmea.parse(data.toString());
-                console.log("gprmc: ", gprmc);
-                if (gprmc.valid == true && gprmc.type == 'RMC') {
-                    let response = {
-                        'device_id': device_id,
-                        'latitude': gprmc.loc.geojson.coordinates[1],
-                        'longitude': gprmc.loc.geojson.coordinates[0],
-                        'speed': gprmc.speed.kmh,
-                        'track': gprmc.track
-                    };
-
-                    let buffer = Buffer.from(JSON.stringify(response));
-                    var is_offline = 0;
-                    try {
-                        client.write(buffer, function (err) {
-                            if (err) {
-                                console.log("error writing to socket, writing offline");
-                                _this.reconnect();
-                                is_offline = 1;
-                            } else {
-                                // console.log("all ok");
-                                is_offline = 0;
-                            }
-                            let values = [response.device_id, response.latitude, response.longitude, response.speed, moment().valueOf(), moment().valueOf(), is_offline];
-                            _this.saveOfflineData(db, values);
-                        });
-                    } catch (e) {
-                        console.log("error writing to traker: ", e)
-                        // _this.reconnect();
-                    }
-
-                    // console.log('wrote in client and offline');
-
-                }
             });
 
         }
@@ -112,25 +41,31 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
 
             portS1.on('error', function (err) {
                 console.log('Error en el puerto: ', err.message);
-                portS1.open(function (err) {
-                    if (err) {
-                        var errorstr = "Error opening port: " + err.message;
+                setTimeout(function() {
+                    portS1.open(function (err) {
+                        if (err) {
+                            var errorstr = "Error opening port: " + err.message;
 
-                    } else {
-                        console.log("PORT OPENED");
-                    }
-                });
+                        } else {
+                            console.log("PORT OPENED");
+                        }
+                    });
+
+                }, 1000)
             });
 
             portS1.on('close', function () {
-                portS1.open(function (err) {
-                    if (err) {
-                        var errorstr = "Error opening port: " + err.message;
+                setTimeout(function() {
+                    portS1.open(function (err) {
+                        if (err) {
+                            var errorstr = "Error opening port: " + err.message;
 
-                    } else {
-                        console.log("PORT OPENED");
-                    }
-                });
+                        } else {
+                            console.log("PORT OPENED");
+                        }
+                    });
+
+                }, 1000)
             });
 
             const parser = portS1.pipe(new Readline({delimiter: '\r\n'}));
@@ -158,7 +93,7 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
                             // console.log("all ok");
                             is_offline = 0;
                         }
-                        let values = [response.device_id, response.latitude, response.longitude, response.speed, moment().valueOf(), moment().valueOf(), is_offline];
+                        let values = [response.device_id, response.latitude, response.longitude, response.speed, moment().valueOf(), moment().valueOf(), is_offline, response.track];
                         self.saveOfflineData(db, values);
                     });
 
@@ -166,10 +101,6 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
 
                 }
             });
-
-            // this.connect(options).then(() => {
-            //     this.setupParser(client, db);
-            // });
 
             client.on('data', function(data) {
                 if(self.isJsonString(data.toString())) {

@@ -136,7 +136,7 @@ class Worker extends SCWorker {
                 'device_id': row.device_id,
                 'latitude': row.lat,
                 'longitude': row.lng,
-                'speed': row.speed,
+                'speed': 33,
                 'createdAt': moment(Number.parseFloat(row.created_at)).format("YYYY-MM-DD HH:mm:ss"),
                 'updatedAt': moment(Number.parseFloat(row.updated_at)).format("YYYY-MM-DD HH:mm:ss")
             };

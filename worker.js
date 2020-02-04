@@ -154,7 +154,7 @@ class Worker extends SCWorker {
                             console.log("--------------------- enviado el dato offline -------------------------");
                         }
                     });
-                }, 500);
+                }, 800);
                 toSend = [];
                 counter = 0;
             }
@@ -172,7 +172,16 @@ class Worker extends SCWorker {
             });
 
         });
-
+        setTimeout(function() {
+            let buffer = Buffer.from(JSON.stringify(toSend));
+            client.write(buffer, function(err) {
+                if(err) {
+                    console.log("error enviando el dato offline");
+                } else {
+                    console.log("--------------------- enviado el dato offline -------------------------");
+                }
+            });
+        }, 500);
 
 
     }

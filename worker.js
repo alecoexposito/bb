@@ -158,8 +158,8 @@ class Worker extends SCWorker {
             counter++;
             toSendNow.push(toSend[i]);
             if(counter == 5) {
-                console.log("esperando 2 segundos");
-                await new Promise(r => setTimeout(r, 2000));
+                console.log("esperando 0.6 segundos");
+                await new Promise(r => setTimeout(r, 600));
                 console.log("pasaron los dos segundos, enviando: ", toSendNow);
                 let buffer = Buffer.from(JSON.stringify(toSendNow));
                 client.write(buffer, function(err) {

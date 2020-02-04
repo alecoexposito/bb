@@ -152,11 +152,13 @@ class Worker extends SCWorker {
 
         });
 
+        var toSendNow = [];
         for (var i = 0; i < toSend.length; i++) {
             counter++;
+            toSendNow.push()
             if(counter == 5) {
                 await new Promise(r => setTimeout(r, 800));
-                let buffer = Buffer.from(JSON.stringify(toSend));
+                let buffer = Buffer.from(JSON.stringify(toSendNow));
                 client.write(buffer, function(err) {
                     if(err) {
                         console.log("error enviando el dato offline");
@@ -165,10 +167,10 @@ class Worker extends SCWorker {
                     }
                 });
                 counter = 0;
-                toSend = [];
+                toSendNow = [];
             }
         }
-        let buffer = Buffer.from(JSON.stringify(toSend));
+        let buffer = Buffer.from(JSON.stringify(toSendNow));
         client.write(buffer, function(err) {
             if(err) {
                 console.log("error enviando el dato offline");

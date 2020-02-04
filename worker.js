@@ -122,7 +122,7 @@ class Worker extends SCWorker {
 
     }
 
-    syncOfflineData(client) {
+    async syncOfflineData(client) {
         console.log("sincronizando datos offline");
         var _this = this;
         let sql = "select * from info_data where is_offline = 1";
@@ -145,18 +145,17 @@ class Worker extends SCWorker {
             toSend.push(response);
             counter++;
             if(counter == 5) {
-                setTimeout(function() {
-                    let buffer = Buffer.from(JSON.stringify(toSend));
-                    client.write(buffer, function(err) {
-                        if(err) {
-                            console.log("error enviando el dato offline");
-                        } else {
-                            console.log("--------------------- enviado el dato offline -------------------------");
-                        }
-                    });
-                }, 800);
-                toSend = [];
+                await new Promise(r => setTimeout(r, 800));
+                let buffer = Buffer.from(JSON.stringify(toSend));
+                client.write(buffer, function(err) {
+                    if(err) {
+                        console.log("error enviando el dato offline");
+                    } else {
+                        console.log("--------------------- enviado el dato offline -------------------------");
+                    }
+                });
                 counter = 0;
+                toSend = [];
             }
         }, (err, count) => {
             if(err) {
@@ -172,17 +171,15 @@ class Worker extends SCWorker {
             });
 
         });
-        setTimeout(function() {
-            let buffer = Buffer.from(JSON.stringify(toSend));
-            client.write(buffer, function(err) {
-                if(err) {
-                    console.log("error enviando el dato offline");
-                } else {
-                    console.log("--------------------- enviado el dato offline -------------------------");
-                }
-            });
-        }, 500);
-
+        await new Promise(r => setTimeout(r, 800));
+        let buffer = Buffer.from(JSON.stringify(toSend));
+        client.write(buffer, function(err) {
+            if(err) {
+                console.log("error enviando el dato offline");
+            } else {
+                console.log("--------------------- enviado el dato offline -------------------------");
+            }
+        });
 
     }
 

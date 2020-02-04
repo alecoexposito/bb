@@ -146,7 +146,7 @@ class Worker extends SCWorker {
             counter++;
             if(counter == 5) {
                 setTimeout(function() {
-                    let buffer = Buffer.from(JSON.stringify(response));
+                    let buffer = Buffer.from(JSON.stringify(toSend));
                     client.write(buffer, function(err) {
                         if(err) {
                             console.log("error enviando el dato offline");
@@ -155,6 +155,7 @@ class Worker extends SCWorker {
                         }
                     });
                 }, 700);
+                toSend = [];
                 counter = 0;
             }
         }, (err, count) => {

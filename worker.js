@@ -123,7 +123,6 @@ class Worker extends SCWorker {
     }
 
     async syncOfflineData(client) {
-        console.log("sincronizando datos offline");
         var _this = this;
         let sql = "select * from info_data where is_offline = 1";
         let counter = 0;
@@ -151,16 +150,13 @@ class Worker extends SCWorker {
 
 
         });
-        console.log("esperando 4 segundos");
         await new Promise(r => setTimeout(r, 4000));
         var toSendNow = [];
         for (var i = 0; i < toSend.length; i++) {
             counter++;
             toSendNow.push(toSend[i]);
             if(counter == 5) {
-                console.log("esperando 0.6 segundos");
                 await new Promise(r => setTimeout(r, 600));
-                console.log("pasaron los dos segundos, enviando: ", toSendNow);
                 let buffer = Buffer.from(JSON.stringify(toSendNow));
                 client.write(buffer, function(err) {
                     if(err) {

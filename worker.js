@@ -131,14 +131,15 @@ class Worker extends SCWorker {
             if (err) {
                 throw err;
             }
-            console.log("row: ", row);
+            // console.log("row: ", row);
             let response = {
                 'device_id': row.device_id,
                 'latitude': row.lat,
                 'longitude': row.lng,
                 'speed': 33,
                 'createdAt': moment(Number.parseFloat(row.created_at)).format("YYYY-MM-DD HH:mm:ss"),
-                'updatedAt': moment(Number.parseFloat(row.updated_at)).format("YYYY-MM-DD HH:mm:ss")
+                'updatedAt': moment(Number.parseFloat(row.updated_at)).format("YYYY-MM-DD HH:mm:ss"),
+                'track': row.orientation_plain
             };
             let buffer = Buffer.from(JSON.stringify(response));
             client.write(buffer, function(err) {

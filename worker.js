@@ -126,7 +126,8 @@ class Worker extends SCWorker {
         console.log("sincronizando datos offline");
         var _this = this;
         let sql = "select * from info_data where is_offline = 1";
-
+        let counter = 0;
+        let toSend = [];
         _this.db.each(sql, [], (err, row) => {
             if (err) {
                 throw err;
@@ -141,16 +142,21 @@ class Worker extends SCWorker {
                 'updatedAt': moment(Number.parseFloat(row.updated_at)).format("YYYY-MM-DD HH:mm:ss"),
                 'track': row.orientation_plain
             };
-            let buffer = Buffer.from(JSON.stringify(response));
-            client.write(buffer, function(err) {
-                if(err) {
-                    console.log("error enviando el dato offline");
-                } else {
-                    console.log("--------------------- enviado el dato offline -------------------------");
-                }
-            });
-
-            console.log("a guardar en server: ", {deviceModel: 'BB', gpsData: response});
+            toSend.push(response);
+            counter++;
+            if(counter == 5) {
+                setTimeout(function() {
+                    let buffer = Buffer.from(JSON.stringify(response));
+                    client.write(buffer, function(err) {
+                        if(err) {
+                            console.log("error enviando el dato offline");
+                        } else {
+                            console.log("--------------------- enviado el dato offline -------------------------");
+                        }
+                    });
+                }, 700);
+                counter = 0;
+            }
         }, (err, count) => {
             if(err) {
                 return console.log("error ocurred retrieving offline data from sqlite");

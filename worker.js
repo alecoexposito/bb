@@ -151,7 +151,8 @@ class Worker extends SCWorker {
 
 
         });
-
+        console.log("esperando 4 segundos");
+        await new Promise(r => setTimeout(r, 4000));
         var toSendNow = [];
         for (var i = 0; i < toSend.length; i++) {
             counter++;

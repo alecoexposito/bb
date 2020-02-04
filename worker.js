@@ -128,7 +128,7 @@ class Worker extends SCWorker {
         let sql = "select * from info_data where is_offline = 1";
         let counter = 0;
         let toSend = [];
-        _this.db.each(sql, [], (err, row) => {
+        _this.db.each(sql, [], async (err, row) => {
             if (err) {
                 throw err;
             }
@@ -143,6 +143,16 @@ class Worker extends SCWorker {
                 'track': row.orientation_plain
             };
             toSend.push(response);
+
+        }, (err, count) => {
+            if(err) {
+                return console.log("error ocurred retrieving offline data from sqlite");
+            }
+
+
+        });
+
+        for (var i = 0; i < toSend.length; i++) {
             counter++;
             if(counter == 5) {
                 await new Promise(r => setTimeout(r, 800));
@@ -157,21 +167,7 @@ class Worker extends SCWorker {
                 counter = 0;
                 toSend = [];
             }
-        }, (err, count) => {
-            if(err) {
-                return console.log("error ocurred retrieving offline data from sqlite");
-            }
-
-            _this.db.run('update info_data set is_offline = 0 where is_offline = 1', [], function(err) {
-                if(err) {
-                    return console.log(console.log(err.message));
-                }
-
-                console.log('updateados a 0 los datos offline sincronizados');
-            });
-
-        });
-        await new Promise(r => setTimeout(r, 800));
+        }
         let buffer = Buffer.from(JSON.stringify(toSend));
         client.write(buffer, function(err) {
             if(err) {
@@ -180,6 +176,15 @@ class Worker extends SCWorker {
                 console.log("--------------------- enviado el dato offline -------------------------");
             }
         });
+
+        _this.db.run('update info_data set is_offline = 0 where is_offline = 1', [], function(err) {
+            if(err) {
+                return console.log(console.log(err.message));
+            }
+
+            console.log('updateados a 0 los datos offline sincronizados');
+        });
+
 
     }
 

@@ -154,7 +154,7 @@ class Worker extends SCWorker {
                             console.log("--------------------- enviado el dato offline -------------------------");
                         }
                     });
-                }, 700);
+                }, 500);
                 toSend = [];
                 counter = 0;
             }

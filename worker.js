@@ -149,6 +149,7 @@ class Worker extends SCWorker {
                     console.log("--------------------- enviado el dato offline -------------------------");
                 }
             });
+
             console.log("a guardar en server: ", {deviceModel: 'BB', gpsData: response});
         }, (err, count) => {
             if(err) {
@@ -236,8 +237,10 @@ class Worker extends SCWorker {
         var socket = socketClient.connect(options);
         socket.on('connect', function () {
             console.log("conectado al server websocket del tracker");
+            socket.setNoDelay(true);
             client.connect(optionsClient.port, optionsClient.ipAddress, function () {
                 console.log('----------------------------- CLIENT CONNECTED ------------------------------');
+                client.setNoDelay(true);
                 _this.syncOfflineData(client);
 
             });

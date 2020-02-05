@@ -16,6 +16,7 @@ var Readable = require('stream').Readable
 var Client = require('node-rest-client').Client;
 
 var socketClient = require('socketcluster-client');
+var request = require('request')
 
 class Worker extends SCWorker {
 
@@ -603,9 +604,21 @@ class Worker extends SCWorker {
         // console.log("going to write to server: ", data.file);
         // fileBuffer.pipe(this.clientSocketTracker);
         // await new Promise(r => setTimeout(r, 200));
-        var file = fs.readFileSync(location + "/" + data.fileName);
+        // var file = fs.readFileSync(location + "/" + data.fileName);
         var dataToSend = data;
-        dataToSend.fileData = file.toString("base64");
+        // dataToSend.fileData = file.toString("base64");
+
+        request.post({
+            url: 'http://' + process.env.API_URL + '/upload-ts-file',
+            formData: {
+                file: fs.createReadStream(location + "/" + data.fileName),
+                filetype: 'ts',
+                filename: data.fileName,
+                deviceId: data.deviceId,
+            }
+        }, function(error, response, body) {
+            console.log(body);
+        });
 
         channel.publish(dataToSend);
     }

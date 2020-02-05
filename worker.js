@@ -617,7 +617,7 @@ class Worker extends SCWorker {
                 deviceId: data.deviceId,
             }
         }, function(error, response, body) {
-            console.log(body);
+            // console.log(body);
         });
 
         channel.publish(dataToSend);

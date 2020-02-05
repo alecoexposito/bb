@@ -602,7 +602,7 @@ class Worker extends SCWorker {
         // var fileBuffer = fs.createReadStream(data.file);
         // console.log("going to write to server: ", data.file);
         // fileBuffer.pipe(this.clientSocketTracker);
-        await new Promise(r => setTimeout(r, 200));
+        // await new Promise(r => setTimeout(r, 200));
         var file = fs.readFileSync(location + "/" + data.fileName);
         var dataToSend = data;
         dataToSend.fileData = file.toString("base64");

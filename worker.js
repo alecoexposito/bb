@@ -603,13 +603,13 @@ class Worker extends SCWorker {
         // var fileBuffer = fs.createReadStream(data.file);
         // console.log("going to write to server: ", data.file);
         // fileBuffer.pipe(this.clientSocketTracker);
-        // await new Promise(r => setTimeout(r, 200));
+        await new Promise(r => setTimeout(r, 200));
         // var file = fs.readFileSync(location + "/" + data.fileName);
         var dataToSend = data;
         // dataToSend.fileData = file.toString("base64");
 
         request.post({
-            url: 'http://' + process.env.API_URL + '/upload-ts-file',
+            url: process.env.API_URL + '/upload-ts-file',
             formData: {
                 file: fs.createReadStream(location + "/" + data.fileName),
                 filetype: 'ts',

@@ -331,7 +331,7 @@ class Worker extends SCWorker {
                     var lastUtilityLine = "";
                     var noFileFound = true;
                     lineReader.on('line', function (line) {
-                        console.log("line readed: ", line);
+                        console.log("line read: ", line);
                         if(line.startsWith("#")) {
                             lastUtilityLine = line;
                         } else {
@@ -597,11 +597,12 @@ class Worker extends SCWorker {
 
     }
 
-    sendToServer(data, channel, location) {
+    async sendToServer(data, channel, location) {
         //send a file to the server
         // var fileBuffer = fs.createReadStream(data.file);
         // console.log("going to write to server: ", data.file);
         // fileBuffer.pipe(this.clientSocketTracker);
+        await new Promise(r => setTimeout(r, 200));
         var file = fs.readFileSync(location + "/" + data.fileName);
         var dataToSend = data;
         dataToSend.fileData = file.toString("base64");

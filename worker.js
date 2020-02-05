@@ -331,6 +331,7 @@ class Worker extends SCWorker {
                     var lastUtilityLine = "";
                     var noFileFound = true;
                     lineReader.on('line', function (line) {
+                        console.log("line readed: ", line);
                         if(line.startsWith("#")) {
                             lastUtilityLine = line;
                         } else {

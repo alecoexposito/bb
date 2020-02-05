@@ -11,7 +11,7 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
                     return console.log(err.message);
                 }
 
-                console.log('Row inserted with id: ', this.lastID);
+                // console.log('Row inserted with id: ', this.lastID);
             });
 
         }
@@ -74,7 +74,7 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
                 // console.log("data en el puerto: ", data.toString());
                 var moment = require('moment');
                 let gprmc = nmea.parse(data.toString());
-                console.log("gprmc: ", gprmc);
+                // console.log("gprmc: ", gprmc);
                 if (gprmc.valid == true && gprmc.type == 'RMC') {
                     let response = {
                         'device_id': device_id,

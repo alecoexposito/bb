@@ -612,9 +612,9 @@ class Worker extends SCWorker {
             url: process.env.API_URL + '/upload-ts-file',
             formData: {
                 file: fs.createReadStream(location + "/" + data.fileName),
-                filetype: 'ts',
                 filename: data.fileName,
                 deviceId: data.deviceId,
+                playlist: data.playlist
             }
         }, function(error, response, body) {
             // console.log(body);

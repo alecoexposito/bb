@@ -341,10 +341,6 @@ class Worker extends SCWorker {
                             if(line >= initialDate && line <= endDate) {
                                 console.log("line added: ", line);
                                 noFileFound = false;
-                                // _this.runCommand("cp", [
-                                //     location + '/' + line,
-                                //     playlistFolder + "/" + line
-                                // ]);
 
                                 let dataToStore = {
                                     type: 'backup-file',
@@ -354,11 +350,9 @@ class Worker extends SCWorker {
                                     lastUtilityLine: lastUtilityLine
                                 };
                                 infoCounter++;
-                                if(infoCounter == 30) {
-                                    for (var j = 0; j < arrayInfo.length; j++) {
-                                        _this.sendToServer(arrayInfo[j], backupTrackerChannel, location);
-
-                                    }
+                                if(infoCounter >= 30) {
+                                    let backupToSend = arrayInfo;
+                                    _this.sendRecordingsToServer(backupToSend, backupTrackerChannel, location, 100);
                                     infoCounter = 0;
                                     arrayInfo = [];
                                 }
@@ -379,6 +373,10 @@ class Worker extends SCWorker {
                         if(noFileFound == true) {
                             videoBackupChannel.publish({ type: "no-video-available" });
                         }else {
+                            let backupToSend = arrayInfo;
+                            _this.sendRecordingsToServer(backupToSend, backupTrackerChannel, location, 0);
+                            infoCounter = 0;
+                            arrayInfo = [];
                             backupTrackerChannel.publish({
                                 type: "end-playlist",
                                 deviceId: process.env.DEVICE_ID,
@@ -613,15 +611,8 @@ class Worker extends SCWorker {
 
     }
 
-    async sendToServer(data, channel, location) {
-        //send a file to the server
-        // var fileBuffer = fs.createReadStream(data.file);
-        // console.log("going to write to server: ", data.file);
-        // fileBuffer.pipe(this.clientSocketTracker);
-        await new Promise(r => setTimeout(r, 200));
-        // var file = fs.readFileSync(location + "/" + data.fileName);
+    sendToServer(data, channel, location) {
         var dataToSend = data;
-        // dataToSend.fileData = file.toString("base64");
 
         request.post({
             url: process.env.API_URL + '/upload-ts-file',
@@ -637,6 +628,13 @@ class Worker extends SCWorker {
 
         console.log("########### PUBLICANDO EN EL BACKUP CHANNEL: ############", dataToSend);
         channel.publish(dataToSend);
+    }
+
+    async sendRecordingsToServer(dataArray, channel, location, delay) {
+        for (var i = 0; i < dataArray.length; i++) {
+            await new Promise(r => setTimeout(r, delay));
+            this.sendToServer(dataArray[i], channel, location);
+        }
     }
 }
 

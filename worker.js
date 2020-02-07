@@ -349,13 +349,13 @@ class Worker extends SCWorker {
                                     playlist: data.playlistName,
                                     lastUtilityLine: lastUtilityLine
                                 };
-                                infoCounter++;
-                                if(infoCounter >= 30) {
-                                    let backupToSend = arrayInfo;
-                                    _this.sendRecordingsToServer(backupToSend, backupTrackerChannel, location, 100);
-                                    infoCounter = 0;
-                                    arrayInfo = [];
-                                }
+                                // infoCounter++;
+                                // if(infoCounter >= 30) {
+                                //     let backupToSend = arrayInfo;
+                                //     _this.sendRecordingsToServer(backupToSend, backupTrackerChannel, location, 100);
+                                //     infoCounter = 0;
+                                //     arrayInfo = [];
+                                // }
 
                                 arrayInfo.push(dataToStore);
 
@@ -379,7 +379,7 @@ class Worker extends SCWorker {
                                 deviceId: process.env.DEVICE_ID,
                                 playlist: data.playlistName,
                             }
-                            _this.sendRecordingsToServer(backupToSend, backupTrackerChannel, location, 200,  endObj);
+                            _this.sendRecordingsToServer(arrayInfo, backupTrackerChannel, location, 200,  endObj);
                             infoCounter = 0;
                             arrayInfo = [];
 

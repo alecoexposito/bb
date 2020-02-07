@@ -356,7 +356,7 @@ class Worker extends SCWorker {
                                 infoCounter++;
                                 if(infoCounter == 30) {
                                     for (var j = 0; j < arrayInfo.length; j++) {
-                                        _this.sendToServer(arrayInfo[i], backupTrackerChannel, location);
+                                        _this.sendToServer(arrayInfo[j], backupTrackerChannel, location);
 
                                     }
                                     infoCounter = 0;

@@ -620,6 +620,7 @@ class Worker extends SCWorker {
             // console.log(body);
         });
 
+        console.log("########### PUBLICANDO EN EL BACKUP CHANNEL: ############", dataToSend);
         channel.publish(dataToSend);
     }
 }

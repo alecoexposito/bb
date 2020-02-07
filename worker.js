@@ -368,24 +368,30 @@ class Worker extends SCWorker {
 
                     });
 
-                    lineReader.on('close', function() {
+                    lineReader.on('close', async function() {
                         console.log("process finished");
                         if(noFileFound == true) {
                             videoBackupChannel.publish({ type: "no-video-available" });
                         }else {
                             let backupToSend = arrayInfo;
-                            _this.sendRecordingsToServer(backupToSend, backupTrackerChannel, location, 200);
-                            infoCounter = 0;
-                            arrayInfo = [];
-                            backupTrackerChannel.publish({
+                            let endObj = {
                                 type: "end-playlist",
                                 deviceId: process.env.DEVICE_ID,
                                 playlist: data.playlistName,
-                            });
-                            // _this.writeToPlayList(playlistFile, "#EXT-X-ENDLIST");
-                            videoBackupChannel.publish({
-                                type: "play-recorded-video",
-                            });
+                            }
+                            _this.sendRecordingsToServer(backupToSend, backupTrackerChannel, location, 200,  endObj);
+                            infoCounter = 0;
+                            arrayInfo = [];
+
+                            // backupTrackerChannel.publish({
+                            //     type: "end-playlist",
+                            //     deviceId: process.env.DEVICE_ID,
+                            //     playlist: data.playlistName,
+                            // });
+                            // // _this.writeToPlayList(playlistFile, "#EXT-X-ENDLIST");
+                            // videoBackupChannel.publish({
+                            //     type: "play-recorded-video",
+                            // });
                         }
                     });
                 } else if(data.type == "stop-video-backup") {
@@ -630,10 +636,17 @@ class Worker extends SCWorker {
         channel.publish(dataToSend);
     }
 
-    async sendRecordingsToServer(dataArray, channel, location, delay) {
+    async sendRecordingsToServer(dataArray, channel, location, delay, endData) {
         for (var i = 0; i < dataArray.length; i++) {
             await new Promise(r => setTimeout(r, delay));
             this.sendToServer(dataArray[i], channel, location);
+        }
+        if (endData) {
+            channel.publish(endData);
+            await new Promise(r => setTimeout(r, 100));
+            channel.publish({
+                type: "play-recorded-video",
+            });
         }
     }
 }

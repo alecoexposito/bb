@@ -325,6 +325,8 @@ class Worker extends SCWorker {
                     // _this.initPlayList(playlistFile, playlistFolder);
 
                     var count = 1;
+                    var playlistSize = 0;
+                    playlistSize =  _this.getFilesizeInBytes(location + '/playlist.m3u8');
                     var lineReader = lr.createInterface({
                         input: fs.createReadStream(location + '/playlist.m3u8')
                     });
@@ -349,13 +351,14 @@ class Worker extends SCWorker {
                                     playlist: data.playlistName,
                                     lastUtilityLine: lastUtilityLine
                                 };
-                                // infoCounter++;
-                                // if(infoCounter >= 30) {
-                                //     let backupToSend = arrayInfo;
-                                //     _this.sendRecordingsToServer(backupToSend, backupTrackerChannel, location, 100);
-                                //     infoCounter = 0;
-                                //     arrayInfo = [];
-                                // }
+                                infoCounter++;
+                                if(infoCounter >= 5 && playlistSize > 10000) {
+                                    let backupToSend = arrayInfo;
+                                    _this.sendRecordingsToServer(backupToSend, backupTrackerChannel, location, 100);
+                                    infoCounter = 0;
+                                    arrayInfo = [];
+                                    playlistSize = 0;
+                                }
 
                                 arrayInfo.push(dataToStore);
 
@@ -648,6 +651,12 @@ class Worker extends SCWorker {
                 type: "play-recorded-video",
             });
         }
+    }
+
+    getFilesizeInBytes(filename) {
+        var stats = fs.statSync(filename)
+        var fileSizeInBytes = stats["size"]
+        return fileSizeInBytes
     }
 }
 

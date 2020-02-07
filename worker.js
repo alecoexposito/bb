@@ -356,13 +356,7 @@ class Worker extends SCWorker {
                                 infoCounter++;
                                 if(infoCounter == 30) {
                                     for (var j = 0; j < arrayInfo.length; j++) {
-                                        _this.sendToServer({
-                                            type: 'backup-file',
-                                            fileName: line,
-                                            deviceId: process.env.DEVICE_ID,
-                                            playlist: data.playlistName,
-                                            lastUtilityLine: lastUtilityLine
-                                        }, backupTrackerChannel, location);
+                                        _this.sendToServer(arrayInfo[i], backupTrackerChannel, location);
 
                                     }
                                     infoCounter = 0;

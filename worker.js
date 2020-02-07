@@ -331,6 +331,8 @@ class Worker extends SCWorker {
 
                     var lastUtilityLine = "";
                     var noFileFound = true;
+                    var arrayInfo = [];
+                    var infoCounter = 0;
                     lineReader.on('line', function (line) {
                         console.log("line read: ", line);
                         if(line.startsWith("#")) {
@@ -343,13 +345,32 @@ class Worker extends SCWorker {
                                 //     location + '/' + line,
                                 //     playlistFolder + "/" + line
                                 // ]);
-                                _this.sendToServer({
+
+                                let data = {
                                     type: 'backup-file',
                                     fileName: line,
                                     deviceId: process.env.DEVICE_ID,
                                     playlist: data.playlistName,
                                     lastUtilityLine: lastUtilityLine
-                                }, backupTrackerChannel, location);
+                                };
+                                infoCounter++;
+                                if(infoCounter == 30) {
+                                    for (var j = 0; j < arrayInfo.length; j++) {
+                                        _this.sendToServer({
+                                            type: 'backup-file',
+                                            fileName: line,
+                                            deviceId: process.env.DEVICE_ID,
+                                            playlist: data.playlistName,
+                                            lastUtilityLine: lastUtilityLine
+                                        }, backupTrackerChannel, location);
+
+                                    }
+                                    infoCounter = 0;
+                                    arrayInfo = [];
+                                }
+
+                                arrayInfo.push(data);
+
                                 // _this.addTsToPlaylist(line, playlistFile, lastUtilityLine);
                             } else if(line > endDate) {
                                 console.log("ultima linea leida");

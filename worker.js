@@ -374,7 +374,7 @@ class Worker extends SCWorker {
                             videoBackupChannel.publish({ type: "no-video-available" });
                         }else {
                             let backupToSend = arrayInfo;
-                            _this.sendRecordingsToServer(backupToSend, backupTrackerChannel, location, 0);
+                            _this.sendRecordingsToServer(backupToSend, backupTrackerChannel, location, 200);
                             infoCounter = 0;
                             arrayInfo = [];
                             backupTrackerChannel.publish({

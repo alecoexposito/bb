@@ -346,7 +346,7 @@ class Worker extends SCWorker {
                                 //     playlistFolder + "/" + line
                                 // ]);
 
-                                let data = {
+                                let dataToStore = {
                                     type: 'backup-file',
                                     fileName: line,
                                     deviceId: process.env.DEVICE_ID,
@@ -363,7 +363,7 @@ class Worker extends SCWorker {
                                     arrayInfo = [];
                                 }
 
-                                arrayInfo.push(data);
+                                arrayInfo.push(dataToStore);
 
                                 // _this.addTsToPlaylist(line, playlistFile, lastUtilityLine);
                             } else if(line > endDate) {

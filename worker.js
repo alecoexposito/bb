@@ -234,14 +234,14 @@ class Worker extends SCWorker {
         var client = new net.Socket();
         client.on('error', function (err) {
             console.log('error conectandose al tracker: ', err);
-            setTimeout(function() {
-                console.log("intentando conectarse al tracker again");
-                client.connect(optionsClient.port, optionsClient.ipAddress, function () {
-                    console.log('----------------------------- CLIENT CONNECTED ------------------------------');
-                    // _this.syncOfflineData(client);
-
-                });
-            }, 10000)
+            // setTimeout(function() {
+            //     console.log("intentando conectarse al tracker again");
+            //     client.connect(optionsClient.port, optionsClient.ipAddress, function () {
+            //         console.log('----------------------------- CLIENT CONNECTED ------------------------------');
+            //         // _this.syncOfflineData(client);
+            //
+            //     });
+            // }, 10000)
         });
 
 

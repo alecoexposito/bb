@@ -240,10 +240,10 @@ class Worker extends SCWorker {
         });
     }
 
-    launchIntervalConnect() {
+    launchIntervalConnect(options) {
         if(false != this.intervalConnect)
             return;
-        this.intervalConnect = setInterval(this.connect, 5000)
+        this.intervalConnect = setInterval(this.connect(options), 5000)
     }
 
     clearIntervalConnect() {
@@ -273,6 +273,12 @@ class Worker extends SCWorker {
         //     //     });
         //     // }, 10000)
         // });
+        var options = {
+            secure: false,
+            hostname: process.env.TRACKER_IP,
+            port: 3001,
+            autoReconnect: true
+        };
         this.client = new net.Socket();
         this.client.on('connect', () => {
             this.clearIntervalConnect()
@@ -284,18 +290,12 @@ class Worker extends SCWorker {
 
         this.client.on('error', (err) => {
 
-            this.launchIntervalConnect()
+            this.launchIntervalConnect(options);
         });
 
-        this.client.on('close', this.launchIntervalConnect);
-        this.client.on('end', this.launchIntervalConnect);
+        this.client.on('close', this.launchIntervalConnect(options));
+        this.client.on('end', this.launchIntervalConnect(options));
 
-        var options = {
-            secure: false,
-            hostname: process.env.TRACKER_IP,
-            port: 3001,
-            autoReconnect: true
-        };
 
         this.connect(options);
         bb.run(optionsClient, this.client, _this.db);

@@ -249,9 +249,9 @@ class Worker extends SCWorker {
         });
 
     }
-
+    client = this.client;
     connect(options) {
-        this.client.connect({
+        client.connect({
             port: options.port,
             host: options.host
         });

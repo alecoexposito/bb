@@ -236,7 +236,7 @@ class Worker extends SCWorker {
         this.client = new net.Socket();
         this.client.connect({
             port: 3002,
-            host: this.options.host
+            host: '69.64.32.172'
         });
     }
 

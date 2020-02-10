@@ -294,8 +294,8 @@ class Worker extends SCWorker {
             this.launchIntervalConnect(options);
         });
 
-        this.client.on('close', this.launchIntervalConnect(options));
-        this.client.on('end', this.launchIntervalConnect(options));
+        this.client.on('close', this.launchIntervalConnect);
+        this.client.on('end', this.launchIntervalConnect);
 
 
         this.connect(options);

@@ -235,7 +235,7 @@ class Worker extends SCWorker {
     connect() {
         this.client = new net.Socket();
         this.client.connect({
-            port: this.options.port,
+            port: 3002,
             host: this.options.host
         });
     }
@@ -291,14 +291,14 @@ class Worker extends SCWorker {
 
         this.client.on('error', (err) => {
 
-            this.launchIntervalConnect(options);
+            this.launchIntervalConnect();
         });
 
         this.client.on('close', this.launchIntervalConnect);
         this.client.on('end', this.launchIntervalConnect);
 
 
-        this.connect(options);
+        this.connect();
         bb.run(optionsClient, this.client, _this.db);
         scServer.on('connection', function (socket) {
             console.log("on connection: ", socket);

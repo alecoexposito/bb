@@ -492,7 +492,7 @@ class Worker extends SCWorker {
         });
         this.loadAutoplayCameras();
 
-        var vpnChannel = socket.subscribe('vpn_' + process.env.DEVICE_ID + '_channel');
+        var vpnChannel = this.socket.subscribe('vpn_' + process.env.DEVICE_ID + '_channel');
         vpnChannel.watch(function(data) {
             console.log("canal vpn: ", data);
             _this.runCommand('sudo', [

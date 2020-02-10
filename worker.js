@@ -232,9 +232,9 @@ class Worker extends SCWorker {
         });
 
     }
-    connect() {
-        this.client = new net.Socket();
-        this.client.connect(3002, process.env.TRACKER_IP);
+    connect(client) {
+        // this.client = new net.Socket();
+        _this.client.connect(3002, process.env.TRACKER_IP);
     }
 
     launchIntervalConnect(socket) {
@@ -294,8 +294,8 @@ class Worker extends SCWorker {
         var socket = socketClient.connect(options);
         socket.on('connect', function () {
             console.log("conectado al server websocket del tracker");
-            // _this.connect();
-            _this.client.connect(optionsClient.port, optionsClient.ipAddress);
+            _this.connect();
+            // _this.client.connect(optionsClient.port, optionsClient.ipAddress);
             _this.client.on('connect', function() {
                 console.log('----------------------------- CLIENT CONNECTED ------------------------------');
                 _this.client.setNoDelay(true);

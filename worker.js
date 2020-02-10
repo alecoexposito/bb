@@ -234,7 +234,7 @@ class Worker extends SCWorker {
     }
     connect(client) {
         // this.client = new net.Socket();
-        _this.client.connect(3002, process.env.TRACKER_IP);
+        this.client.connect(3002, process.env.TRACKER_IP);
     }
 
     launchIntervalConnect(socket) {

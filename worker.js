@@ -254,15 +254,15 @@ class Worker extends SCWorker {
     }
 
     launchIntervalConnect() {
-        if(false != intervalConnect)
+        if(false != this.intervalConnect)
             return;
         this.intervalConnect = setInterval(connect, 5000)
     }
 
     clearIntervalConnect() {
-        if(false == intervalConnect)
+        if(false == this.intervalConnect)
             return;
-        clearInterval(intervalConnect)
+        clearInterval(this.intervalConnect)
         this.intervalConnect = false
     }
 

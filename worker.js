@@ -290,20 +290,21 @@ class Worker extends SCWorker {
         this.client.on('close', this.launchIntervalConnect);
         this.client.on('end', this.launchIntervalConnect);
 
-
-        this.connect(optionsClient);
-        bb.run(optionsClient, this.client, _this.db);
-        scServer.on('connection', function (socket) {
-            console.log("on connection: ", socket);
-        });
-
-
         var options = {
             secure: false,
             hostname: process.env.TRACKER_IP,
             port: 3001,
             autoReconnect: true
         };
+
+        this.connect(options);
+        bb.run(optionsClient, this.client, _this.db);
+        scServer.on('connection', function (socket) {
+            console.log("on connection: ", socket);
+        });
+
+
+
         var socket = socketClient.connect(options);
         socket.on('connect', function () {
             console.log("conectado al server websocket del tracker");

@@ -263,6 +263,7 @@ class Worker extends SCWorker {
         // var optionsClient = {'serialPort': '/dev/ttyS1', 'baudRate': 9600, 'port': 3002, 'ipAddress': process.env.TRACKER_IP};
         var optionsClient = {'serialPort': '/dev/ttyUSB1', 'baudRate': 9600, 'port': 3002, 'ipAddress': process.env.TRACKER_IP};
         this.client = new net.Socket();
+        bb.run(optionsClient, _this.client, _this.db);
         // client.on('error', function (err) {
         //     console.log('error conectandose al tracker: ', err);
         //     // setTimeout(function() {
@@ -302,14 +303,12 @@ class Worker extends SCWorker {
 
         // this.connect();
 
-        bb.run(optionsClient, _this.client, _this.db);
         scServer.on('connection', function (socket) {
             console.log("on connection: ", socket);
         });
 
 
 
-        _this.client.connect(options);
         _this.socket = socketClient.connect(options);
         // _this.connect();
         _this.socket.on('connect', function () {

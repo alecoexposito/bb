@@ -238,9 +238,6 @@ class Worker extends SCWorker {
         //     port: 3002,
         //     host: process.env.TRACKER_IP
         // });
-        
-        this.socket.removeAllListeners();
-
         this.socket = socketClient.connect(this.options);
     }
 
@@ -332,6 +329,7 @@ class Worker extends SCWorker {
 
         _this.socket.on('close', function() {
             console.log("on close: ");
+            _this.socket.removeAllListeners();
             _this.launchIntervalConnect();
             // socket = socketClient.connect(options);
         });

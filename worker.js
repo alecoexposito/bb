@@ -232,18 +232,18 @@ class Worker extends SCWorker {
         });
 
     }
-    connect(options) {
+    connect() {
         this.client = new net.Socket();
         this.client.connect({
-            port: options.port,
-            host: options.host
+            port: this.options.port,
+            host: this.options.host
         });
     }
 
-    launchIntervalConnect(options) {
+    launchIntervalConnect() {
         if(false != this.intervalConnect)
             return;
-        this.intervalConnect = setInterval(this.connect(options), 5000)
+        this.intervalConnect = setInterval(this.connect, 5000)
     }
 
     clearIntervalConnect() {
@@ -279,6 +279,7 @@ class Worker extends SCWorker {
             port: 3001,
             autoReconnect: true
         };
+        this.options = options;
         this.client = new net.Socket();
         this.client.on('connect', () => {
             this.clearIntervalConnect()

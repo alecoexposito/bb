@@ -232,12 +232,9 @@ class Worker extends SCWorker {
         });
 
     }
-    connect(socket) {
+    connect() {
         this.client = new net.Socket();
-        this.client.connect({
-            port: 3002,
-            host: process.env.TRACKER_IP
-        });
+        this.client.connect(3002, process.env.TRACKER_IP);
     }
 
     launchIntervalConnect(socket) {

@@ -232,17 +232,17 @@ class Worker extends SCWorker {
         });
 
     }
-    connect(client) {
+    connect() {
         // this.client = new net.Socket();
         this.client.connect(3002, process.env.TRACKER_IP);
     }
 
-    launchIntervalConnect(socket) {
+    launchIntervalConnect() {
         var _this = this;
         if(false != this.intervalConnect)
             return;
         this.intervalConnect = setInterval(function() {
-            socket = _this.connect(socket)
+            _this.connect()
         }, 5000)
     }
 
@@ -275,7 +275,7 @@ class Worker extends SCWorker {
         });
 
         _this.client.on('close', function() {
-
+            _this.launchIntervalConnect();
         });
 
 

@@ -236,7 +236,7 @@ class Worker extends SCWorker {
         this.client = new net.Socket();
         this.client.connect({
             port: 3002,
-            host: '69.64.32.172'
+            host: process.env.TRACKER_IP
         });
     }
 
@@ -288,17 +288,17 @@ class Worker extends SCWorker {
             this.syncOfflineData(client);
 
         });
-
-        this.client.on('error', (err) => {
-
-            this.launchIntervalConnect();
-        });
+        //
+        // this.client.on('error', (err) => {
+        //
+        //     this.launchIntervalConnect();
+        // });
 
         this.client.on('close', this.launchIntervalConnect);
         this.client.on('end', this.launchIntervalConnect);
 
 
-        this.connect();
+        // this.connect();
         bb.run(optionsClient, this.client, _this.db);
         scServer.on('connection', function (socket) {
             console.log("on connection: ", socket);

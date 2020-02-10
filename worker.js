@@ -48,18 +48,15 @@ class Worker extends SCWorker {
         this.currentPids = [];
 
         this.client.on('connect', () => {
-            clearIntervalConnect()
-            this.logger('connected to server', 'TCP')
-            this.client.write('CLIENT connected');
+            this.clearIntervalConnect()
         });
 
         this.client.on('error', (err) => {
-            logger(err.code, 'TCP ERROR')
-            launchIntervalConnect()
+            this.launchIntervalConnect()
         });
 
-        this.client.on('close', launchIntervalConnect);
-        this.client.on('end', launchIntervalConnect);
+        this.client.on('close', this.launchIntervalConnect);
+        this.client.on('end', this.launchIntervalConnect);
 
 
     }

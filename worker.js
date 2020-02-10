@@ -309,6 +309,7 @@ class Worker extends SCWorker {
 
 
 
+        _this.client.connect(options);
         _this.socket = socketClient.connect(options);
         // _this.connect();
         _this.socket.on('connect', function () {

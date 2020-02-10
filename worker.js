@@ -315,11 +315,12 @@ class Worker extends SCWorker {
         this.socket.on('connect', function () {
             console.log("conectado al server websocket del tracker");
             // client.connect(optionsClient.port, optionsClient.ipAddress, function () {
-            //     console.log('----------------------------- CLIENT CONNECTED ------------------------------');
-            //     client.setNoDelay(true);
-            //     _this.syncOfflineData(client);
-            //
-            // });
+                console.log('----------------------------- CLIENT CONNECTED ------------------------------');
+                _this.clearIntervalConnect();
+                client.setNoDelay(true);
+                _this.syncOfflineData(client);
+
+            });
         });
         this.socket.on('error', function(err) {
             console.log("error ocurred: ", err);
@@ -328,7 +329,7 @@ class Worker extends SCWorker {
 
         this.socket.on('close', function() {
             console.log("on close: ");
-            this.launchIntervalConnect();
+            _this.launchIntervalConnect();
             // socket = socketClient.connect(options);
         });
 

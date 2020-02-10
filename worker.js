@@ -111,6 +111,8 @@ class Worker extends SCWorker {
         console.log("enviando single-image");
         let filePath = "/home/zurikato/camera-local/single-camera.jpg";
         let seconds = moment(modifiedAt).unix();
+        console.log("modified at: ", modifiedAt);
+        console.log("************* segundos: ", seconds);
         let currentSeconds = moment().unix();
         let old = (currentSeconds - seconds) >= 10;
         try {

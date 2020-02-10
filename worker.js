@@ -112,7 +112,7 @@ class Worker extends SCWorker {
         console.log("enviando single-image");
         let filePath = "/home/zurikato/camera-local/single-camera.jpg";
 
-        let old = _this.singleImageLastMd5 !== md5;
+        let old = _this.singleImageLastMd5 === md5;
         try {
             var imageFile = fs.readFileSync(filePath);
             channel.publish({

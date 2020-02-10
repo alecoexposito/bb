@@ -16,7 +16,8 @@ var Readable = require('stream').Readable
 var Client = require('node-rest-client').Client;
 
 var socketClient = require('socketcluster-client');
-var request = require('request')
+var request = require('request');
+const md5File = require('md5-file');
 
 class Worker extends SCWorker {
 
@@ -106,18 +107,12 @@ class Worker extends SCWorker {
 
     }
 
-    sendSingleImageWebsocket(channel, imei, name, vehicle, modifiedAt) {
+    sendSingleImageWebsocket(channel, imei, name, vehicle, md5) {
         var _this = this;
         console.log("enviando single-image");
         let filePath = "/home/zurikato/camera-local/single-camera.jpg";
-        let seconds = moment(modifiedAt).unix();
-        console.log("modified at: ", modifiedAt);
-        console.log("************* segundos: ", seconds);
-        let currentSeconds = moment().unix();
-        console.log("************* current segundos: ", currentSeconds);
 
-        console.log("RESTA DE LOS SEGUNDOS: ", currentSeconds - seconds);
-        let old = (currentSeconds - seconds) >= 400;
+        let old = _this.singleImageLastMd5 !== md5;
         try {
             var imageFile = fs.readFileSync(filePath);
             channel.publish({
@@ -221,17 +216,16 @@ class Worker extends SCWorker {
                 let intervalC = setInterval(function() {
                     // var urlCamera = 'rtsp://192.168.1.30:554/user=admin&password=&channel=1&stream=1.sdp';
                     let path = '/home/zurikato/scripts/single-image.sh';
+                    _this.singleImageLastMd5 = md5File.sync(path);
                     let singleCameraCommand = _this.runCommand('bash', [
                         path,
                         urlCamera
                     ]);
-                    console.log("en el ciclo")
                     setTimeout(function() {
-                        let stats = fs.statSync(path)
-                        console.log("stats: ", stats);
-                        let singleImagelastModified = stats.ctime;
+                        let singleImageMd5 = md5File.sync(path);
+                        console.log("MD5: ", singleImageMd5);
 
-                        _this.sendSingleImageWebsocket(_this.cameraSingleChannel, process.env.DEVICE_IMEI, cameraName, vehicle, singleImagelastModified);
+                        _this.sendSingleImageWebsocket(_this.cameraSingleChannel, process.env.DEVICE_IMEI, cameraName, vehicle, singleImageMd5);
                     }, 4000)
                 }, intervalSeconds * 1000);
                 _this.autoplayCameraIntervals.push(intervalC);

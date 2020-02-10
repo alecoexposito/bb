@@ -324,6 +324,7 @@ class Worker extends SCWorker {
 
         _this.socket.on('error', function(err) {
             console.log("error ocurred: ", err);
+            _this.launchIntervalConnect();
             // socket = socketClient.connect(options);
         });
 

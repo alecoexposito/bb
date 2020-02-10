@@ -228,7 +228,7 @@ class Worker extends SCWorker {
                     setTimeout(function() {
                         let stats = fs.statSync("/home/zurikato/camera-local/single-camera.jpg");
                         console.log("stats: ", stats);
-                        let singleImagelastModified = stats.ctime;
+                        let singleImagelastModified = stats.mtime;
 
                         _this.sendSingleImageWebsocket(_this.cameraSingleChannel, process.env.DEVICE_IMEI, cameraName, vehicle, singleImagelastModified);
                     }, 4000)

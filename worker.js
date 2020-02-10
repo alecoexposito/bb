@@ -63,7 +63,6 @@ class Worker extends SCWorker {
         this.client.on('close', this.launchIntervalConnect);
         this.client.on('end', this.launchIntervalConnect);
 
-
     }
 
     findRunningProcess(idCamera) {
@@ -291,7 +290,7 @@ class Worker extends SCWorker {
         //     //     });
         //     // }, 10000)
         // });
-
+        this.client = new net.Socket();
         this.connect(optionsClient);
         bb.run(optionsClient, this.client, _this.db);
         scServer.on('connection', function (socket) {

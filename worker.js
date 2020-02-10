@@ -233,6 +233,7 @@ class Worker extends SCWorker {
 
     }
     connect(options) {
+        this.client = new net.Socket();
         this.client.connect({
             port: options.port,
             host: options.host

@@ -56,6 +56,7 @@ class Worker extends SCWorker {
         });
 
         this.client.on('error', (err) => {
+
             this.launchIntervalConnect()
         });
 
@@ -249,7 +250,7 @@ class Worker extends SCWorker {
         });
 
     }
-    client = this.client;
+    client;
     connect(options) {
         client.connect({
             port: options.port,

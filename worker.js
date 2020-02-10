@@ -222,7 +222,7 @@ class Worker extends SCWorker {
                     ]);
                     console.log("en el ciclo")
                     setTimeout(function() {
-                        let statsOld = fs.statSync(path)
+                        let stats = fs.statSync(path)
                         let singleImagelastModified = stats.mtime;
 
                         _this.sendSingleImageWebsocket(_this.cameraSingleChannel, process.env.DEVICE_IMEI, cameraName, vehicle, singleImagelastModified);

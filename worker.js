@@ -238,7 +238,7 @@ class Worker extends SCWorker {
         //     port: 3002,
         //     host: process.env.TRACKER_IP
         // });
-        socket = socketClient.connect(this.options);
+        return socketClient.connect(this.options);
     }
 
     launchIntervalConnect(socket) {
@@ -289,7 +289,8 @@ class Worker extends SCWorker {
             port: 3001,
             autoReconnect: true
         };
-        var socket = socketClient.connect(options);
+        // var socket = socketClient.connect(options);
+        var socket = _this.connect();
         socket.on('connect', function () {
             console.log("conectado al server websocket del tracker");
             client.connect(optionsClient.port, optionsClient.ipAddress, function () {

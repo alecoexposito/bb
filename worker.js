@@ -215,8 +215,9 @@ class Worker extends SCWorker {
 
                 let intervalC = setInterval(function() {
                     // var urlCamera = 'rtsp://192.168.1.30:554/user=admin&password=&channel=1&stream=1.sdp';
+                    let path = '/home/zurikato/scripts/single-image.sh';
                     let singleCameraCommand = _this.runCommand('bash', [
-                        '/home/zurikato/scripts/single-image.sh',
+                        path,
                         urlCamera
                     ]);
                     console.log("en el ciclo")

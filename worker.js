@@ -301,7 +301,7 @@ class Worker extends SCWorker {
             _this.client.connect(optionsClient.port, optionsClient.ipAddress, function () {
                 console.log('----------------------------- CLIENT CONNECTED ------------------------------');
                 _this.client.setNoDelay(true);
-                _this.syncOfflineData(client);
+                _this.syncOfflineData(_this.client);
 
             });
         });

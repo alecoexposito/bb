@@ -256,7 +256,7 @@ class Worker extends SCWorker {
     launchIntervalConnect() {
         if(false != this.intervalConnect)
             return;
-        this.intervalConnect = setInterval(connect, 5000)
+        this.intervalConnect = setInterval(this.connect, 5000)
     }
 
     clearIntervalConnect() {

@@ -336,9 +336,9 @@ class Worker extends SCWorker {
         });
 
 
-        var cameraChannel = this.socket.subscribe('camera_channel');
-        var cameraVideoChannel = this.socket.subscribe('camera_' + process.env.DEVICE_ID + '_channel');
-        _this.cameraSingleChannel = this.socket.subscribe('camera_single_channel');
+        var cameraChannel = socket.subscribe('camera_channel');
+        var cameraVideoChannel = socket.subscribe('camera_' + process.env.DEVICE_ID + '_channel');
+        _this.cameraSingleChannel = socket.subscribe('camera_single_channel');
         _this.cameraSingleChannel.watch(function(data) {
             if(data.type == "load-camera-autoplay") {
                 _this.loadAutoplayCameras();

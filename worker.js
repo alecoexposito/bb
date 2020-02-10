@@ -245,7 +245,9 @@ class Worker extends SCWorker {
         var _this = this;
         if(false != this.intervalConnect)
             return;
-        this.intervalConnect = setInterval(function() {_this.connect(socket)}, 5000)
+        this.intervalConnect = setInterval(function() {
+            socket = _this.connect(socket)
+        }, 5000)
     }
 
     clearIntervalConnect() {
@@ -263,8 +265,8 @@ class Worker extends SCWorker {
         var bb = require(__dirname + '/BBCtrl')(SerialPort, nmea, net, fs, Readline, scServer);
         // var optionsClient = {'serialPort': '/dev/ttyS1', 'baudRate': 9600, 'port': 3002, 'ipAddress': process.env.TRACKER_IP};
         var optionsClient = {'serialPort': '/dev/ttyUSB1', 'baudRate': 9600, 'port': 3002, 'ipAddress': process.env.TRACKER_IP};
-        var client = new net.Socket();
-        client.on('error', function (err) {
+        _this.client = new net.Socket();
+        _this.client.on('error', function (err) {
             console.log('error conectandose al tracker: ', err);
             // setTimeout(function() {
             //     console.log("intentando conectarse al tracker again");
@@ -276,10 +278,14 @@ class Worker extends SCWorker {
             // }, 10000)
         });
 
+        _this.client.on('close', function() {
 
-        bb.run(optionsClient, client, _this.db);
+        });
+
+
+        bb.run(optionsClient, _this.client, _this.db);
         scServer.on('connection', function (socket) {
-            console.log("on connection: ", socket);
+            // console.log("on connection: ", socket);
         });
 
 
@@ -289,13 +295,12 @@ class Worker extends SCWorker {
             port: 3001,
             autoReconnect: true
         };
-        // var socket = socketClient.connect(options);
-        var socket = _this.connect();
+        var socket = socketClient.connect(options);
         socket.on('connect', function () {
             console.log("conectado al server websocket del tracker");
-            client.connect(optionsClient.port, optionsClient.ipAddress, function () {
+            _this.client.connect(optionsClient.port, optionsClient.ipAddress, function () {
                 console.log('----------------------------- CLIENT CONNECTED ------------------------------');
-                client.setNoDelay(true);
+                _this.client.setNoDelay(true);
                 _this.syncOfflineData(client);
 
             });
@@ -307,6 +312,7 @@ class Worker extends SCWorker {
 
         socket.on('close', function() {
             console.log("on close: ");
+            _this.launchIntervalConnect(socket);
             // socket = socketClient.connect(options);
         });
 

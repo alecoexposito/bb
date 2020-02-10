@@ -16,8 +16,7 @@ var Readable = require('stream').Readable
 var Client = require('node-rest-client').Client;
 
 var socketClient = require('socketcluster-client');
-var request = require('request');
-const md5File = require('md5-file');
+var request = require('request')
 
 class Worker extends SCWorker {
 
@@ -107,14 +106,18 @@ class Worker extends SCWorker {
 
     }
 
-    sendSingleImageWebsocket(channel, imei, name, vehicle, md5) {
+    sendSingleImageWebsocket(channel, imei, name, vehicle, modifiedAt) {
         var _this = this;
         console.log("enviando single-image");
         let filePath = "/home/zurikato/camera-local/single-camera.jpg";
-        console.log("md51: ", _this.singleImageLastMd5);
-        console.log("md52: ", md5);
+        let seconds = moment(modifiedAt).unix();
+        console.log("modified at: ", modifiedAt);
+        console.log("************* segundos: ", seconds);
+        let currentSeconds = moment().unix();
+        console.log("************* current segundos: ", currentSeconds);
 
-        let old = _this.singleImageLastMd5 === md5;
+        console.log("RESTA DE LOS SEGUNDOS: ", currentSeconds - seconds);
+        let old = (currentSeconds - seconds) >= 19;
         try {
             var imageFile = fs.readFileSync(filePath);
             channel.publish({
@@ -218,16 +221,16 @@ class Worker extends SCWorker {
                 let intervalC = setInterval(function() {
                     // var urlCamera = 'rtsp://192.168.1.30:554/user=admin&password=&channel=1&stream=1.sdp';
                     let path = '/home/zurikato/scripts/single-image.sh';
-                    _this.singleImageLastMd5 = md5File.sync(path);
                     let singleCameraCommand = _this.runCommand('bash', [
                         path,
                         urlCamera
                     ]);
                     setTimeout(function() {
-                        let singleImageMd5 = md5File.sync(path);
-                        console.log("MD5: ", singleImageMd5);
+                        let stats = fs.statSync("/home/zurikato/camera-local/single-camera.jpg");
+                        console.log("stats: ", stats);
+                        let singleImagelastModified = stats.ctime;
 
-                        _this.sendSingleImageWebsocket(_this.cameraSingleChannel, process.env.DEVICE_IMEI, cameraName, vehicle, singleImageMd5);
+                        _this.sendSingleImageWebsocket(_this.cameraSingleChannel, process.env.DEVICE_IMEI, cameraName, vehicle, singleImagelastModified);
                     }, 4000)
                 }, intervalSeconds * 1000);
                 _this.autoplayCameraIntervals.push(intervalC);

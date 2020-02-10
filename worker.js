@@ -298,7 +298,7 @@ class Worker extends SCWorker {
         this.client.on('end', this.launchIntervalConnect);
 
 
-        // this.connect();
+        this.connect();
         bb.run(optionsClient, this.client, _this.db);
         scServer.on('connection', function (socket) {
             console.log("on connection: ", socket);

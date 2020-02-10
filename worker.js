@@ -20,6 +20,7 @@ var request = require('request')
 
 class Worker extends SCWorker {
 
+    client;
     constructor() {
         super();
         var sqlite3 = require('sqlite3').verbose();
@@ -35,6 +36,8 @@ class Worker extends SCWorker {
         this.clientRest = new Client();
         this.autoplayCameras = [];
         this.autoplayCameraIntervals = [];
+        this.intervalConnect = false;
+        this.client = new net.Socket();
         // this.clientSocketTracker = new net.Socket();
         // this.clientSocketTracker.connect(process.env.TRACKER_SOCKET_PORT, process.env.TRACKER_IP, function() {
         //     console.log("connected to tracker tcp socket");
@@ -44,6 +47,21 @@ class Worker extends SCWorker {
          * @type {Array}
          */
         this.currentPids = [];
+
+        this.client.on('connect', () => {
+            clearIntervalConnect()
+            this.logger('connected to server', 'TCP')
+            this.client.write('CLIENT connected');
+        });
+
+        this.client.on('error', (err) => {
+            logger(err.code, 'TCP ERROR')
+            launchIntervalConnect()
+        });
+
+        this.client.on('close', launchIntervalConnect);
+        this.client.on('end', launchIntervalConnect);
+
 
     }
 
@@ -105,17 +123,22 @@ class Worker extends SCWorker {
 
     }
 
-    sendSingleImageWebsocket(channel, imei, name, vehicle) {
+    sendSingleImageWebsocket(channel, imei, name, vehicle, modifiedAt) {
         var _this = this;
         console.log("enviando single-image");
+        let filePath = "/home/zurikato/camera-local/single-camera.jpg";
+        let seconds = moment(modifiedAt).unix();
+        let currentSeconds = moment().unix();
+        let old = (currentSeconds - seconds) >= 10;
         try {
-            var imageFile = fs.readFileSync("/home/zurikato/camera-local/single-camera.jpg");
+            var imageFile = fs.readFileSync(filePath);
             channel.publish({
                 image: imageFile.toString("base64"),
                 type: 'single-camera',
                 imei: imei,
                 name: name,
-                vehicle: vehicle
+                vehicle: vehicle,
+                old
             });
         } catch (e) {
             console.log("error reading file: ", e);
@@ -215,7 +238,10 @@ class Worker extends SCWorker {
                     ]);
                     console.log("en el ciclo")
                     setTimeout(function() {
-                        _this.sendSingleImageWebsocket(_this.cameraSingleChannel, process.env.DEVICE_IMEI, cameraName, vehicle);
+                        let statsOld = fs.statSync(path)
+                        let singleImagelastModified = stats.mtime;
+
+                        _this.sendSingleImageWebsocket(_this.cameraSingleChannel, process.env.DEVICE_IMEI, cameraName, vehicle, singleImagelastModified);
                     }, 4000)
                 }, intervalSeconds * 1000);
                 _this.autoplayCameraIntervals.push(intervalC);
@@ -223,6 +249,27 @@ class Worker extends SCWorker {
         });
 
     }
+
+    connect(options) {
+        this.client.connect({
+            port: options.port,
+            host: options.host
+        });
+    }
+
+    launchIntervalConnect() {
+        if(false != intervalConnect)
+            return;
+        this.intervalConnect = setInterval(connect, 5000)
+    }
+
+    clearIntervalConnect() {
+        if(false == intervalConnect)
+            return;
+        clearInterval(intervalConnect)
+        this.intervalConnect = false
+    }
+
 
     run() {
         var _this = this;
@@ -232,19 +279,19 @@ class Worker extends SCWorker {
         // var optionsClient = {'serialPort': '/dev/ttyS1', 'baudRate': 9600, 'port': 3002, 'ipAddress': process.env.TRACKER_IP};
         var optionsClient = {'serialPort': '/dev/ttyUSB1', 'baudRate': 9600, 'port': 3002, 'ipAddress': process.env.TRACKER_IP};
         var client = new net.Socket();
-        client.on('error', function (err) {
-            console.log('error conectandose al tracker: ', err);
-            // setTimeout(function() {
-            //     console.log("intentando conectarse al tracker again");
-            //     client.connect(optionsClient.port, optionsClient.ipAddress, function () {
-            //         console.log('----------------------------- CLIENT CONNECTED ------------------------------');
-            //         // _this.syncOfflineData(client);
-            //
-            //     });
-            // }, 10000)
-        });
+        // client.on('error', function (err) {
+        //     console.log('error conectandose al tracker: ', err);
+        //     // setTimeout(function() {
+        //     //     console.log("intentando conectarse al tracker again");
+        //     //     client.connect(optionsClient.port, optionsClient.ipAddress, function () {
+        //     //         console.log('----------------------------- CLIENT CONNECTED ------------------------------');
+        //     //         // _this.syncOfflineData(client);
+        //     //
+        //     //     });
+        //     // }, 10000)
+        // });
 
-
+        this.connect(optionsClient);
         bb.run(optionsClient, client, _this.db);
         scServer.on('connection', function (socket) {
             console.log("on connection: ", socket);

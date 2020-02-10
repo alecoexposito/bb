@@ -233,11 +233,13 @@ class Worker extends SCWorker {
 
     }
     connect() {
-        this.client = new net.Socket();
-        this.client.connect({
-            port: 3002,
-            host: process.env.TRACKER_IP
-        });
+        // this.client = new net.Socket();
+        // this.client.connect({
+        //     port: 3002,
+        //     host: process.env.TRACKER_IP
+        // });
+
+        this.socket = socketClient.connect(options);
     }
 
     launchIntervalConnect() {
@@ -280,25 +282,27 @@ class Worker extends SCWorker {
             autoReconnect: true
         };
         this.options = options;
-        this.client = new net.Socket();
-        this.client.on('connect', () => {
-            this.clearIntervalConnect()
-            console.log('----------------------------- CLIENT NEWLY CONNECTED ------------------------------');
-            this.client.setNoDelay(true);
-            this.syncOfflineData(client);
+        // this.client = new net.Socket();
+        // this.client.on('connect', () => {
+        //     this.clearIntervalConnect()
+        //     console.log('----------------------------- CLIENT NEWLY CONNECTED ------------------------------');
+        //     this.client.setNoDelay(true);
+        //     this.syncOfflineData(client);
+        //
+        // });
 
-        });
         //
         // this.client.on('error', (err) => {
         //
         //     this.launchIntervalConnect();
         // });
 
-        this.client.on('close', this.launchIntervalConnect);
-        this.client.on('end', this.launchIntervalConnect);
+        // this.client.on('close', this.launchIntervalConnect);
+        // this.client.on('end', this.launchIntervalConnect);
 
 
-        this.connect();
+        // this.connect();
+
         bb.run(optionsClient, this.client, _this.db);
         scServer.on('connection', function (socket) {
             console.log("on connection: ", socket);
@@ -306,7 +310,8 @@ class Worker extends SCWorker {
 
 
 
-        var socket = socketClient.connect(options);
+        // this.socket = socketClient.connect(options);
+        this.connect();
         socket.on('connect', function () {
             console.log("conectado al server websocket del tracker");
             // client.connect(optionsClient.port, optionsClient.ipAddress, function () {
@@ -323,8 +328,10 @@ class Worker extends SCWorker {
 
         socket.on('close', function() {
             console.log("on close: ");
+            this.launchIntervalConnect();
             // socket = socketClient.connect(options);
         });
+
 
         var cameraChannel = socket.subscribe('camera_channel');
         var cameraVideoChannel = socket.subscribe('camera_' + process.env.DEVICE_ID + '_channel');

@@ -233,7 +233,7 @@ class Worker extends SCWorker {
 
     }
     connect(options) {
-        client.connect({
+        this.client.connect({
             port: options.port,
             host: options.host
         });

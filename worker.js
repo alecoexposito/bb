@@ -232,19 +232,19 @@ class Worker extends SCWorker {
         });
 
     }
-    connect() {
+    connect(socket) {
         // this.client = new net.Socket();
         // this.client.connect({
         //     port: 3002,
         //     host: process.env.TRACKER_IP
         // });
-        this.socket = socketClient.connect(this.options);
+        socket = socketClient.connect(this.options);
     }
 
-    launchIntervalConnect() {
+    launchIntervalConnect(socket) {
         if(false != this.intervalConnect)
             return;
-        this.intervalConnect = setInterval(this.connect, 5000)
+        this.intervalConnect = setInterval(function() {this.connect(socket)}, 5000)
     }
 
     clearIntervalConnect() {
@@ -309,9 +309,9 @@ class Worker extends SCWorker {
 
 
 
-        _this.socket = socketClient.connect(options);
+        var socket = socketClient.connect(options);
         // _this.connect();
-        _this.socket.on('connect', function () {
+        socket.on('connect', function () {
             console.log("conectado al server websocket del tracker");
             // client.connect(optionsClient.port, optionsClient.ipAddress, function () {
             console.log('----------------------------- CLIENT CONNECTED ------------------------------');
@@ -322,16 +322,16 @@ class Worker extends SCWorker {
             // });
         });
 
-        _this.socket.on('error', function(err) {
+        socket.on('error', function(err) {
             console.log("error ocurred: ", err);
-            _this.launchIntervalConnect();
+            _this.launchIntervalConnect(socket);
             // socket = socketClient.connect(options);
         });
 
-        _this.socket.on('close', function() {
+        socket.on('close', function() {
             console.log("on close: ");
-            _this.socket.removeAllListeners();
-            _this.launchIntervalConnect();
+            // socket.removeAllListeners();
+            _this.launchIntervalConnect(socket);
             // socket = socketClient.connect(options);
         });
 

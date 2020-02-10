@@ -302,15 +302,15 @@ class Worker extends SCWorker {
 
         // this.connect();
 
-        bb.run(optionsClient, this.client, _this.db);
+        bb.run(optionsClient, _this.client, _this.db);
         scServer.on('connection', function (socket) {
             console.log("on connection: ", socket);
         });
 
 
 
-        // this.socket = socketClient.connect(options);
-        _this.connect();
+        _this.socket = socketClient.connect(options);
+        // _this.connect();
         _this.socket.on('connect', function () {
             console.log("conectado al server websocket del tracker");
             // client.connect(optionsClient.port, optionsClient.ipAddress, function () {

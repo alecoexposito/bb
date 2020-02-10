@@ -115,7 +115,7 @@ class Worker extends SCWorker {
         console.log("************* segundos: ", seconds);
         let currentSeconds = moment().unix();
         console.log("************* current segundos: ", currentSeconds);
-        
+
         console.log("RESTA DE LOS SEGUNDOS: ", currentSeconds - seconds);
         let old = (currentSeconds - seconds) >= 400;
         try {
@@ -228,7 +228,7 @@ class Worker extends SCWorker {
                     console.log("en el ciclo")
                     setTimeout(function() {
                         let stats = fs.statSync(path)
-                        let singleImagelastModified = stats.mtime;
+                        let singleImagelastModified = stats.ctime;
 
                         _this.sendSingleImageWebsocket(_this.cameraSingleChannel, process.env.DEVICE_IMEI, cameraName, vehicle, singleImagelastModified);
                     }, 4000)

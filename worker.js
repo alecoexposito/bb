@@ -317,7 +317,7 @@ class Worker extends SCWorker {
             console.log('----------------------------- CLIENT CONNECTED ------------------------------');
             _this.clearIntervalConnect();
             _this.client.setNoDelay(true);
-            _this.syncOfflineData(_this.client);
+            // _this.syncOfflineData(_this.client);
 
             // });
         });

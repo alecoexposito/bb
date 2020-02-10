@@ -264,78 +264,50 @@ class Worker extends SCWorker {
         // var optionsClient = {'serialPort': '/dev/ttyS1', 'baudRate': 9600, 'port': 3002, 'ipAddress': process.env.TRACKER_IP};
         var optionsClient = {'serialPort': '/dev/ttyUSB1', 'baudRate': 9600, 'port': 3002, 'ipAddress': process.env.TRACKER_IP};
         var client = new net.Socket();
+        client.on('error', function (err) {
+            console.log('error conectandose al tracker: ', err);
+            // setTimeout(function() {
+            //     console.log("intentando conectarse al tracker again");
+            //     client.connect(optionsClient.port, optionsClient.ipAddress, function () {
+            //         console.log('----------------------------- CLIENT CONNECTED ------------------------------');
+            //         // _this.syncOfflineData(client);
+            //
+            //     });
+            // }, 10000)
+        });
+
+
         bb.run(optionsClient, client, _this.db);
-        // client.on('error', function (err) {
-        //     console.log('error conectandose al tracker: ', err);
-        //     // setTimeout(function() {
-        //     //     console.log("intentando conectarse al tracker again");
-        //     //     client.connect(optionsClient.port, optionsClient.ipAddress, function () {
-        //     //         console.log('----------------------------- CLIENT CONNECTED ------------------------------');
-        //     //         // _this.syncOfflineData(client);
-        //     //
-        //     //     });
-        //     // }, 10000)
-        // });
+        scServer.on('connection', function (socket) {
+            console.log("on connection: ", socket);
+        });
+
+
         var options = {
             secure: false,
             hostname: process.env.TRACKER_IP,
             port: 3001,
             autoReconnect: true
         };
-        this.options = options;
-        // this.client = new net.Socket();
-        // this.client.on('connect', () => {
-        //     this.clearIntervalConnect()
-        //     console.log('----------------------------- CLIENT NEWLY CONNECTED ------------------------------');
-        //     this.client.setNoDelay(true);
-        //     this.syncOfflineData(client);
-        //
-        // });
-
-        //
-        client.on('error', (err) => {
-            console.log("error en el socket", err);
-            this.launchIntervalConnect();
-        });
-
-        // this.client.on('close', this.launchIntervalConnect);
-        // this.client.on('end', this.launchIntervalConnect);
-
-
-        // this.connect();
-
-        scServer.on('connection', function (socket) {
-            console.log("on connection: ", socket);
-        });
-
-
-
         var socket = socketClient.connect(options);
-        // _this.connect();
         socket.on('connect', function () {
             console.log("conectado al server websocket del tracker");
-            // client.connect(optionsClient.port, optionsClient.ipAddress, function () {
-            console.log('----------------------------- CLIENT CONNECTED ------------------------------');
-            _this.clearIntervalConnect();
-            client.setNoDelay(true);
-            // _this.syncOfflineData(_this.client);
+            client.connect(optionsClient.port, optionsClient.ipAddress, function () {
+                console.log('----------------------------- CLIENT CONNECTED ------------------------------');
+                client.setNoDelay(true);
+                _this.syncOfflineData(client);
 
-            // });
+            });
         });
-
         socket.on('error', function(err) {
             console.log("error ocurred: ", err);
-            _this.launchIntervalConnect(socket);
             // socket = socketClient.connect(options);
         });
 
         socket.on('close', function() {
             console.log("on close: ");
-            // socket.removeAllListeners();
-            _this.launchIntervalConnect(socket);
             // socket = socketClient.connect(options);
         });
-
 
         var cameraChannel = socket.subscribe('camera_channel');
         var cameraVideoChannel = socket.subscribe('camera_' + process.env.DEVICE_ID + '_channel');

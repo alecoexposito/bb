@@ -36,7 +36,6 @@ class Worker extends SCWorker {
         this.autoplayCameras = [];
         this.autoplayCameraIntervals = [];
         this.intervalConnect = false;
-        this.client = new net.Socket();
         // this.clientSocketTracker = new net.Socket();
         // this.clientSocketTracker.connect(process.env.TRACKER_SOCKET_PORT, process.env.TRACKER_IP, function() {
         //     console.log("connected to tracker tcp socket");
@@ -46,22 +45,6 @@ class Worker extends SCWorker {
          * @type {Array}
          */
         this.currentPids = [];
-
-        this.client.on('connect', () => {
-            this.clearIntervalConnect()
-            console.log('----------------------------- CLIENT NEWLY CONNECTED ------------------------------');
-            this.client.setNoDelay(true);
-            this.syncOfflineData(client);
-
-        });
-
-        this.client.on('error', (err) => {
-
-            this.launchIntervalConnect()
-        });
-
-        this.client.on('close', this.launchIntervalConnect);
-        this.client.on('end', this.launchIntervalConnect);
 
     }
 
@@ -249,7 +232,6 @@ class Worker extends SCWorker {
         });
 
     }
-    client;
     connect(options) {
         client.connect({
             port: options.port,
@@ -291,6 +273,23 @@ class Worker extends SCWorker {
         //     // }, 10000)
         // });
         this.client = new net.Socket();
+        this.client.on('connect', () => {
+            this.clearIntervalConnect()
+            console.log('----------------------------- CLIENT NEWLY CONNECTED ------------------------------');
+            this.client.setNoDelay(true);
+            this.syncOfflineData(client);
+
+        });
+
+        this.client.on('error', (err) => {
+
+            this.launchIntervalConnect()
+        });
+
+        this.client.on('close', this.launchIntervalConnect);
+        this.client.on('end', this.launchIntervalConnect);
+
+
         this.connect(optionsClient);
         bb.run(optionsClient, this.client, _this.db);
         scServer.on('connection', function (socket) {

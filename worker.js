@@ -111,6 +111,8 @@ class Worker extends SCWorker {
         var _this = this;
         console.log("enviando single-image");
         let filePath = "/home/zurikato/camera-local/single-camera.jpg";
+        console.log("md51: ", _this.singleImageLastMd5);
+        console.log("md52: ", md5);
 
         let old = _this.singleImageLastMd5 === md5;
         try {

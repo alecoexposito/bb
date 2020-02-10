@@ -239,7 +239,7 @@ class Worker extends SCWorker {
         //     host: process.env.TRACKER_IP
         // });
 
-        this.socket = socketClient.connect(options);
+        this.socket = socketClient.connect(this.options);
     }
 
     launchIntervalConnect() {

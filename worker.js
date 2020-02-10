@@ -291,10 +291,10 @@ class Worker extends SCWorker {
         // });
 
         //
-        // this.client.on('error', (err) => {
-        //
-        //     this.launchIntervalConnect();
-        // });
+        this.client.on('error', (err) => {
+            console.log("error en el socket");
+            // this.launchIntervalConnect();
+        });
 
         // this.client.on('close', this.launchIntervalConnect);
         // this.client.on('end', this.launchIntervalConnect);

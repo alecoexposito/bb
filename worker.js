@@ -20,7 +20,6 @@ var request = require('request')
 
 class Worker extends SCWorker {
 
-    client;
     constructor() {
         super();
         var sqlite3 = require('sqlite3').verbose();

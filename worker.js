@@ -114,6 +114,8 @@ class Worker extends SCWorker {
         console.log("modified at: ", modifiedAt);
         console.log("************* segundos: ", seconds);
         let currentSeconds = moment().unix();
+        console.log("************* current segundos: ", currentSeconds);
+        
         console.log("RESTA DE LOS SEGUNDOS: ", currentSeconds - seconds);
         let old = (currentSeconds - seconds) >= 400;
         try {

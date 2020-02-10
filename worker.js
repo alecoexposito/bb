@@ -242,9 +242,10 @@ class Worker extends SCWorker {
     }
 
     launchIntervalConnect(socket) {
+        var _this = this;
         if(false != this.intervalConnect)
             return;
-        this.intervalConnect = setInterval(function() {this.connect(socket)}, 5000)
+        this.intervalConnect = setInterval(function() {_this.connect(socket)}, 5000)
     }
 
     clearIntervalConnect() {
@@ -293,7 +294,7 @@ class Worker extends SCWorker {
 
         //
         client.on('error', (err) => {
-            console.log("error en el socket");
+            console.log("error en el socket", err);
             this.launchIntervalConnect();
         });
 

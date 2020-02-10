@@ -115,7 +115,7 @@ class Worker extends SCWorker {
         console.log("************* segundos: ", seconds);
         let currentSeconds = moment().unix();
         console.log("RESTA DE LOS SEGUNDOS: ", currentSeconds - seconds);
-        let old = (currentSeconds - seconds) >= 10;
+        let old = (currentSeconds - seconds) >= 400;
         try {
             var imageFile = fs.readFileSync(filePath);
             channel.publish({

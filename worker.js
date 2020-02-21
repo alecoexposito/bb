@@ -243,7 +243,7 @@ class Worker extends SCWorker {
         try {
             this.client.connect(3002, process.env.TRACKER_IP);
         } catch (e) {
-            console.log(************************** ocurrio un error conectando ***************************************)
+            console.log("************************** ocurrio un error conectando ***************************************");
         }
     }
 
@@ -284,9 +284,9 @@ class Worker extends SCWorker {
             // }, 10000)
         });
 
-        _this.client.on('close', function() {
-            _this.launchIntervalConnect();
-        });
+        // _this.client.on('close', function() {
+        //     _this.launchIntervalConnect();
+        // });
 
 
         bb.run(optionsClient, _this.client, _this.db);
@@ -310,6 +310,7 @@ class Worker extends SCWorker {
                 console.log('----------------------------- CLIENT CONNECTED ------------------------------');
                 _this.clearIntervalConnect();
                 _this.client.setNoDelay(true);
+                _this.loadAutoplayCameras();
                 _this.syncOfflineData(_this.client);
             });
         });
@@ -320,7 +321,12 @@ class Worker extends SCWorker {
 
         socket.on('close', function() {
             console.log("on close: ");
-            _this.launchIntervalConnect(socket);
+            try {
+                _this.launchIntervalConnect(socket);
+                console.log("despues de lanzar el intervalo")
+            } catch (e) {
+                console.log("EN EL CATCH DEL INTERVALO");
+            }
             // socket = socketClient.connect(options);
         });
 
@@ -481,7 +487,6 @@ class Worker extends SCWorker {
                 }
             }
         });
-        this.loadAutoplayCameras();
 
         var vpnChannel = socket.subscribe('vpn_' + process.env.DEVICE_ID + '_channel');
         vpnChannel.watch(function(data) {

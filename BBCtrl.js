@@ -26,6 +26,7 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
         }
 
         run(options, client, db) {
+            console.log("************* en el run de la bb *********************");
             var self = this;
 
             let device_id = process.env.DEVICE_IMEI; // '353147044612671';

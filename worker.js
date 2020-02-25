@@ -476,14 +476,14 @@ class Worker extends SCWorker {
                 }
             }
         });
-        cameraVideoChannel.watch(function(data) {
-            if(data.type && data.type == "feedback") {
-                console.log("feedback: ", data);
-                var idCamera = data.idCamera;
-                if(idCamera != "all") {
-                    var index = _this.runningProcessIndex(idCamera);
-                    _this.currentPids[index].lastTimestamp = moment().unix();
-                    // _this.lastTimestamp = moment().unix();
+
+        var obdChannel = socket.subscribe('obd_channel');
+        obdChannel.watch(function(data) {
+            if(data.id == process.env.DEVICE_ID) {
+                if (data.type == "obd-info") {
+                    _this.runCommand('python ~/scripts/obd-info.py', [], function() {
+                        obdChannel.publish({ type: 'obd-info-response', message: 'just a simple text' });
+                    });
                 }
             }
         });
@@ -496,6 +496,17 @@ class Worker extends SCWorker {
                 'openvpn',
                 'start',
             ]);
+        });
+
+        var obdChannel = socket.subscribe('obd_channel');
+        obdChannel.watch(function(data) {
+            if(data.id == process.env.DEVICE_ID) {
+                if (data.type == "obd-info") {
+                    _this.runCommand('python ~/scripts/obd-info.py', [], function() {
+                        obdChannel.publish({ type: 'obd-info-response', message: 'just a simple text' });
+                    });
+                }
+            }
         });
     }
 

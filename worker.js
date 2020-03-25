@@ -36,6 +36,7 @@ class Worker extends SCWorker {
         this.autoplayCameras = [];
         this.autoplayCameraIntervals = [];
         this.intervalConnect = false;
+        thisi.offlineLock = false;
         // this.clientSocketTracker = new net.Socket();
         // this.clientSocketTracker.connect(process.env.TRACKER_SOCKET_PORT, process.env.TRACKER_IP, function() {
         //     console.log("connected to tracker tcp socket");
@@ -136,6 +137,9 @@ class Worker extends SCWorker {
 
     async syncOfflineData(client) {
         var _this = this;
+        if(_this.offlineLock == true)
+            return;
+        _this.offlineLock = true;
         let sql = "select * from info_data where is_offline = 1";
         let counter = 0;
         let toSend = [];
@@ -186,6 +190,8 @@ class Worker extends SCWorker {
         client.write(buffer, function(err) {
             if(err) {
                 console.log("error enviando el dato offline, saliendo de la sincronizacion de datos offline");
+                _this.offlineLock = false;
+                setTimeout(function() {_this.syncOfflineData(client)}, 30000);
                 return;
             } else {
                 console.log("--------------------- enviado el dato offline -------------------------");
@@ -200,7 +206,8 @@ class Worker extends SCWorker {
         //     console.log('updateados a 2 los datos offline sincronizados');
         // });
 
-
+        _this.offlineLock = false;
+        setTimeout(function() {_this.syncOfflineData(client)}, 60000);
     }
 
     loadAutoplayCameras() {

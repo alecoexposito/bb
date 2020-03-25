@@ -36,7 +36,7 @@ class Worker extends SCWorker {
         this.autoplayCameras = [];
         this.autoplayCameraIntervals = [];
         this.intervalConnect = false;
-        thisi.offlineLock = false;
+        this.offlineLock = false;
         // this.clientSocketTracker = new net.Socket();
         // this.clientSocketTracker.connect(process.env.TRACKER_SOCKET_PORT, process.env.TRACKER_IP, function() {
         //     console.log("connected to tracker tcp socket");
@@ -191,7 +191,6 @@ class Worker extends SCWorker {
             if(err) {
                 console.log("error enviando el dato offline, saliendo de la sincronizacion de datos offline");
                 _this.offlineLock = false;
-                setTimeout(function() {_this.syncOfflineData(client)}, 30000);
                 return;
             } else {
                 console.log("--------------------- enviado el dato offline -------------------------");

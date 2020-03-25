@@ -108,6 +108,19 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
                     let dataJson = JSON.parse(data.toString());
                     if(dataJson.type == "reply")
                         console.log("reply from tracker: ", data.toString());
+                    else if (dataJson.type == "reply-offline") {
+                        console.log("reply from tracker: ", data.toString());
+                        let ids = dataJson.ids;
+                        for (let i = 0; i < ids.length; i++) {
+                            let params = [];
+                            params.push(ids[i]);
+                            db.run('update info_data set is_offline = 2 where is_offline = 1 and id = ?', params, function(err) {
+                                if(err) {
+                                    return console.log(err.message);
+                                }
+                            });
+                        }
+                    }
                 }
             });
         }

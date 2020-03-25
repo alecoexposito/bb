@@ -145,6 +145,7 @@ class Worker extends SCWorker {
             }
             // console.log("row: ", row);
             let response = {
+                'offline_id': row.id,
                 'device_id': row.device_id,
                 'latitude': row.lat,
                 'longitude': row.lng,
@@ -190,13 +191,13 @@ class Worker extends SCWorker {
             }
         });
 
-        _this.db.run('update info_data set is_offline = 0 where is_offline = 1', [], function(err) {
-            if(err) {
-                return console.log(console.log(err.message));
-            }
-
-            console.log('updateados a 0 los datos offline sincronizados');
-        });
+        // _this.db.run('update info_data set is_offline = 2 where is_offline = 1', [], function(err) {
+        //     if(err) {
+        //         return console.log(err.message);
+        //     }
+        //
+        //     console.log('updateados a 2 los datos offline sincronizados');
+        // });
 
 
     }

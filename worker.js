@@ -185,7 +185,8 @@ class Worker extends SCWorker {
         let buffer = Buffer.from(JSON.stringify(toSendNow));
         client.write(buffer, function(err) {
             if(err) {
-                console.log("error enviando el dato offline");
+                console.log("error enviando el dato offline, saliendo de la sincronizacion de datos offline");
+                return;
             } else {
                 console.log("--------------------- enviado el dato offline -------------------------");
             }

@@ -26,6 +26,7 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
         }
 
         run(options, client, db) {
+            var _this = this;
             /**
              * conectandome al puerto tcp 2947 para enviar las tramas a medida que lleguen
              */
@@ -38,11 +39,16 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
             }
 
             tcpClient.on("error", function() {
-                console.log("error conectandose al tcp");
-                setTimeout(function(){
-                    tcpClient.connect(2947, '127.0.0.1');
-                }, 3000);
-            })
+                if (_this.tcpLock === false) {
+                    console.log("error conectandose al tcp, reconectando en 3 segundos");
+                    _this.tcpLock = true;
+                    setTimeout(function() {
+                        console.log("reconectando ahora.....");
+                        tcpClient.connect(2947, '127.0.0.1');
+                        _this.tcpLock = false;
+                    }, 3000);
+                }
+            });
 
 
 

@@ -26,6 +26,19 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
         }
 
         run(options, client, db) {
+            /**
+             * conectandome al puerto tcp 2947 para enviar las tramas a medida que lleguen
+             */
+
+            var tcpClient = new net.Socket();
+            try {
+                tcpClient.connect(2947, '127.0.0.1');
+            } catch (e) {
+                console.log("************************** ocurrio un error conectando al puerto tcp local ***************************************");
+            }
+
+
+
             console.log("************* en el run de la bb *********************");
             var self = this;
 
@@ -73,6 +86,12 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
             // parser.on('data', function(data){console.log("data en el parser: ", data);})
             parser.on("data", function (data) {
                 // console.log("data en el puerto: ", data.toString());
+                console.log("enviando los datos recibidos al tcp: ", data);
+                tcpClient.write(data, function(err) {
+                    if(err) {
+                        console.log("error enviando al puerto tcp");
+                    }
+                });
                 var moment = require('moment');
                 let gprmc = nmea.parse(data.toString());
                 // console.log("gprmc: ", gprmc);

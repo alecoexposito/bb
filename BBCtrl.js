@@ -27,6 +27,7 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
 
         run(options, client, db) {
             var _this = this;
+            _this.tcpLock = false;
             /**
              * conectandome al puerto tcp 2947 para enviar las tramas a medida que lleguen
              */

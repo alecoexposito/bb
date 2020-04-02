@@ -37,6 +37,10 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
                 console.log("************************** ocurrio un error conectando al puerto tcp local ***************************************");
             }
 
+            tcpClient.on("error", function() {
+                console.log("error conectandose al tcp")
+            })
+
 
 
             console.log("************* en el run de la bb *********************");

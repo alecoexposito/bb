@@ -38,7 +38,8 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
             }
 
             tcpClient.on("error", function() {
-                console.log("error conectandose al tcp")
+                console.log("error conectandose al tcp");
+                tcpClient.connect(2947, '127.0.0.1');
             })
 
 

@@ -111,6 +111,10 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
                 // console.log("gprmc: ", gprmc);
                 if (gprmc.valid == true && gprmc.type == 'RMC') {
                     console.log("FECHA: ", gprmc.datetime);
+
+                    let gpsMilliseconds = moment(gprmc.datetime).valueOf();
+                    console.log("MILLISECONDS: ", gpsMilliseconds);
+
                     let response = {
                         'device_id': device_id,
                         'latitude': gprmc.loc.geojson.coordinates[1],
@@ -128,7 +132,7 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
                             // console.log("all ok");
                             is_offline = 0;
                         }
-                        let values = [response.device_id, response.latitude, response.longitude, response.speed, moment().valueOf(), moment().valueOf(), is_offline, response.track];
+                        let values = [response.device_id, response.latitude, response.longitude, response.speed, moment(gpsMilliseconds).valueOf(), moment(gpsMilliseconds).valueOf(), is_offline, response.track];
                         self.saveOfflineData(db, values);
                     });
 

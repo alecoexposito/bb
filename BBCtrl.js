@@ -34,7 +34,7 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
 
             var tcpClient = new net.Socket();
             try {
-                tcpClient.connect(2947, '127.0.0.1');
+                tcpClient.connect(4006, '127.0.0.1');
             } catch (e) {
                 console.log("************************** ocurrio un error conectando al puerto tcp local ***************************************");
             }

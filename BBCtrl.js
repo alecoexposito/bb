@@ -45,7 +45,7 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
                     _this.tcpLock = true;
                     setTimeout(function() {
                         console.log("reconectando ahora.....");
-                        tcpClient.connect(2947, '127.0.0.1');
+                        tcpClient.connect(4006, '127.0.0.1');
                         _this.tcpLock = false;
                     }, 3000);
                 }
@@ -110,12 +110,13 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
                 let gprmc = nmea.parse(data.toString());
                 // console.log("gprmc: ", gprmc);
                 if (gprmc.valid == true && gprmc.type == 'RMC') {
+                    console.log("FECHA: ", gprmc.datetime);
                     let response = {
                         'device_id': device_id,
                         'latitude': gprmc.loc.geojson.coordinates[1],
                         'longitude': gprmc.loc.geojson.coordinates[0],
                         'speed': gprmc.speed.kmh,
-                        'track': gprmc.track
+                        'track': gprmc.track,
                     };
                     let buffer = Buffer.from(JSON.stringify(response));
                     var is_offline = 0;

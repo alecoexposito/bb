@@ -32,7 +32,7 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
             var self = this;
 
             let device_id = process.env.DEVICE_IMEI; // '353147044612671';
-            let portS1 = new SerialPort(options.serialPort, {baudRate: options.baudRate, autoOpen: false, lock: false});
+            let portS1 = new SerialPort(options.serialPort, {baudRate: options.baudRate, autoOpen: true, lock: false});
             portS1.open(function (err) {
                 if (err) {
                     var errorstr = "Error opening port: " + err.message;

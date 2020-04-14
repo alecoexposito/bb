@@ -282,6 +282,7 @@ class Worker extends SCWorker {
         _this.client = new net.Socket();
         _this.client.on('error', function (err) {
             console.log('error conectandose al tracker: ', err);
+            process.nextTick(() -> _this.client.destroy());
             // setTimeout(function() {
             //     console.log("intentando conectarse al tracker again");
             //     client.connect(optionsClient.port, optionsClient.ipAddress, function () {

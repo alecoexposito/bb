@@ -8,10 +8,10 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
             let buffer = Buffer.from(JSON.stringify(data));
             client.write(buffer, function(err) {
                 if(err) {
-                    console.log("setting offline local info with id: ", localId);
-                    db.run('update info_data set is_offline = 1 where id = ?', [localId], function(err) {
+                    console.log("setting offline local info with id: ", data.localId);
+                    db.run('update info_data set is_offline = 1 where id = ?', [data.localId], function(err) {
                         if(err) {
-                            console.log("error seteando offline id: ", localId);
+                            console.log("error seteando offline id: ", data.localId);
                             return;
                         }
                     });

@@ -126,9 +126,7 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
 
             client.on('data', function(data) {
                 if(self.isJsonString(data.toString())) {
-                    console.log("string data: ", data);
                     let dataJson = JSON.parse(data.toString());
-                    console.log("data: ", dataJson);
                     if(dataJson.type == "reply")
                         self.manageRegularConfirmation(dataJson, db);
                     else if (dataJson.type == "reply-offline") {

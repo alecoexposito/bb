@@ -125,18 +125,18 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
             });
 
             client.on('data', function(data) {
+                let dataJson = JSON.parse(data.toString());
                 if(self.isJsonString(data.toString())) {
                     if(dataJson.type == "reply")
-                        self.manageRegularConfirmation(data, db);
+                        self.manageRegularConfirmation(dataJson, db);
                     else if (dataJson.type == "reply-offline") {
-                        self.manageOfflineConfirmation(data, db);
+                        self.manageOfflineConfirmation(dataJson, db);
                     }
                 }
             });
         }
-        manageOfflineConfirmation(data, db) {
-            console.log("reply from tracker: ", data.toString());
-            let dataJson = JSON.parse(data.toString());
+        manageOfflineConfirmation(dataJson, db) {
+            console.log("reply from tracker: ", dataJson);
             let ids = dataJson.ids;
             for (let i = 0; i < ids.length; i++) {
                 let params = [];
@@ -148,9 +148,9 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
                 });
             }
         }
-        manageRegularConfirmation(data, db) {
+        manageRegularConfirmation(dataJson, db) {
             console.log("reply from tracker: ", data.toString());
-            let id = data.id;
+            let id = dataJson.localId;
             db.run('update info_data set is_offline = 0 where is_offline = 3 and id = ?', [id], function(err) {
                 if(err) {
                     return console.log(err.message);

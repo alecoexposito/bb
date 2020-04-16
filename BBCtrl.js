@@ -4,14 +4,32 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
 
         }
 
-        saveOfflineData(db, values) {
+        sendToServer(client, info, db, data) {
+            let buffer = Buffer.from(JSON.stringify(data));
+            client.write(buffer, function(err) {
+                if(err) {
+                    console.log("setting offline local info with id: ", localId);
+                    db.run('update info_data set is_offline = 1 where id = ?', [localId], function(err) {
+                        if(err) {
+                            console.log("error seteando offline id: ", localId);
+                            return;
+                        }
+                    });
+                }
+            });
+
+        }
+
+        saveOfflineData(db, values, client, response) {
+            const self = this;
             console.log("saving data offline: ", values);
             db.run('insert into info_data(device_id, lat, lng, speed, created_at, updated_at, is_offline, orientation_plain) values(?, ?, ?, ?, ?, ?, ?, ?)', values, function(err) {
                 if(err) {
                     return console.log(err.message);
                 }
-
-                // console.log('Row inserted with id: ', this.lastID);
+                console.log('Row inserted with id: ', this.lastID);
+                response.localId = this.lastID;
+                self.sendToServer(client, values, db, response);
             });
 
         }
@@ -98,24 +116,11 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
                         'speed': gprmc.speed.kmh,
                         'track': gprmc.track,
                         'createdAt': moment(gpsMilliseconds).format("YYYY-MM-DD HH:mm:ss"),
-                        'updatedAt': moment(gpsMilliseconds).format("YYYY-MM-DD HH:mm:ss"),
+                        'updatedAt': moment(gpsMilliseconds).format("YYYY-MM-DD HH:mm:ss")
                     };
-                    let buffer = Buffer.from(JSON.stringify(response));
-                    var is_offline = 0;
-                    client.write(buffer, function(err) {
-                        if(err) {
-                            console.log("error writing to socket, writing offline");
-                            is_offline = 1;
-                        } else {
-                            // console.log("all ok");
-                            is_offline = 0;
-                        }
-                        let values = [response.device_id, response.latitude, response.longitude, response.speed, gpsMilliseconds, gpsMilliseconds, is_offline, response.track];
-                        self.saveOfflineData(db, values);
-                    });
-
-                    // console.log('wrote in client and offline');
-
+                    var is_offline = 3;
+                    let values = [response.device_id, response.latitude, response.longitude, response.speed, gpsMilliseconds, gpsMilliseconds, is_offline, response.track];
+                    self.saveOfflineData(db, values, client, response);
                 }
             });
 
@@ -123,22 +128,36 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
                 if(self.isJsonString(data.toString())) {
                     let dataJson = JSON.parse(data.toString());
                     if(dataJson.type == "reply")
-                        console.log("reply from tracker: ", data.toString());
+                        self.manageRegularConfirmation(data, db);
                     else if (dataJson.type == "reply-offline") {
-                        console.log("reply from tracker: ", data.toString());
-                        let ids = dataJson.ids;
-                        for (let i = 0; i < ids.length; i++) {
-                            let params = [];
-                            params.push(ids[i]);
-                            db.run('update info_data set is_offline = 2 where is_offline = 1 and id = ?', params, function(err) {
-                                if(err) {
-                                    return console.log(err.message);
-                                }
-                            });
-                        }
+                        self.manageOfflineConfirmation(data, db);
                     }
                 }
             });
+        }
+        manageOfflineConfirmation(data, db) {
+            console.log("reply from tracker: ", data.toString());
+            let ids = dataJson.ids;
+            for (let i = 0; i < ids.length; i++) {
+                let params = [];
+                params.push(ids[i]);
+                db.run('update info_data set is_offline = 2 where is_offline = 1 and id = ?', params, function(err) {
+                    if(err) {
+                        return console.log(err.message);
+                    }
+                });
+            }
+        }
+        manageRegularConfirmation(data, db) {
+            console.log("reply from tracker: ", data.toString());
+            let id = data.id;
+            db.run('update info_data set is_offline = 0 where is_offline = 3 and id = ?', [id], function(err) {
+                if(err) {
+                    return console.log(err.message);
+                }
+            });
+
+
         }
     }
 

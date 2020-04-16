@@ -126,7 +126,6 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
 
             client.on('data', function(data) {
                 if(self.isJsonString(data.toString())) {
-                    let dataJson = JSON.parse(data.toString());
                     if(dataJson.type == "reply")
                         self.manageRegularConfirmation(data, db);
                     else if (dataJson.type == "reply-offline") {
@@ -137,6 +136,7 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
         }
         manageOfflineConfirmation(data, db) {
             console.log("reply from tracker: ", data.toString());
+            let dataJson = JSON.parse(data.toString());
             let ids = dataJson.ids;
             for (let i = 0; i < ids.length; i++) {
                 let params = [];

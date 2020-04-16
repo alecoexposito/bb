@@ -125,10 +125,10 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
             });
 
             client.on('data', function(data) {
-                console.log("string data: ", data);
-                let dataJson = JSON.parse(data.toString());
-                console.log("data: ", dataJson);
                 if(self.isJsonString(data.toString())) {
+                    console.log("string data: ", data);
+                    let dataJson = JSON.parse(data.toString());
+                    console.log("data: ", dataJson);
                     if(dataJson.type == "reply")
                         self.manageRegularConfirmation(dataJson, db);
                     else if (dataJson.type == "reply-offline") {
@@ -151,7 +151,7 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
             }
         }
         manageRegularConfirmation(dataJson, db) {
-            console.log("reply from tracker: ", data.toString());
+            console.log("reply from tracker: ", dataJson);
             let id = dataJson.localId;
             db.run('update info_data set is_offline = 0 where is_offline = 3 and id = ?', [id], function(err) {
                 if(err) {

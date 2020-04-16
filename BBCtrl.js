@@ -125,6 +125,7 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
             });
 
             client.on('data', function(data) {
+                console.log("data: ", data);
                 let dataJson = JSON.parse(data.toString());
                 if(self.isJsonString(data.toString())) {
                     if(dataJson.type == "reply")

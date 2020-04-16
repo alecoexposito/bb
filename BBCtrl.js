@@ -125,8 +125,8 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
             });
 
             client.on('data', function(data) {
-                console.log("data: ", data);
                 let dataJson = JSON.parse(data.toString());
+                console.log("data: ", dataJson);
                 if(self.isJsonString(data.toString())) {
                     if(dataJson.type == "reply")
                         self.manageRegularConfirmation(dataJson, db);

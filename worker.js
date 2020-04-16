@@ -197,6 +197,9 @@ class Worker extends SCWorker {
             }
         });
 
+        _this.db.run('update info_data set is_offline = 1 where is_offline = 3 and id not in (select id from info_data where is_offline = 3 order by id desc limit 1)', [], function(err) {
+            console.log("PASADOS LOS DATOS DE 3 a 1")
+        });
         // _this.db.run('update info_data set is_offline = 2 where is_offline = 1', [], function(err) {
         //     if(err) {
         //         return console.log(err.message);

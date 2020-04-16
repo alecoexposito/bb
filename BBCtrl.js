@@ -73,6 +73,7 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
 
             const parser = portS1.pipe(new Readline({delimiter: '\r\n'}));
             // parser.on('data', function(data){console.log("data en el parser: ", data);})
+            var lastGpsMilliseconds = 0;
             parser.on("data", function (data) {
                 // console.log("data en el puerto: ", data.toString());
                 var moment = require('moment');
@@ -80,9 +81,15 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
                 // console.log("gprmc: ", gprmc);
                 if (gprmc.valid == true && gprmc.type == 'RMC') {
                     console.log("FECHA: ", gprmc.datetime);
-
                     let gpsMilliseconds = moment(gprmc.datetime).valueOf();
                     console.log("MILLISECONDS: ", gpsMilliseconds);
+                    let difference = gpsMilliseconds - lastGpsMilliseconds;
+
+                    if (difference < 7000) {
+                        console.log("NO TOCA TODAVIA");
+                        return;
+                    }
+                    lastGpsMilliseconds = gpsMilliseconds;
 
                     let response = {
                         'device_id': device_id,

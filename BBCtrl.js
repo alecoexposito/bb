@@ -103,7 +103,7 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
                     console.log("MILLISECONDS: ", gpsMilliseconds);
                     let difference = gpsMilliseconds - lastGpsMilliseconds;
 
-                    if (difference < 7000) {
+                    if (difference < 5000) {
                         console.log("NO TOCA TODAVIA");
                         return;
                     }

@@ -380,9 +380,9 @@ class Worker extends SCWorker {
 
                 } else if(data.type == "start-video-backup") {
                     var location = process.env.VIDEO_BACKUP_LOCATION + "/" + data.idCamera;
-                    console.log("Stream from backup: ", data);
                     var initialDate = data.initialDate;
                     var endDate = data.endDate;
+                    let isFirstTime = data.isFirstTime;
                     console.log(initialDate);
 
                     var videoBackupChannel = socket.subscribe(data.playlistName + '_channel');
@@ -404,7 +404,6 @@ class Worker extends SCWorker {
                     var arrayInfo = [];
                     var infoCounter = 0;
                     lineReader.on('line', function (line) {
-                        console.log("line read: ", line);
                         if(line.startsWith("#")) {
                             lastUtilityLine = line;
                         } else {
@@ -417,7 +416,8 @@ class Worker extends SCWorker {
                                     fileName: line,
                                     deviceId: process.env.DEVICE_ID,
                                     playlist: data.playlistName,
-                                    lastUtilityLine: lastUtilityLine
+                                    lastUtilityLine: lastUtilityLine,
+                                    isFirstTime: isFirstTime
                                 };
                                 infoCounter++;
                                 if(infoCounter >= 5 && playlistSize > 10000) {

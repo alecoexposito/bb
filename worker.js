@@ -769,7 +769,9 @@ class Worker extends SCWorker {
             } else {
                 if (line >= initialDate && line <= endDate) {
                     let lineDate = moment(line, 'YYYY-MM-DD_HH-mm-ss_hls.ts');
-                    if (lastMarkedDate == null) {
+                    console.log("last marked date: ", lastMarkedDate);
+                    console.log("line: ", lineDate);
+                    if (lastMarkedDate === null) {
                         lastMarkedDate = lineDate.clone();
                     } else {
                         if (lastMarkedDate.diff(lineDate, 'seconds') > 60) {

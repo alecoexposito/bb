@@ -759,6 +759,7 @@ class Worker extends SCWorker {
         let lineReader2 = lr.createInterface({
             input: fs.createReadStream(location + '/playlist.m3u8')
         });
+        console.log("location: ", location);
 
         let lastUtilityLine = "";
         let noFileFound = true;
@@ -773,7 +774,7 @@ class Worker extends SCWorker {
                 if (line >= initialDateStr && line <= endDateStr) {
                     let lineDate = moment(line, 'YYYY-MM-DD_HH-mm-ss_hls.ts');
                     console.log("last marked date: ", lastMarkedDate);
-                    console.log("line: ", lineDate, lastMarkedDate.diff(lineDate, 'seconds'));
+                    console.log("line: ", lineDate, lineDate.diff(lastMarkedDate, 'seconds'));
                     if (lineDate.diff(lastMarkedDate, 'seconds') > 60) {
                         console.log("pushing in result", lastMarkedDate.diff(lineDate, 'seconds'));
                         result.push({

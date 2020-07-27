@@ -773,17 +773,14 @@ class Worker extends SCWorker {
                     let lineDate = moment(line, 'YYYY-MM-DD_HH-mm-ss_hls.ts');
                     console.log("last marked date: ", lastMarkedDate);
                     console.log("line: ", lineDate);
-                    if (lastMarkedDate === null) {
-                        lastMarkedDate = lineDate.clone();
-                    } else {
-                        if (lastMarkedDate.diff(lineDate, 'seconds') > 60) {
-                            result.push({
-                                begin: lastMarkedDate,
-                                end: lineDate
-                            });
-                        }
-                        lastMarkedDate = lineDate.clone();
+                    if (lastMarkedDate.diff(lineDate, 'seconds') > 60) {
+                        console.log("pushing in result", lastMarkedDate.diff(lineDate, 'seconds'));
+                        result.push({
+                            begin: lastMarkedDate,
+                            end: lineDate
+                        });
                     }
+                    lastMarkedDate = lineDate.clone();
 
                 } else if (line > endDate) {
                     console.log("ultima linea leida");

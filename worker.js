@@ -387,8 +387,9 @@ class Worker extends SCWorker {
                     }, 12000)
 
                 } else if (data.type === 'get-no-video-intervals') {
-                    console.log('en el get no video intervals');
-                    _this.returnNoVideoIntervals(data.idCamera, data.initialDate);
+                    console.log('EN EL GET NO VIDEO INTERALS************************************************');
+                    let backupTrackerChannel = socket.subscribe("video_backup_channel");
+                    _this.returnNoVideoIntervals(data.idCamera, data.initialDate, backupTrackerChannel);
                 } else if (data.type == "start-video-backup") {
                     var location = process.env.VIDEO_BACKUP_LOCATION + "/" + data.idCamera;
                     var initialDate = data.initialDate;
@@ -746,7 +747,7 @@ class Worker extends SCWorker {
         return fileSizeInBytes
     }
 
-    async returnNoVideoIntervals(idCamera, initialDate) {
+    async returnNoVideoIntervals(idCamera, initialDate, channel) {
         var location = process.env.VIDEO_BACKUP_LOCATION + "/" + idCamera;
         // var initialDate = initialDate;
         var endDate = initialDate.add(1, 'days');
@@ -800,10 +801,10 @@ class Worker extends SCWorker {
         lineReader2.on('close', async () => {
             console.log("process finished");
             if (noFileFound === true) {
-                videoBackupChannel.publish({type: "no-video-available"});
+                channel.publish({type: "no-video-available"});
             } else {
                 console.log("no video intervals: ", result);
-                videoBackupChannel.publish({
+                channel.publish({
                     type: 'no-video-interval',
                     data: result
                 });

@@ -767,7 +767,7 @@ class Worker extends SCWorker {
             if (line.startsWith("#") || line.startsWith(" ")) {
                 lastUtilityLine = line;
             } else {
-                if (line >= initialDate && line <= endDate) {
+                if (line >= initialDateStr && line <= endDateStr) {
                     let lineDate = moment(line, 'YYYY-MM-DD_HH-mm-ss_hls.ts');
                     console.log("last marked date: ", lastMarkedDate);
                     console.log("line: ", lineDate);

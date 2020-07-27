@@ -750,7 +750,7 @@ class Worker extends SCWorker {
         // initialDate.add(1, 'days')
         // console.log("initial date: ", initialDate);
         let initDate = moment(initialDate, 'DD/MM/YYYY');
-        let endDate = moment(initialDate).add(1, 'days');
+        let endDate = moment(initDate).add(1, 'days');
 
         let initialDateStr = initDate.format('YYYY-MM-DD_HH-mm-ss') + "_hls.ts";
         let endDateStr = endDate.format('YYYY-MM-DD_HH-mm-ss') + "_hls.ts";

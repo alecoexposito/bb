@@ -388,7 +388,7 @@ class Worker extends SCWorker {
                 } else if (data.type === "get-no-video-intervals") {
                     console.log('EN EL GET NO VIDEO INTERALS********', data);
                     var videoBackupChannel = socket.subscribe(data.playlistName + '_channel');
-                    _this.returnNoVideoIntervals(data.idCamera, moment(data.initialDate), videoBackupChannel);
+                    _this.returnNoVideoIntervals(data.idCamera, data.initialDate, videoBackupChannel);
                 } else if (data.type == "start-video-backup") {
                     var location = process.env.VIDEO_BACKUP_LOCATION + "/" + data.idCamera;
                     var initialDate = data.initialDate;

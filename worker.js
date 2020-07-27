@@ -777,10 +777,9 @@ class Worker extends SCWorker {
                     console.log("last marked date: ", lastMarkedDate);
                     console.log("line: ", lineDate, lineDate.diff(lastMarkedDate, 'seconds'));
                     if (lineDate.diff(lastMarkedDate, 'seconds') > 60) {
-                        console.log("pushing in result", lastMarkedDate.diff(lineDate, 'seconds'));
                         result.push({
-                            begin: lastMarkedDate,
-                            end: lineDate
+                            begin: lastMarkedDate.format('YYYY-MM-DD HH:mm:ss'),
+                            end: lineDate.format('YYYY-MM-DD HH:mm:ss')
                         });
                     }
                     lastMarkedDate = lineDate.clone();

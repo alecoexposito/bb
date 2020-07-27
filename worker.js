@@ -361,6 +361,7 @@ class Worker extends SCWorker {
 
 
         cameraChannel.watch(function (data) {
+            console.log("ALGO ENTRO EN EL CAMERA CHANNEL: ", data);
             if (data.id == process.env.DEVICE_ID) {
                 if (data.type == "start-streaming") {
                     console.log("AAAAAAAAAAAAAAAAAAAAAA--------------received from web:------------AAAAAAAAAAAAAAA ", data);

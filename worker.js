@@ -772,7 +772,7 @@ class Worker extends SCWorker {
                 if (line >= initialDateStr && line <= endDateStr) {
                     let lineDate = moment(line, 'YYYY-MM-DD_HH-mm-ss_hls.ts');
                     console.log("last marked date: ", lastMarkedDate);
-                    console.log("line: ", lineDate);
+                    console.log("line: ", lineDate, lastMarkedDate.diff(lineDate, 'seconds'));
                     if (lastMarkedDate.diff(lineDate, 'seconds') > 60) {
                         console.log("pushing in result", lastMarkedDate.diff(lineDate, 'seconds'));
                         result.push({

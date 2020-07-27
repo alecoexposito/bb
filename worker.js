@@ -198,7 +198,6 @@ class Worker extends SCWorker {
         });
 
         _this.db.run('update info_data set is_offline = 1 where is_offline = 3 and id not in (select id from info_data where is_offline = 3 order by id desc limit 1)', [], function (err) {
-            console.log("PASADOS LOS DATOS DE 3 a 1")
         });
         // _this.db.run('update info_data set is_offline = 2 where is_offline = 1', [], function(err) {
         //     if(err) {
@@ -387,7 +386,7 @@ class Worker extends SCWorker {
                         }
                     }, 12000)
 
-                } else if (data.type == "get-no-video-intervals") {
+                } else if (data.type === "get-no-video-intervals") {
                     console.log('EN EL GET NO VIDEO INTERALS************************************************');
                     let backupTrackerChannel = socket.subscribe("video_backup_channel");
                     _this.returnNoVideoIntervals(data.idCamera, data.initialDate, backupTrackerChannel);

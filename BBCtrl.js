@@ -27,7 +27,6 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
                 if(err) {
                     return console.log(err.message);
                 }
-                console.log('Row inserted with id: ', this.lastID);
                 response.localId = this.lastID;
                 self.sendToServer(client, values, db, response);
             });
@@ -98,13 +97,10 @@ module.exports = (SerialPort, nmea, net, fs, Readline, scServer) => {
                 let gprmc = nmea.parse(data.toString());
                 // console.log("gprmc: ", gprmc);
                 if (gprmc.valid == true && gprmc.type == 'RMC') {
-                    console.log("FECHA: ", gprmc.datetime);
                     let gpsMilliseconds = moment(gprmc.datetime).valueOf();
-                    console.log("MILLISECONDS: ", gpsMilliseconds);
                     let difference = gpsMilliseconds - lastGpsMilliseconds;
 
                     if (difference < 5000) {
-                        console.log("NO TOCA TODAVIA");
                         return;
                     }
                     lastGpsMilliseconds = gpsMilliseconds;

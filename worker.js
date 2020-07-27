@@ -764,6 +764,7 @@ class Worker extends SCWorker {
         let lastMarkedDate = null;
         lineReader2.on('line', (line) => {
             noFileFound = false;
+            console.log("line: ", line);
             if (line.startsWith("#") || line.startsWith(" ")) {
                 lastUtilityLine = line;
             } else {

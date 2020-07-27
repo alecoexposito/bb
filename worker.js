@@ -749,9 +749,10 @@ class Worker extends SCWorker {
         let location = process.env.VIDEO_BACKUP_LOCATION + "/" + idCamera;
         // initialDate.add(1, 'days')
         // console.log("initial date: ", initialDate);
-        var endDate = moment(initialDate).add(1, 'days');
+        let initDate = moment(initialDate, 'DD/MM/YYYY');
+        let endDate = moment(initialDate).add(1, 'days');
 
-        let initialDateStr = initialDate.format('YYYY-MM-DD_HH-mm-ss') + "_hls.ts";
+        let initialDateStr = initDate.format('YYYY-MM-DD_HH-mm-ss') + "_hls.ts";
         let endDateStr = endDate.format('YYYY-MM-DD_HH-mm-ss') + "_hls.ts";
 
         console.log("initial date str: ", initialDateStr);
@@ -764,7 +765,7 @@ class Worker extends SCWorker {
         let lastUtilityLine = "";
         let noFileFound = true;
         let result = [];
-        let lastMarkedDate = moment(initialDate);
+        let lastMarkedDate = moment(initDate);
         lineReader2.on('line', (line) => {
             noFileFound = false;
             // console.log("line: ", line);

@@ -747,21 +747,16 @@ class Worker extends SCWorker {
         return fileSizeInBytes
     }
 
-    async returnNoVideoIntervals(idCamera, initialDate, channel) {
-        var location = process.env.VIDEO_BACKUP_LOCATION + "/" + idCamera;
+    async returnNoVideoIntervals(idCamera, initialDate) {
+        let location = process.env.VIDEO_BACKUP_LOCATION + "/" + idCamera;
         // var initialDate = initialDate;
         var endDate = initialDate.add(1, 'days');
 
         let initialDateStr = initialDate.format('YYYY-MM-DD_HH-mm-ss') + "_hls.ts";
         let endDateStr = endDate.format('YYYY-MM-DD_HH-mm-ss') + "_hls.ts";
 
-        var videoBackupChannel = socket.subscribe(playlistName + '_channel');
         let backupTrackerChannel = socket.subscribe("video_backup_channel");
 
-
-        var count = 1;
-        var playlistSize = 0;
-        playlistSize = _this.getFilesizeInBytes(location + '/playlist.m3u8');
         let lineReader2 = lr.createInterface({
             input: fs.createReadStream(location + '/playlist.m3u8')
         });
@@ -769,7 +764,6 @@ class Worker extends SCWorker {
         let lastUtilityLine = "";
         let noFileFound = true;
         let result = [];
-        let infoCounter = 0;
         let lastMarkedDate = null;
         lineReader2.on('line', (line) => {
             noFileFound = false;

@@ -748,12 +748,13 @@ class Worker extends SCWorker {
 
     async returnNoVideoIntervals(idCamera, initialDate, channel) {
         let location = process.env.VIDEO_BACKUP_LOCATION + "/" + idCamera;
-        // var initialDate = initialDate;
         var endDate = initialDate.add(1, 'days');
 
         let initialDateStr = initialDate.format('YYYY-MM-DD_HH-mm-ss') + "_hls.ts";
         let endDateStr = endDate.format('YYYY-MM-DD_HH-mm-ss') + "_hls.ts";
 
+        console.log("initial date str: ", initialDateStr);
+        console.log("end date str: ", endDateStr);
         let lineReader2 = lr.createInterface({
             input: fs.createReadStream(location + '/playlist.m3u8')
         });

@@ -24,7 +24,7 @@ class Worker extends SCWorker {
         super();
         var sqlite3 = require('sqlite3').verbose();
         this.db = new sqlite3.Database('/home/zurikato/.db/bb.sqlite', sqlite3.OPEN_READWRITE, (err) => {
-            if(err) {
+            if (err) {
                 return console.log("error openning the sqlite database");
             }
             console.log('connected to the sqlite database');
@@ -50,18 +50,18 @@ class Worker extends SCWorker {
     }
 
     findRunningProcess(idCamera) {
-        for(var i = 0; i < this.currentPids.length; i++) {
+        for (var i = 0; i < this.currentPids.length; i++) {
             var currentProcess = this.currentPids[i];
-            if(currentProcess.idCamera == idCamera)
+            if (currentProcess.idCamera == idCamera)
                 return currentProcess;
         }
         return null;
     }
 
     runningProcessIndex(idCamera) {
-        for(var i = 0; i < this.currentPids.length; i++) {
+        for (var i = 0; i < this.currentPids.length; i++) {
             var currentProcess = this.currentPids[i];
-            if(currentProcess.idCamera == idCamera)
+            if (currentProcess.idCamera == idCamera)
                 return i;
         }
         return -1;
@@ -69,7 +69,7 @@ class Worker extends SCWorker {
 
     addRunningProcess(idCamera, pid) {
         var index = this.runningProcessIndex(idCamera);
-        if(index != -1) {
+        if (index != -1) {
             this.currentPids[index].pid = pid;
             this.currentPids[index].sendImage = true;
         } else {
@@ -93,12 +93,12 @@ class Worker extends SCWorker {
     sendImageWebsocket(cameraVideoChannel, idCamera) {
         var _this = this;
         var currentProcess = _this.findRunningProcess(idCamera);
-        if(currentProcess.sendImage) {
+        if (currentProcess.sendImage) {
             console.log("enviando");
             var imageFile = fs.readFileSync("/home/zurikato/camera-local/camera-" + idCamera + ".jpg");
 
             cameraVideoChannel.publish({image: imageFile.toString("base64"), idCamera: idCamera});
-            setTimeout(function() {
+            setTimeout(function () {
                 _this.sendImageWebsocket(cameraVideoChannel, idCamera);
             }, 300)
         } else {
@@ -137,7 +137,7 @@ class Worker extends SCWorker {
 
     async syncOfflineData(client) {
         var _this = this;
-        if(_this.offlineLock == true)
+        if (_this.offlineLock == true)
             return;
         _this.offlineLock = true;
         let sql = "select * from info_data where is_offline = 1";
@@ -161,7 +161,7 @@ class Worker extends SCWorker {
             toSend.push(response);
 
         }, (err, count) => {
-            if(err) {
+            if (err) {
                 return console.log("error ocurred retrieving offline data from sqlite");
             }
 
@@ -172,11 +172,11 @@ class Worker extends SCWorker {
         for (var i = 0; i < toSend.length; i++) {
             counter++;
             toSendNow.push(toSend[i]);
-            if(counter == 5) {
+            if (counter == 5) {
                 await new Promise(r => setTimeout(r, 600));
                 let buffer = Buffer.from(JSON.stringify(toSendNow));
-                client.write(buffer, function(err) {
-                    if(err) {
+                client.write(buffer, function (err) {
+                    if (err) {
                         console.log("error enviando el dato offline");
                     } else {
                         console.log("--------------------- enviado el dato offline -------------------------");
@@ -187,8 +187,8 @@ class Worker extends SCWorker {
             }
         }
         let buffer = Buffer.from(JSON.stringify(toSendNow));
-        client.write(buffer, function(err) {
-            if(err) {
+        client.write(buffer, function (err) {
+            if (err) {
                 console.log("error enviando el dato offline, saliendo de la sincronizacion de datos offline");
                 _this.offlineLock = false;
                 return;
@@ -197,7 +197,7 @@ class Worker extends SCWorker {
             }
         });
 
-        _this.db.run('update info_data set is_offline = 1 where is_offline = 3 and id not in (select id from info_data where is_offline = 3 order by id desc limit 1)', [], function(err) {
+        _this.db.run('update info_data set is_offline = 1 where is_offline = 3 and id not in (select id from info_data where is_offline = 3 order by id desc limit 1)', [], function (err) {
             console.log("PASADOS LOS DATOS DE 3 a 1")
         });
         // _this.db.run('update info_data set is_offline = 2 where is_offline = 1', [], function(err) {
@@ -209,16 +209,18 @@ class Worker extends SCWorker {
         // });
 
         _this.offlineLock = false;
-        setTimeout(function() {_this.syncOfflineData(client)}, 60000);
+        setTimeout(function () {
+            _this.syncOfflineData(client)
+        }, 60000);
     }
 
     loadAutoplayCameras() {
         console.log("load autoplay for cameras");
         var _this = this;
-        this.clientRest.get(process.env.API_URL + "/devices/" + process.env.DEVICE_ID + "/camerasInAutoplay", function(data, response) {
+        this.clientRest.get(process.env.API_URL + "/devices/" + process.env.DEVICE_ID + "/camerasInAutoplay", function (data, response) {
             console.log("data in response: ", data);
             _this.autoplayCameras = data;
-            while(_this.autoplayCameraIntervals.length > 0) {
+            while (_this.autoplayCameraIntervals.length > 0) {
                 let interval = _this.autoplayCameraIntervals.pop();
                 clearInterval(interval);
             }
@@ -229,14 +231,14 @@ class Worker extends SCWorker {
                 let vehicle = _this.autoplayCameras[i].vehicle_name;
                 let intervalSeconds = _this.autoplayCameras[i].autoplay_interval;
 
-                let intervalC = setInterval(function() {
+                let intervalC = setInterval(function () {
                     // var urlCamera = 'rtsp://192.168.1.30:554/user=admin&password=&channel=1&stream=1.sdp';
                     let path = '/home/zurikato/scripts/single-image.sh';
                     let singleCameraCommand = _this.runCommand('bash', [
                         path,
                         urlCamera
                     ]);
-                    setTimeout(function() {
+                    setTimeout(function () {
                         let stats = fs.statSync("/home/zurikato/camera-local/single-camera.jpg");
                         console.log("stats: ", stats);
                         let singleImagelastModified = stats.mtime;
@@ -249,6 +251,7 @@ class Worker extends SCWorker {
         });
 
     }
+
     connect() {
         // this.client = new net.Socket();
         try {
@@ -260,15 +263,15 @@ class Worker extends SCWorker {
 
     launchIntervalConnect() {
         var _this = this;
-        if(false != this.intervalConnect)
+        if (false != this.intervalConnect)
             return;
-        this.intervalConnect = setInterval(function() {
+        this.intervalConnect = setInterval(function () {
             _this.connect()
         }, 5000)
     }
 
     clearIntervalConnect() {
-        if(false == this.intervalConnect)
+        if (false == this.intervalConnect)
             return;
         clearInterval(this.intervalConnect)
         this.intervalConnect = false
@@ -281,7 +284,12 @@ class Worker extends SCWorker {
         var scServer = this.scServer;
         var bb = require(__dirname + '/BBCtrl')(SerialPort, nmea, net, fs, Readline, scServer);
         // var optionsClient = {'serialPort': '/dev/ttyS1', 'baudRate': 9600, 'port': 3002, 'ipAddress': process.env.TRACKER_IP};
-        var optionsClient = {'serialPort': '/dev/ttyUSB1', 'baudRate': 9600, 'port': 3002, 'ipAddress': process.env.TRACKER_IP};
+        var optionsClient = {
+            'serialPort': '/dev/ttyUSB1',
+            'baudRate': 9600,
+            'port': 3002,
+            'ipAddress': process.env.TRACKER_IP
+        };
         _this.client = new net.Socket();
         _this.client.on('error', function (err) {
             console.log('error conectandose al tracker: ', err);
@@ -318,7 +326,7 @@ class Worker extends SCWorker {
             console.log("conectado al server websocket del tracker");
             _this.connect();
             // _this.client.connect(optionsClient.port, optionsClient.ipAddress);
-            _this.client.on('connect', function() {
+            _this.client.on('connect', function () {
                 console.log('----------------------------- CLIENT CONNECTED ------------------------------');
                 _this.clearIntervalConnect();
                 _this.client.setNoDelay(true);
@@ -326,12 +334,12 @@ class Worker extends SCWorker {
                 _this.syncOfflineData(_this.client);
             });
         });
-        socket.on('error', function(err) {
+        socket.on('error', function (err) {
             console.log("error ocurred: ", err);
             // socket = socketClient.connect(options);
         });
 
-        socket.on('close', function() {
+        socket.on('close', function () {
             console.log("on close: ");
             try {
                 _this.launchIntervalConnect(socket);
@@ -345,31 +353,31 @@ class Worker extends SCWorker {
         var cameraChannel = socket.subscribe('camera_channel');
         var cameraVideoChannel = socket.subscribe('camera_' + process.env.DEVICE_ID + '_channel');
         _this.cameraSingleChannel = socket.subscribe('camera_single_channel');
-        _this.cameraSingleChannel.watch(function(data) {
-            if(data.type == "load-camera-autoplay") {
+        _this.cameraSingleChannel.watch(function (data) {
+            if (data.type == "load-camera-autoplay") {
                 _this.loadAutoplayCameras();
             }
         })
 
 
         cameraChannel.watch(function (data) {
-            if(data.id == process.env.DEVICE_ID) {
+            if (data.id == process.env.DEVICE_ID) {
                 if (data.type == "start-streaming") {
                     console.log("AAAAAAAAAAAAAAAAAAAAAA--------------received from web:------------AAAAAAAAAAAAAAA ", data);
 
-                    if(data.multiple) {
+                    if (data.multiple) {
                         _this.runMultipleCameras(data, cameraVideoChannel);
                     } else {
                         var idCamera = data.idCamera;
                         var urlCamera = data.urlCamera;
                         _this.runSingleCamera(idCamera, urlCamera, cameraVideoChannel);
                     }
-                } else if(data.type == "stop-streaming") {
+                } else if (data.type == "stop-streaming") {
                     console.log("AAAAAAAAAAAAAAAAAAAAAA--------------received from web:------------AAAAAAAAAAAAAAA ", data);
-                    var interval = setInterval(function() {
+                    var interval = setInterval(function () {
                         var idCamera = data.idCamera;
                         var currentProcess = _this.findRunningProcess(idCamera);
-                        if((moment().unix() - currentProcess.lastTimestamp) >= 20) {
+                        if ((moment().unix() - currentProcess.lastTimestamp) >= 20) {
                             var pid = currentProcess.pid;
                             console.log("------ killinig process with pid: -----------", pid);
                             process.kill(-pid, "SIGKILL");
@@ -378,11 +386,13 @@ class Worker extends SCWorker {
                         }
                     }, 12000)
 
-                } else if(data.type == "start-video-backup") {
+                } else if (data.type === 'get-no-video-intervals') {
+                    console.log('en el get no video intervals');
+                    _this.returnNoVideoIntervals(data.idCamera, data.initialDate);
+                } else if (data.type == "start-video-backup") {
                     var location = process.env.VIDEO_BACKUP_LOCATION + "/" + data.idCamera;
                     var initialDate = data.initialDate;
                     var endDate = data.endDate;
-                    let isFirstTime = data.isFirstTime;
                     console.log(initialDate);
 
                     var videoBackupChannel = socket.subscribe(data.playlistName + '_channel');
@@ -394,7 +404,7 @@ class Worker extends SCWorker {
 
                     var count = 1;
                     var playlistSize = 0;
-                    playlistSize =  _this.getFilesizeInBytes(location + '/playlist.m3u8');
+                    playlistSize = _this.getFilesizeInBytes(location + '/playlist.m3u8');
                     var lineReader = lr.createInterface({
                         input: fs.createReadStream(location + '/playlist.m3u8')
                     });
@@ -404,10 +414,10 @@ class Worker extends SCWorker {
                     var arrayInfo = [];
                     var infoCounter = 0;
                     lineReader.on('line', function (line) {
-                        if(line.startsWith("#")) {
+                        if (line.startsWith("#")) {
                             lastUtilityLine = line;
                         } else {
-                            if(line >= initialDate && line <= endDate) {
+                            if (line >= initialDate && line <= endDate) {
                                 console.log("line added: ", line);
                                 noFileFound = false;
 
@@ -417,10 +427,9 @@ class Worker extends SCWorker {
                                     deviceId: process.env.DEVICE_ID,
                                     playlist: data.playlistName,
                                     lastUtilityLine: lastUtilityLine,
-                                    isFirstTime: isFirstTime
                                 };
                                 infoCounter++;
-                                if(infoCounter >= 5 && playlistSize > 10000) {
+                                if (infoCounter >= 5 && playlistSize > 10000) {
                                     let backupToSend = arrayInfo;
                                     _this.sendRecordingsToServer(backupToSend, backupTrackerChannel, location, 100);
                                     infoCounter = 0;
@@ -431,7 +440,7 @@ class Worker extends SCWorker {
                                 arrayInfo.push(dataToStore);
 
                                 // _this.addTsToPlaylist(line, playlistFile, lastUtilityLine);
-                            } else if(line > endDate) {
+                            } else if (line > endDate) {
                                 console.log("ultima linea leida");
                                 lineReader.close();
                             }
@@ -439,18 +448,18 @@ class Worker extends SCWorker {
 
                     });
 
-                    lineReader.on('close', async function() {
+                    lineReader.on('close', async function () {
                         console.log("process finished");
-                        if(noFileFound == true) {
-                            videoBackupChannel.publish({ type: "no-video-available" });
-                        }else {
+                        if (noFileFound == true) {
+                            videoBackupChannel.publish({type: "no-video-available"});
+                        } else {
                             let backupToSend = arrayInfo;
                             let endObj = {
                                 type: "end-playlist",
                                 deviceId: process.env.DEVICE_ID,
                                 playlist: data.playlistName,
                             }
-                            _this.sendRecordingsToServer(arrayInfo, backupTrackerChannel, location, 200,  endObj);
+                            _this.sendRecordingsToServer(arrayInfo, backupTrackerChannel, location, 200, endObj);
                             infoCounter = 0;
                             arrayInfo = [];
 
@@ -465,14 +474,14 @@ class Worker extends SCWorker {
                             // });
                         }
                     });
-                } else if(data.type == "stop-video-backup") {
+                } else if (data.type == "stop-video-backup") {
                     var folderPath = "/home/zurikato/camera/video/" + data.playlistName;
                     del([folderPath], {force: true}).then(paths => {
                         console.log('Deleted files and folders:\n', paths.join('\n'));
                     });
                     // _this.deleteFolderFiles(folderPath);
                     // fs.rmdirSync(folderPath);
-                } else if(data.type == "begin-download") {
+                } else if (data.type == "begin-download") {
                     console.log("entrando en el begin download")
                     var totalTime = data.endTime - data.initialTime;
                     let backupTrackerChannel = socket.subscribe("video_backup_channel");
@@ -490,18 +499,18 @@ class Worker extends SCWorker {
         });
 
         var obdChannel = socket.subscribe('obd_channel');
-        obdChannel.watch(function(data) {
-            if(data.id == process.env.DEVICE_ID) {
+        obdChannel.watch(function (data) {
+            if (data.id == process.env.DEVICE_ID) {
                 if (data.type == "obd-info") {
-                    _this.runCommand('python ~/scripts/obd-info.py', [], function() {
-                        obdChannel.publish({ type: 'obd-info-response', message: 'just a simple text' });
+                    _this.runCommand('python ~/scripts/obd-info.py', [], function () {
+                        obdChannel.publish({type: 'obd-info-response', message: 'just a simple text'});
                     });
                 }
             }
         });
 
         var vpnChannel = socket.subscribe('vpn_' + process.env.DEVICE_ID + '_channel');
-        vpnChannel.watch(function(data) {
+        vpnChannel.watch(function (data) {
             console.log("canal vpn: ", data);
             _this.runCommand('sudo', [
                 'service',
@@ -511,11 +520,11 @@ class Worker extends SCWorker {
         });
 
         var obdChannel = socket.subscribe('obd_channel');
-        obdChannel.watch(function(data) {
-            if(data.id == process.env.DEVICE_ID) {
+        obdChannel.watch(function (data) {
+            if (data.id == process.env.DEVICE_ID) {
                 if (data.type == "obd-info") {
-                    _this.runCommand('python ~/scripts/obd-info.py', [], function() {
-                        obdChannel.publish({ type: 'obd-info-response', message: 'just a simple text' });
+                    _this.runCommand('python ~/scripts/obd-info.py', [], function () {
+                        obdChannel.publish({type: 'obd-info-response', message: 'just a simple text'});
                     });
                 }
             }
@@ -527,56 +536,56 @@ class Worker extends SCWorker {
         console.log("initial time: ", initialTime);
         console.log("total time: ", totalTime);
         var location = "/home/zurikato/camera/video/" + playlistName;
-        if(fs.existsSync(location + "/videos.txt")) {
+        if (fs.existsSync(location + "/videos.txt")) {
             fs.truncateSync(location + "/videos.txt", 0);
         }
 
         fs.readdir(location, (err, files) => {
-                var noFileFound = true;
-                var firstPass = true;
-                var initialDate = null;
-                var endDate = null;
-                var noFileFound = true;
-                var _this = this;
-                var scriptsLocation = "/home/zurikato/scripts";
-                files.forEach(file => {
-                    noFileFound = false;
-                    if(file != 'playlist.m3u8') {
-                        if(firstPass) {
-                            var dateStr = file.replace("_hls.ts", "");
-                            var fileDate = moment(dateStr, 'YYYY-MM-DD_HH-mm-ss');
-                            var initialDateTmp = fileDate.add(Math.floor(initialTime), 'seconds');
-                            initialDate = initialDateTmp.format('YYYY-MM-DD_HH-mm-ss') + "_hls.ts";
-                            endDate = initialDateTmp.add(Math.ceil(totalTime), 'seconds').format('YYYY-MM-DD_HH-mm-ss') + "_hls.ts";
-                            console.log("initial date: ", initialDate);
-                            console.log("end date: ", endDate);
-                            firstPass = false;
-                        }
-                        var filename = location + "/videos.txt";
-                        if(file >= initialDate && file <= endDate) {
-                            console.log("included file: ", file);
-                            fs.appendFileSync(filename, "file " + file + "\n", function(err) {
-                                if(err) {
-                                    return console.log("error: ", err);
-                                }
-                            });
-                        }
+            var noFileFound = true;
+            var firstPass = true;
+            var initialDate = null;
+            var endDate = null;
+            var noFileFound = true;
+            var _this = this;
+            var scriptsLocation = "/home/zurikato/scripts";
+            files.forEach(file => {
+                noFileFound = false;
+                if (file != 'playlist.m3u8') {
+                    if (firstPass) {
+                        var dateStr = file.replace("_hls.ts", "");
+                        var fileDate = moment(dateStr, 'YYYY-MM-DD_HH-mm-ss');
+                        var initialDateTmp = fileDate.add(Math.floor(initialTime), 'seconds');
+                        initialDate = initialDateTmp.format('YYYY-MM-DD_HH-mm-ss') + "_hls.ts";
+                        endDate = initialDateTmp.add(Math.ceil(totalTime), 'seconds').format('YYYY-MM-DD_HH-mm-ss') + "_hls.ts";
+                        console.log("initial date: ", initialDate);
+                        console.log("end date: ", endDate);
+                        firstPass = false;
                     }
-                });
-                var videoBackupChannel = socket.subscribe(playlistName + '_channel');
-                _this.runCommand("sh", [
-                    scriptsLocation + '/join-cut-segments.sh',
-                    initialTime,
-                    totalTime,
-                    playlistName
-                ], function() {
-                    videoBackupChannel.publish({ type: "download-ready" });
-                });
-
-                if(noFileFound == true) {
-                    videoBackupChannel.publish({ type: "no-video-available" });
+                    var filename = location + "/videos.txt";
+                    if (file >= initialDate && file <= endDate) {
+                        console.log("included file: ", file);
+                        fs.appendFileSync(filename, "file " + file + "\n", function (err) {
+                            if (err) {
+                                return console.log("error: ", err);
+                            }
+                        });
+                    }
                 }
             });
+            var videoBackupChannel = socket.subscribe(playlistName + '_channel');
+            _this.runCommand("sh", [
+                scriptsLocation + '/join-cut-segments.sh',
+                initialTime,
+                totalTime,
+                playlistName
+            ], function () {
+                videoBackupChannel.publish({type: "download-ready"});
+            });
+
+            if (noFileFound == true) {
+                videoBackupChannel.publish({type: "no-video-available"});
+            }
+        });
 
     }
 
@@ -597,7 +606,7 @@ class Worker extends SCWorker {
         });
 
         vcommand.on('close', code => {
-            if(closeCallback !== undefined) {
+            if (closeCallback !== undefined) {
                 console.log("executing callback function");
                 closeCallback();
             }
@@ -608,8 +617,8 @@ class Worker extends SCWorker {
     }
 
     writeToPlayList(filename, data) {
-        fs.appendFileSync(filename, data, function(err) {
-            if(err) {
+        fs.appendFileSync(filename, data, function (err) {
+            if (err) {
                 return console.log("error: ", err);
             }
         });
@@ -626,7 +635,7 @@ class Worker extends SCWorker {
 
     addTsToPlaylist(tsFilename, playlistFilename, infoLine) {
         var infoLineData = "#EXTINF:30.000000,\n";
-        if(infoLine !== undefined)
+        if (infoLine !== undefined)
             infoLineData = infoLine + "\n";
         this.writeToPlayList(playlistFilename, infoLineData);
         this.writeToPlayList(playlistFilename, tsFilename + "\n");
@@ -650,7 +659,7 @@ class Worker extends SCWorker {
         var vcommand = null;
 
         var currentProcess = _this.findRunningProcess(idCamera);
-        if(currentProcess != null && currentProcess.pid != null) {
+        if (currentProcess != null && currentProcess.pid != null) {
             console.log("process already openned");
         } else {
             vcommand = _this.runCommand('bash', [
@@ -669,23 +678,23 @@ class Worker extends SCWorker {
     runMultipleCameras(data, cameraVideoChannel) {
         var cameras = data.cameras;
         var _this = this;
-        for(var i = 0; i < cameras.length; i++) {
+        for (var i = 0; i < cameras.length; i++) {
             var idCamera = cameras[i].idCamera;
             var urlCamera = cameras[i].urlCamera;
             console.log("cameras en i: ", cameras[i]);
             _this.runSingleCamera(idCamera, urlCamera, cameraVideoChannel);
         }
 
-        var interval = setInterval(function() {
+        var interval = setInterval(function () {
             var idCamera = cameras[0].idCamera;
             var currentProcess = _this.findRunningProcess(idCamera);
             console.log("en el interval del multiple cameras: " + idCamera, (moment().unix() - currentProcess.lastTimestamp) >= 20);
-            if((moment().unix() - currentProcess.lastTimestamp) >= 20) {
+            if ((moment().unix() - currentProcess.lastTimestamp) >= 20) {
                 var pid = currentProcess.pid;
                 console.log("------ killinig process with pid: -----------", pid);
                 process.kill(-pid, "SIGKILL");
                 _this.stopRunningProcess(idCamera);
-                for(var j = 1; j < cameras.length; j++) {
+                for (var j = 1; j < cameras.length; j++) {
                     currentProcess = _this.findRunningProcess(cameras[j].idCamera);
                     var pid = currentProcess.pid;
                     console.log("------ killinig process with pid: -----------", pid);
@@ -709,7 +718,7 @@ class Worker extends SCWorker {
                 deviceId: data.deviceId,
                 playlist: data.playlist
             }
-        }, function(error, response, body) {
+        }, function (error, response, body) {
             // console.log(body);
         });
 
@@ -735,6 +744,71 @@ class Worker extends SCWorker {
         var stats = fs.statSync(filename)
         var fileSizeInBytes = stats["size"]
         return fileSizeInBytes
+    }
+
+    returnNoVideoIntervals = async (idCamera, initialDate) => {
+        var location = process.env.VIDEO_BACKUP_LOCATION + "/" + idCamera;
+        // var initialDate = initialDate;
+        var endDate = initialDate.add(1, 'days');
+
+        let initialDateStr = initialDate.format('YYYY-MM-DD_HH-mm-ss') + "_hls.ts";
+        let endDateStr = endDate.format('YYYY-MM-DD_HH-mm-ss') + "_hls.ts";
+
+        var videoBackupChannel = socket.subscribe(playlistName + '_channel');
+        let backupTrackerChannel = socket.subscribe("video_backup_channel");
+
+
+        var count = 1;
+        var playlistSize = 0;
+        playlistSize = _this.getFilesizeInBytes(location + '/playlist.m3u8');
+        let lineReader2 = lr.createInterface({
+            input: fs.createReadStream(location + '/playlist.m3u8')
+        });
+
+        let lastUtilityLine = "";
+        let noFileFound = true;
+        let result = [];
+        let infoCounter = 0;
+        let lastMarkedDate = null;
+        lineReader2.on('line', (line) => {
+            noFileFound = false;
+            if (line.startsWith("#") || line.startsWith(" ")) {
+                lastUtilityLine = line;
+            } else {
+                if (line >= initialDate && line <= endDate) {
+                    let lineDate = moment(line, 'YYYY-MM-DD_HH-mm-ss_hls.ts');
+                    if (lastMarkedDate == null) {
+                        lastMarkedDate = lineDate.clone();
+                    } else {
+                        if (lastMarkedDate.diff(lineDate, 'seconds') > 60) {
+                            result.push({
+                                begin: lastMarkedDate,
+                                end: lineDate
+                            });
+                        }
+                        lastMarkedDate = lineDate.clone();
+                    }
+
+                } else if (line > endDate) {
+                    console.log("ultima linea leida");
+                    lineReader2.close();
+                }
+            }
+
+        });
+
+        lineReader2.on('close', async () => {
+            console.log("process finished");
+            if (noFileFound === true) {
+                videoBackupChannel.publish({type: "no-video-available"});
+            } else {
+                console.log("no video intervals: ", result);
+                videoBackupChannel.publish({
+                    type: 'no-video-interval',
+                    data: result
+                });
+            }
+        });
     }
 }
 

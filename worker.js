@@ -387,8 +387,8 @@ class Worker extends SCWorker {
 
                 } else if (data.type === "get-no-video-intervals") {
                     console.log('EN EL GET NO VIDEO INTERALS********', data);
-                    let backupTrackerChannel = socket.subscribe("video_backup_channel");
-                    _this.returnNoVideoIntervals(data.idCamera, moment(data.initialDate), backupTrackerChannel);
+                    var videoBackupChannel = socket.subscribe(data.playlistName + '_channel');
+                    _this.returnNoVideoIntervals(data.idCamera, moment(data.initialDate), videoBackupChannel);
                 } else if (data.type == "start-video-backup") {
                     var location = process.env.VIDEO_BACKUP_LOCATION + "/" + data.idCamera;
                     var initialDate = data.initialDate;
@@ -746,7 +746,7 @@ class Worker extends SCWorker {
         return fileSizeInBytes
     }
 
-    async returnNoVideoIntervals(idCamera, initialDate) {
+    async returnNoVideoIntervals(idCamera, initialDate, channel) {
         let location = process.env.VIDEO_BACKUP_LOCATION + "/" + idCamera;
         // var initialDate = initialDate;
         var endDate = initialDate.add(1, 'days');
@@ -798,7 +798,7 @@ class Worker extends SCWorker {
             } else {
                 console.log("no video intervals: ", result);
                 channel.publish({
-                    type: 'no-video-interval',
+                    type: 'no-video-intervals',
                     data: result
                 });
             }

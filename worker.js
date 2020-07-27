@@ -746,7 +746,7 @@ class Worker extends SCWorker {
         return fileSizeInBytes
     }
 
-    returnNoVideoIntervals = async (idCamera, initialDate) => {
+    async returnNoVideoIntervals(idCamera, initialDate) {
         var location = process.env.VIDEO_BACKUP_LOCATION + "/" + idCamera;
         // var initialDate = initialDate;
         var endDate = initialDate.add(1, 'days');

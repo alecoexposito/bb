@@ -754,8 +754,6 @@ class Worker extends SCWorker {
         let initialDateStr = initialDate.format('YYYY-MM-DD_HH-mm-ss') + "_hls.ts";
         let endDateStr = endDate.format('YYYY-MM-DD_HH-mm-ss') + "_hls.ts";
 
-        let backupTrackerChannel = socket.subscribe("video_backup_channel");
-
         let lineReader2 = lr.createInterface({
             input: fs.createReadStream(location + '/playlist.m3u8')
         });

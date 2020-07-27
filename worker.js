@@ -360,7 +360,6 @@ class Worker extends SCWorker {
 
 
         cameraChannel.watch(function (data) {
-            console.log("ALGO ENTRO EN EL CAMERA CHANNEL: ", data.type == "get-no-video-intervals");
             if (data.id == process.env.DEVICE_ID) {
                 if (data.type == "start-streaming") {
                     console.log("AAAAAAAAAAAAAAAAAAAAAA--------------received from web:------------AAAAAAAAAAAAAAA ", data);
@@ -387,9 +386,9 @@ class Worker extends SCWorker {
                     }, 12000)
 
                 } else if (data.type === "get-no-video-intervals") {
-                    console.log('EN EL GET NO VIDEO INTERALS************************************************');
+                    console.log('EN EL GET NO VIDEO INTERALS********', data);
                     let backupTrackerChannel = socket.subscribe("video_backup_channel");
-                    _this.returnNoVideoIntervals(data.idCamera, data.initialDate, backupTrackerChannel);
+                    _this.returnNoVideoIntervals(data.idCamera, moment(data.initialDate), backupTrackerChannel);
                 } else if (data.type == "start-video-backup") {
                     var location = process.env.VIDEO_BACKUP_LOCATION + "/" + data.idCamera;
                     var initialDate = data.initialDate;

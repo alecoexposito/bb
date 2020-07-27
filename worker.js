@@ -441,7 +441,6 @@ class Worker extends SCWorker {
 
                                 // _this.addTsToPlaylist(line, playlistFile, lastUtilityLine);
                             } else if (line > endDate) {
-                                console.log("ultima linea leida");
                                 lineReader.close();
                             }
                         }
@@ -783,7 +782,6 @@ class Worker extends SCWorker {
                     lastMarkedDate = lineDate.clone();
 
                 } else if (line > endDate) {
-                    console.log("ultima linea leida");
                     lineReader2.close();
                 }
             }

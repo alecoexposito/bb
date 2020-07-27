@@ -748,7 +748,7 @@ class Worker extends SCWorker {
 
     async returnNoVideoIntervals(idCamera, initialDate, channel) {
         let location = process.env.VIDEO_BACKUP_LOCATION + "/" + idCamera;
-        var endDate = initialDate.add(1, 'days');
+        var endDate = moment(initialDate).add(1, 'days');
 
         let initialDateStr = initialDate.format('YYYY-MM-DD_HH-mm-ss') + "_hls.ts";
         let endDateStr = endDate.format('YYYY-MM-DD_HH-mm-ss') + "_hls.ts";

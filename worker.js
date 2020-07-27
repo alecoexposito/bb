@@ -762,7 +762,7 @@ class Worker extends SCWorker {
         let lastUtilityLine = "";
         let noFileFound = true;
         let result = [];
-        let lastMarkedDate = null;
+        let lastMarkedDate = moment(initialDate);
         lineReader2.on('line', (line) => {
             noFileFound = false;
             // console.log("line: ", line);

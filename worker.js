@@ -784,7 +784,7 @@ class Worker extends SCWorker {
                     type: 'no-video-intervals',
                     data: {
                         begin: initDate.format('YYYY-MM-DD HH:mm:ss'),
-                        end: initDate.add(24, 'hours')
+                        end: initDate.add(24, 'hours').format('YYYY-MM-DD HH:mm:ss')
                     }
                 });
 

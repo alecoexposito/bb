@@ -448,7 +448,6 @@ class Worker extends SCWorker {
                     });
 
                     lineReader.on('close', async function () {
-                        console.log("process finished");
                         if (noFileFound == true) {
                             videoBackupChannel.publish({type: "no-video-available"});
                         } else {
@@ -461,16 +460,6 @@ class Worker extends SCWorker {
                             _this.sendRecordingsToServer(arrayInfo, backupTrackerChannel, location, 200, endObj);
                             infoCounter = 0;
                             arrayInfo = [];
-
-                            // backupTrackerChannel.publish({
-                            //     type: "end-playlist",
-                            //     deviceId: process.env.DEVICE_ID,
-                            //     playlist: data.playlistName,
-                            // });
-                            // // _this.writeToPlayList(playlistFile, "#EXT-X-ENDLIST");
-                            // videoBackupChannel.publish({
-                            //     type: "play-recorded-video",
-                            // });
                         }
                     });
                 } else if (data.type == "stop-video-backup") {
@@ -478,8 +467,6 @@ class Worker extends SCWorker {
                     del([folderPath], {force: true}).then(paths => {
                         console.log('Deleted files and folders:\n', paths.join('\n'));
                     });
-                    // _this.deleteFolderFiles(folderPath);
-                    // fs.rmdirSync(folderPath);
                 } else if (data.type == "begin-download") {
                     console.log("entrando en el begin download")
                     var totalTime = data.endTime - data.initialTime;
@@ -760,7 +747,6 @@ class Worker extends SCWorker {
         let lineReader2 = lr.createInterface({
             input: fs.createReadStream(location + '/playlist.m3u8')
         });
-        console.log("location: ", location);
 
         let lastUtilityLine = "";
         let noFileFound = true;
@@ -768,7 +754,6 @@ class Worker extends SCWorker {
         let lastMarkedDate = moment(initDate);
         lineReader2.on('line', (line) => {
             noFileFound = false;
-            // console.log("line: ", line);
             if (line.startsWith("#") || line.startsWith(" ")) {
                 lastUtilityLine = line;
             } else {
@@ -793,10 +778,17 @@ class Worker extends SCWorker {
 
         lineReader2.on('close', async () => {
             console.log("process finished");
-            if (noFileFound === true) {
+            if (result.length === 0) {
                 channel.publish({type: "no-video-available"});
+                channel.publish({
+                    type: 'no-video-intervals',
+                    data: {
+                        begin: initDate.format('YYYY-MM-DD HH:mm:ss'),
+                        end: initDate.add(24, 'hours')
+                    }
+                });
+
             } else {
-                console.log("no video intervals: ", result);
                 channel.publish({
                     type: 'no-video-intervals',
                     data: result

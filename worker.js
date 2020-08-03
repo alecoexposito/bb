@@ -771,7 +771,7 @@ class Worker extends SCWorker {
 
                 } else if (line > endDate) {
                     let lastDayHour = initDate.add(24, 'hours');
-                    if (lastMarkedDate.diff(lastDayHour, 'seconds') > 60) {
+                    if (lastDayHour.diff(lastMarkedDate, 'seconds') > 60) {
                         result.push({
                             begin: lastMarkedDate.format('YYYY-MM-DD HH:mm:ss'),
                             end: lastDayHour.format('YYYY-MM-DD HH:mm:ss')

@@ -771,6 +771,7 @@ class Worker extends SCWorker {
 
                 } else if (line > endDate) {
                     let lastDayHour = initDate.add(24, 'hours');
+                    console.log("fecha mayor ya: ", lastDayHour.diff(lastMarkedDate, 'seconds'))
                     if (lastDayHour.diff(lastMarkedDate, 'seconds') > 60) {
                         result.push({
                             begin: lastMarkedDate.format('YYYY-MM-DD HH:mm:ss'),

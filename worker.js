@@ -797,7 +797,6 @@ class Worker extends SCWorker {
                         end: lastDayHour.format('YYYY-MM-DD HH:mm:ss')
                     });
                 }
-                lastMarkedDate = lineDate.clone();
                 channel.publish({
                     type: 'no-video-intervals',
                     data: result

@@ -770,6 +770,14 @@ class Worker extends SCWorker {
                     lastMarkedDate = lineDate.clone();
 
                 } else if (line > endDate) {
+                    let lastDayHour = initDate.add(24, 'hours');
+                    if (lastMarkedDate.diff(lastDayHour, 'seconds') > 60) {
+                        result.push({
+                            begin: lastMarkedDate.format('YYYY-MM-DD HH:mm:ss'),
+                            end: lastDayHour.format('YYYY-MM-DD HH:mm:ss')
+                        });
+                    }
+                    lastMarkedDate = lineDate.clone();
                     lineReader2.close();
                 }
             }

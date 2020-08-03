@@ -770,15 +770,6 @@ class Worker extends SCWorker {
                     lastMarkedDate = lineDate.clone();
 
                 } else if (line > endDate) {
-                    let lastDayHour = initDate.add(24, 'hours');
-                    console.log("fecha mayor ya: ", lastDayHour.diff(lastMarkedDate, 'seconds'))
-                    if (lastDayHour.diff(lastMarkedDate, 'seconds') > 60) {
-                        result.push({
-                            begin: lastMarkedDate.format('YYYY-MM-DD HH:mm:ss'),
-                            end: lastDayHour.format('YYYY-MM-DD HH:mm:ss')
-                        });
-                    }
-                    lastMarkedDate = lineDate.clone();
                     lineReader2.close();
                 }
             }
@@ -798,6 +789,15 @@ class Worker extends SCWorker {
                 });
 
             } else {
+                let lastDayHour = initDate.add(24, 'hours');
+                console.log("fecha mayor ya: ", lastDayHour.diff(lastMarkedDate, 'seconds'))
+                if (lastDayHour.diff(lastMarkedDate, 'seconds') > 60) {
+                    result.push({
+                        begin: lastMarkedDate.format('YYYY-MM-DD HH:mm:ss'),
+                        end: lastDayHour.format('YYYY-MM-DD HH:mm:ss')
+                    });
+                }
+                lastMarkedDate = lineDate.clone();
                 channel.publish({
                     type: 'no-video-intervals',
                     data: result

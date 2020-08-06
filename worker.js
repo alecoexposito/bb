@@ -292,15 +292,6 @@ class Worker extends SCWorker {
         _this.client = new net.Socket();
         _this.client.on('error', function (err) {
             console.log('error conectandose al tracker: ', err);
-            // process.nextTick(() => _this.client.destroy());
-            // setTimeout(function() {
-            //     console.log("intentando conectarse al tracker again");
-            //     client.connect(optionsClient.port, optionsClient.ipAddress, function () {
-            //         console.log('----------------------------- CLIENT CONNECTED ------------------------------');
-            //         // _this.syncOfflineData(client);
-            //
-            //     });
-            // }, 10000)
         });
 
         // _this.client.on('close', function() {
@@ -472,15 +463,15 @@ class Worker extends SCWorker {
                     _this.downloadVideo(data, socket);
 
                     console.log("entrando en el begin download")
-                    var totalTime = data.endTime - data.initialTime;
-                    let backupTrackerChannel = socket.subscribe("video_backup_channel");
-                    backupTrackerChannel.publish({
-                        type: 'download-video',
-                        initialTime: data.initialTime,
-                        totalTime: data.totalTime,
-                        playlist: data.playlistName,
-                        deviceId: process.env.DEVICE_ID
-                    });
+                    // var totalTime = data.endTime - data.initialTime;
+                    // let backupTrackerChannel = socket.subscribe("video_backup_channel");
+                    // backupTrackerChannel.publish({
+                    //     type: 'download-video',
+                    //     initialTime: data.initialTime,
+                    //     totalTime: data.totalTime,
+                    //     playlist: data.playlistName,
+                    //     deviceId: process.env.DEVICE_ID
+                    // });
 
                     // _this.downloadVideoByTime(data.initialTime, totalTime, data.playlistName, socket);
                 }
@@ -845,7 +836,7 @@ class Worker extends SCWorker {
                     noFileFound = false;
 
                     let dataToStore = {
-                        type: 'backup-file',
+                        type: 'add-download-file',
                         fileName: line,
                         deviceId: process.env.DEVICE_ID,
                         playlist: data.playlistName,
@@ -872,19 +863,19 @@ class Worker extends SCWorker {
         });
 
         lineReader.on('close', async function () {
-            if (noFileFound == true) {
-                videoBackupChannel.publish({type: "no-video-available"});
-            } else {
-                let backupToSend = arrayInfo;
-                let endObj = {
-                    type: "end-playlist",
-                    deviceId: process.env.DEVICE_ID,
-                    playlist: data.playlistName,
-                }
-                _this.sendRecordingsToServer(arrayInfo, backupTrackerChannel, location, 200, endObj);
-                infoCounter = 0;
-                arrayInfo = [];
-            }
+            // if (noFileFound == true) {
+            //     videoBackupChannel.publish({type: "no-video-available"});
+            // } else {
+            //     let backupToSend = arrayInfo;
+            //     let endObj = {
+            //         type: "end-playlist",
+            //         deviceId: process.env.DEVICE_ID,
+            //         playlist: data.playlistName,
+            //     }
+            //     _this.sendRecordingsToServer(arrayInfo, backupTrackerChannel, location, 200, endObj);
+            //     infoCounter = 0;
+            //     arrayInfo = [];
+            // }
         });
 
     }

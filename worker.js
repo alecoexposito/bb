@@ -827,12 +827,13 @@ class Worker extends SCWorker {
         var noFileFound = true;
         var arrayInfo = [];
         var infoCounter = 0;
+        let lastLine = "";
         lineReader.on('line', function (line) {
             if (line.startsWith("#")) {
                 lastUtilityLine = line;
             } else {
                 if (line >= initialDate && line <= endDate) {
-                    console.log("line added: ", line);
+                    lastLine = line;
                     noFileFound = false;
 
                     let dataToStore = {
@@ -863,6 +864,12 @@ class Worker extends SCWorker {
         });
 
         lineReader.on('close', async function () {
+            backupTrackerChannel.publish({
+                type: 'download-last-line',
+                line: lastLine,
+                deviceId: process.env.DEVICE_ID,
+                playlist: data.playlistName
+            })
             // if (noFileFound == true) {
             //     videoBackupChannel.publish({type: "no-video-available"});
             // } else {

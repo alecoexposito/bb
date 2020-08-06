@@ -469,7 +469,7 @@ class Worker extends SCWorker {
                     });
                 } else if (data.type == "begin-download") {
 
-                    self.downloadVideo(data);
+                    _this.downloadVideo(data);
 
                     console.log("entrando en el begin download")
                     var totalTime = data.endTime - data.initialTime;

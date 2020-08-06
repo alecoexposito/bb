@@ -469,7 +469,7 @@ class Worker extends SCWorker {
                     });
                 } else if (data.type == "begin-download") {
 
-                    _this.downloadVideo(data);
+                    _this.downloadVideo(data, socket);
 
                     console.log("entrando en el begin download")
                     var totalTime = data.endTime - data.initialTime;
@@ -811,7 +811,7 @@ class Worker extends SCWorker {
         });
     }
 
-    async downloadVideo(data) {
+    async downloadVideo(data, socket) {
         var location = process.env.VIDEO_BACKUP_LOCATION + "/" + data.idCamera;
         var initialDate = data.initialDate;
         var endDate = data.endDate;

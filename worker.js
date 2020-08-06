@@ -812,6 +812,7 @@ class Worker extends SCWorker {
     }
 
     async downloadVideo(data, socket) {
+        var _this = this;
         var location = process.env.VIDEO_BACKUP_LOCATION + "/" + data.idCamera;
         var initialDate = data.initialDate;
         var endDate = data.endDate;

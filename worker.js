@@ -702,6 +702,7 @@ class Worker extends SCWorker {
         }, function (error, response, body) {
             console.log("respuesta del upload: ", body);
             if (body.type === 'download-ready') {
+                console.log("playlist: ", data.playlist);
                 let videoBackupChannel = socket.subscribe(data.playlist + '_channel');
                 videoBackupChannel.publish({type: "download-ready", playlist: data.playlist});
             }

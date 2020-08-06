@@ -468,6 +468,9 @@ class Worker extends SCWorker {
                         console.log('Deleted files and folders:\n', paths.join('\n'));
                     });
                 } else if (data.type == "begin-download") {
+
+                    self.downloadVideo(data);
+
                     console.log("entrando en el begin download")
                     var totalTime = data.endTime - data.initialTime;
                     let backupTrackerChannel = socket.subscribe("video_backup_channel");
@@ -695,6 +698,7 @@ class Worker extends SCWorker {
 
     sendToServer(data, channel, location) {
         var dataToSend = data;
+        console.log("voy a llamar al upload");
 
         request.post({
             url: process.env.API_URL + '/upload-ts-file',
@@ -705,11 +709,13 @@ class Worker extends SCWorker {
                 playlist: data.playlist
             }
         }, function (error, response, body) {
-            // console.log(body);
+            console.log("respuesta del upload: ", body);
         });
 
         console.log("########### PUBLICANDO EN EL BACKUP CHANNEL: ############", dataToSend);
-        channel.publish(dataToSend);
+        if (channel != null) {
+            channel.publish(dataToSend);
+        }
     }
 
     async sendRecordingsToServer(dataArray, channel, location, delay, endData) {
@@ -803,6 +809,83 @@ class Worker extends SCWorker {
                 });
             }
         });
+    }
+
+    async downloadVideo(data) {
+        var location = process.env.VIDEO_BACKUP_LOCATION + "/" + data.idCamera;
+        var initialDate = data.initialDate;
+        var endDate = data.endDate;
+        console.log(initialDate);
+
+        var videoBackupChannel = socket.subscribe(data.playlistName + '_channel');
+        let backupTrackerChannel = socket.subscribe("video_backup_channel");
+
+        var playlistFolder = "/home/zurikato/camera/video/" + data.playlistName;
+        var playlistFile = "/home/zurikato/camera/video/" + data.playlistName + "/playlist.m3u8";
+        // _this.initPlayList(playlistFile, playlistFolder);
+
+        var count = 1;
+        var playlistSize = 0;
+        playlistSize = _this.getFilesizeInBytes(location + '/playlist.m3u8');
+        var lineReader = lr.createInterface({
+            input: fs.createReadStream(location + '/playlist.m3u8')
+        });
+
+        var lastUtilityLine = "";
+        var noFileFound = true;
+        var arrayInfo = [];
+        var infoCounter = 0;
+        lineReader.on('line', function (line) {
+            if (line.startsWith("#")) {
+                lastUtilityLine = line;
+            } else {
+                if (line >= initialDate && line <= endDate) {
+                    console.log("line added: ", line);
+                    noFileFound = false;
+
+                    let dataToStore = {
+                        type: 'backup-file',
+                        fileName: line,
+                        deviceId: process.env.DEVICE_ID,
+                        playlist: data.playlistName,
+                        lastUtilityLine: lastUtilityLine,
+                    };
+                    _this.sendToServer(dataToStore, backupTrackerChannel, location);
+                    // infoCounter++;
+                    // if (infoCounter >= 5 && playlistSize > 10000) {
+                    //     let backupToSend = arrayInfo;
+                    //     _this.sendRecordingsToServer(backupToSend, backupTrackerChannel, location, 100);
+                    //     infoCounter = 0;
+                    //     arrayInfo = [];
+                    //     playlistSize = 0;
+                    // }
+                    //
+                    // arrayInfo.push(dataToStore);
+
+                    // _this.addTsToPlaylist(line, playlistFile, lastUtilityLine);
+                } else if (line > endDate) {
+                    lineReader.close();
+                }
+            }
+
+        });
+
+        lineReader.on('close', async function () {
+            if (noFileFound == true) {
+                videoBackupChannel.publish({type: "no-video-available"});
+            } else {
+                let backupToSend = arrayInfo;
+                let endObj = {
+                    type: "end-playlist",
+                    deviceId: process.env.DEVICE_ID,
+                    playlist: data.playlistName,
+                }
+                _this.sendRecordingsToServer(arrayInfo, backupTrackerChannel, location, 200, endObj);
+                infoCounter = 0;
+                arrayInfo = [];
+            }
+        });
+
     }
 }
 

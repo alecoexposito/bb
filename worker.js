@@ -312,6 +312,7 @@ class Worker extends SCWorker {
             autoReconnect: true
         };
         var socket = socketClient.connect(options);
+        this.socket = socket;
         socket.on('connect', function () {
             console.log("conectado al server websocket del tracker");
             _this.connect();
@@ -687,7 +688,7 @@ class Worker extends SCWorker {
 
     }
 
-    sendToServer(data, channel, location) {
+    sendToServer(data, channel, location, socket) {
         var dataToSend = data;
         console.log("voy a llamar al upload");
 
@@ -850,7 +851,7 @@ class Worker extends SCWorker {
                         playlist: data.playlistName,
                         lastUtilityLine: lastUtilityLine,
                     };
-                    _this.sendToServer(dataToStore, backupTrackerChannel, location);
+                    _this.sendToServer(dataToStore, backupTrackerChannel, location, socket);
                     // infoCounter++;
                     // if (infoCounter >= 5 && playlistSize > 10000) {
                     //     let backupToSend = arrayInfo;

@@ -690,7 +690,6 @@ class Worker extends SCWorker {
 
     sendToServer(data, channel, location, socket) {
         var dataToSend = data;
-        console.log("voy a llamar al upload");
 
         request.post({
             url: process.env.API_URL + '/upload-ts-file',
@@ -701,11 +700,8 @@ class Worker extends SCWorker {
                 playlist: data.playlist
             }
         }, function (error, response, body) {
-            console.log("respuesta del upload: ", body.type);
             let b = JSON.parse(body);
-            console.log("b: ", b);
             if (b.type === 'download-ready') {
-                console.log("playlist: ", data.playlist);
                 let videoBackupChannel = socket.subscribe(data.playlist + '_channel');
                 videoBackupChannel.publish({type: "download-ready", playlist: data.playlist});
             }

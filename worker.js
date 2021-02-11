@@ -784,7 +784,7 @@ class Worker extends SCWorker {
                 channel.publish({
                     type: 'no-video-intervals',
                     data: [{
-                        begin: initDate.format('YYYY-MM-DD HH:mm:ss'),
+                        begin: moment().format('YYYY-MM-DD HH:mm:ss'),
                         end: initDate.add(24, 'hours').format('YYYY-MM-DD HH:mm:ss')
                     }]
                 });
